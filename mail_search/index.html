@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Поиск по почте</title>
+  <style>
+    :root { font: 16px/1.5 system-ui, sans-serif; color: #18242a; background: #f0f3f2; }
+    body { max-width: 1200px; margin: auto; padding: 2rem 1.25rem; }
+    h1 { margin: 0 0 1.25rem; font-size: 2rem; letter-spacing: -.04em; }
+    form { display: grid; grid-template-columns: minmax(9rem, 1fr) 10rem minmax(10rem, 3fr) auto; align-items: end; gap: .75rem; }
+    label { display: grid; gap: .3rem; font-size: .85rem; font-weight: 600; min-width: 0; }
+    input, select, button { font: inherit; color: inherit; }
+    input, select { box-sizing: border-box; width: 100%; padding: .65rem; border: 1px solid #adbebb; border-radius: .45rem; background: #fff; }
+    button { cursor: pointer; }
+    form button { padding: .65rem 1.15rem; border: 1px solid #1a564b; border-radius: .45rem; background: #1a564b; color: #fff; }
+    :focus-visible { outline: 3px solid #318b7b; outline-offset: 2px; }
+    main { display: grid; grid-template-columns: minmax(16rem, 2fr) minmax(0, 3fr); gap: 1rem; align-items: start; }
+    #status { min-height: 1.5rem; color: #435557; margin: .65rem 0; }
+    #results, article { border: 1px solid #d1dcd9; border-radius: .6rem; background: #fff; min-height: 7rem; overflow: hidden; }
+    article { padding: 1.2rem; }
+    article h2 { margin: 0; font-size: 1.25rem; }
+    article p { color: #435557; margin: .3rem 0 1rem; }
+    #results button { width: 100%; display: grid; gap: .15rem; text-align: left; border: 0; border-bottom: 1px solid #d1dcd9; background: #fff; padding: .75rem .85rem; }
+    #results button:last-child { border-bottom: 0; }
+    #results button:hover, #results button[aria-current="true"] { background: #e5f3ee; }
+    #results button:focus-visible { outline-offset: -3px; }
+    small { color: #435557; }
+    #results span { overflow-wrap: anywhere; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; margin: 0; }
+    @media (max-width: 720px) {
+      form { grid-template-columns: 1fr 1fr; }
+      main { grid-template-columns: minmax(0, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Поиск по почте</h1>
+  <form id="search">
+    <label>Почтовый ящик<select id="mailbox" required></select></label>
+    <label>Дата отсчёта<input id="as-of" type="date" required></label>
+    <label>Запрос<input id="query" type="search" maxlength="1000" placeholder="Электронные чеки вчера"></label>
+    <button type="submit">Найти</button>
+  </form>
+  <p id="status" role="status"></p>
+  <main>
+    <div id="results" aria-label="Список писем"></div>
+    <article id="message" aria-label="Открытое письмо"><p>Выберите письмо из списка.</p></article>
+  </main>
+  <script>
+    const form = document.querySelector("#search");
+    const mailbox = document.querySelector("#mailbox");
+    const asOf = document.querySelector("#as-of");
+    const query = document.querySelector("#query");
+    const results = document.querySelector("#results");
+    const message = document.querySelector("#message");
+    const status = document.querySelector("#status");
+    let mailboxes = {};
+    let searchVersion = 0;
+    let messageVersion = 0;
+
+    function node(tag, text) {
+      const element = document.createElement(tag);
+      element.textContent = text;
+      return element;
+    }
+
+    async function get(path, params = {}) {
+      const response = await fetch(path + "?" + new URLSearchParams(params));
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+      return data;
+    }
+
+    function scope() {
+      return { mailbox: mailbox.value, as_of: asOf.value };
+    }
+
+    function setDefaultDay() {
+      asOf.value = mailboxes[mailbox.value] || new Date().toISOString().slice(0, 10);
+    }
+
+    async function openMessage(docId, button, messageScope) {
+      const version = ++messageVersion;
+      results.querySelector("[aria-current]")?.removeAttribute("aria-current");
+      button.setAttribute("aria-current", "true");
+      message.replaceChildren(node("p", "Открываем письмо…"));
+      try {
+        const mail = await get("/api/message", { ...messageScope, doc_id: docId });
+        if (version !== messageVersion) return;
+        message.replaceChildren(
+          node("h2", mail.subject || "Письмо"),
+          node("p", mail.day || "Дата неизвестна"),
+          node("pre", mail.body)
+        );
+      } catch (error) {
+        if (version === messageVersion) message.replaceChildren(node("p", error.message));
+      }
+    }
+
+    async function search() {
+      const version = ++searchVersion;
+      ++messageVersion;
+      status.textContent = "Ищем письма…";
+      message.replaceChildren(node("p", "Выберите письмо из списка."));
+      results.replaceChildren();
+      const requestScope = scope();
+      const requestQuery = query.value.trim();
+      try {
+        const rows = await get("/api/search", { ...requestScope, q: requestQuery });
+        if (version !== searchVersion) return;
+        status.textContent = rows.length
+          ? (requestQuery ? `Писем в выдаче: ${rows.length}` : "Последние письма")
+          : "Письма не найдены.";
+        for (const row of rows) {
+          const button = node("button", "");
+          const preview = row.subject ? row.preview.split("\n").slice(1).join(" ").trim() : row.preview;
+          button.append(node("strong", row.subject || "Без темы"), node("small", row.day || "Дата неизвестна"), node("span", preview));
+          button.addEventListener("click", () => openMessage(row.doc_id, button, requestScope));
+          results.append(button);
+        }
+      } catch (error) {
+        if (version === searchVersion) status.textContent = error.message;
+      }
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      search();
+    });
+    mailbox.addEventListener("change", () => {
+      setDefaultDay();
+      search();
+    });
+    asOf.addEventListener("change", () => {
+      if (asOf.value) search();
+    });
+
+    get("/api/mailboxes").then(data => {
+      mailboxes = data;
+      for (const id of Object.keys(data)) {
+        const option = node("option", id);
+        option.value = id;
+        mailbox.append(option);
+      }
+      setDefaultDay();
+      search();
+    }).catch(error => { status.textContent = error.message; });
+  </script>
+</body>
+</html>
