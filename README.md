@@ -53,16 +53,20 @@ python -m mail_search compare --model-dir .cache/e5-model --repeats 5 \
 
 ## Сравнение моделей
 
-Кандидаты в ветке `ML` запускаются из локальных весов. Для PyTorch-кандидатов используйте Python 3.10+ и `requirements-ml.txt`.
+Кандидаты в ветке `ML` запускаются из локальных весов. На 99 исходных запросах гибрид с **Harrier 270M** получил Recall@10 **0,9279**, nDCG@10 **0,9815** и серверный p99 **22,28 мс**. На расширенном наборе из 858 запросов лидировал гибрид Granite с RuModernBERT. [Сравнение на 99 запросах](benchmarks/models.md#результаты-на-99-исходных-запросах) · [Расширенный бенчмарк](benchmarks/expanded/README.md)
+
+Для PyTorch-кандидатов используйте Python 3.10+ и `requirements-ml.txt`.
 
 ```sh
 python -m pip install -r requirements-ml.txt
 python -m mail_search.download_models all
-python -m mail_search serve --embedder granite97
+python -m mail_search serve --embedder harrier270
 python -m mail_search serve --embedder granite97 --reranker ru-reranker
 ```
 
 Энкодер выбирается через `--embedder e5|granite97|user2-small|harrier270`, ранжировщик — через `--reranker ru-reranker|bge-reranker`. Параметр `--device cpu|mps|cuda` позволяет задать устройство PyTorch. По умолчанию сервис использует доступный GPU, а при его отсутствии CPU. У E5 остаётся исходный ONNX на CPU. Для остальных моделей отдельные кэши формируются при первом запуске. С установленным ранжировщиком обычный `/api/search` применяет его к первым 20 кандидатам RRF. Чтобы посмотреть выдачу до ранжировщика, передайте `mode=hybrid`.
+
+Полное построение векторного индекса Harrier для 16 376 писем заняло **419,67 с** на Apple M4 Pro. Это отдельная операция при пустом кэше. После построения первый HTTP-прогон 99 запросов занял **1,91 с**. [Тайминги по запросам и батчам](benchmarks/harrier270-timings.json)
 
 ```sh
 python -m mail_search compare --embedder granite97 --repeats 3 --include-undated

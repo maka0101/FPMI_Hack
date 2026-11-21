@@ -1,0 +1,105 @@
+{
+  "dataset": "official_original_99",
+  "query_file": "queries_dev.jsonl",
+  "relevance_file": "qrels_dev.jsonl",
+  "queries_sha256": "7a5b587ee7361ca2e35e1929cbbfdcc3154b4302b6fb830ae1c41846518d6017",
+  "qrels_sha256": "826362ae5592d58b3bb1cd382103dc0aef151cf014025258f0cddba0fefa0dd4",
+  "queries": 99,
+  "repeats": 3,
+  "cutoff": 10,
+  "summary_activated_queries": 0,
+  "max_semantic_query_characters": 62,
+  "bootstrap_blocks": 85,
+  "models": {
+    "bm25": {
+      "mode": "bm25",
+      "embedder": null,
+      "reranker": null,
+      "recall_at_10": 0.9248814168600265,
+      "ndcg_at_10": 0.9784775007591382,
+      "server_p99_ms": 4.306,
+      "latency_samples": 297
+    },
+    "e5": {
+      "mode": "hybrid-summary",
+      "embedder": {
+        "name": "multilingual-e5-small",
+        "device": "cpu",
+        "precision": "int8"
+      },
+      "reranker": null,
+      "recall_at_10": 0.9187220599430939,
+      "ndcg_at_10": 0.9696157892859164,
+      "server_p99_ms": 7.242958,
+      "latency_samples": 297
+    },
+    "granite97": {
+      "mode": "hybrid-summary",
+      "embedder": {
+        "name": "ibm-granite/granite-embedding-97m-multilingual-r2",
+        "device": "mps",
+        "precision": "bfloat16"
+      },
+      "reranker": null,
+      "recall_at_10": 0.9157717093100337,
+      "ndcg_at_10": 0.9722647517440649,
+      "server_p99_ms": 10.315625,
+      "latency_samples": 297
+    },
+    "user2-small": {
+      "mode": "hybrid-summary",
+      "embedder": {
+        "name": "deepvk/USER2-small",
+        "device": "mps",
+        "precision": "bfloat16"
+      },
+      "reranker": null,
+      "recall_at_10": 0.8983818378426222,
+      "ndcg_at_10": 0.9539441448183349,
+      "server_p99_ms": 10.296792,
+      "latency_samples": 297
+    },
+    "harrier270": {
+      "mode": "hybrid-summary",
+      "embedder": {
+        "name": "microsoft/harrier-oss-v1-270m",
+        "device": "mps",
+        "precision": "bfloat16"
+      },
+      "reranker": null,
+      "recall_at_10": 0.9278648952222928,
+      "ndcg_at_10": 0.9815301237607658,
+      "server_p99_ms": 22.279542,
+      "latency_samples": 297
+    },
+    "granite97-ru": {
+      "mode": "hybrid-summary-rerank",
+      "embedder": {
+        "name": "ibm-granite/granite-embedding-97m-multilingual-r2",
+        "device": "mps",
+        "precision": "bfloat16"
+      },
+      "reranker": {
+        "name": "n-bor1sov/RuModernBERT-base-reranker-ru",
+        "device": "mps",
+        "precision": "bfloat16"
+      },
+      "recall_at_10": 0.919640697982944,
+      "ndcg_at_10": 0.962988113181106,
+      "server_p99_ms": 512.262583,
+      "latency_samples": 297
+    }
+  },
+  "best_vs_bm25_ndcg": {
+    "first": "harrier270",
+    "second": "bm25",
+    "delta_ndcg": 0.003052623001627473,
+    "interval": [
+      -0.017743295167508034,
+      0.026789072753139416
+    ],
+    "familywise_confidence": 0.95,
+    "pairwise_comparisons": 15,
+    "bootstrap_draws": 20000
+  }
+}
