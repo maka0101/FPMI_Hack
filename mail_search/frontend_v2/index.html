@@ -13,19 +13,28 @@
     h1, h2 { line-height: 1.2; margin: 0; }
     h1 { font-size: clamp(1.6rem, 4vw, 2.35rem); }
     h2 { font-size: 1.15rem; }
-    header, .settings, .search, .examples, .actions { display: flex; gap: .65rem; flex-wrap: wrap; align-items: center; }
+    header, .settings, .search, .actions { display: flex; gap: .65rem; flex-wrap: wrap; align-items: center; }
     header { justify-content: space-between; margin-bottom: 1.5rem; }
     a, .link { color: #175748; }
     .settings { margin-bottom: .8rem; align-items: end; }
     .settings label { display: grid; gap: .25rem; font-size: .85rem; }
     input, select, button { font: inherit; color: inherit; }
     input, select, .primary { padding: .58rem .75rem; border-radius: .55rem; border: 1px solid #a5b7b0; background: #fff; }
-    .search input { flex: 1 1 12rem; min-width: 0; }
+    .search-field { position: relative; flex: 1 1 12rem; min-width: 0; }
+    .search-field input { width: 100%; }
+    .suggestions {
+      position: absolute; z-index: 2; inset: calc(100% + .35rem) 0 auto;
+      background: #fff; border: 1px solid #a5b7b0; border-radius: .65rem;
+      box-shadow: 0 .45rem 1.2rem #18242a22; overflow: hidden;
+    }
+    #suggestion-options { list-style: none; margin: 0; padding: 0; }
+    #suggestion-options li { padding: .65rem .8rem; cursor: pointer; overflow-wrap: anywhere; }
+    #suggestion-options li:hover, #suggestion-options [aria-selected="true"] { background: #e5f3ee; }
+    #suggestion-options small { display: block; }
+    .suggestions p { margin: 0; padding: .5rem .8rem .3rem; font-size: .85rem; }
     .primary { color: white; background: #1a564b; border-color: #1a564b; }
     button { cursor: pointer; }
     :focus-visible { outline: 2px solid #257c66; outline-offset: 2px; }
-    .examples { margin-top: .6rem; }
-    .examples button { border: 1px solid #c4d5ce; background: #e5efe9; border-radius: 2rem; padding: .3rem .7rem; font-size: .88rem; }
     main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .9rem; align-items: start; }
     .panel { background: white; border: 1px solid #d1dcd9; border-radius: .8rem; overflow: hidden; }
     .panel h2, #reader { padding: 1rem; }
@@ -57,15 +66,16 @@
     <label>Дата отсчёта<input id="as-of" type="date" required form="search"></label>
   </div>
   <form id="search" class="search" role="search">
-    <input id="query" type="search" maxlength="1000" aria-label="Поисковый запрос" placeholder="Опишите письмо или событие">
+    <div class="search-field" id="search-field">
+      <input id="query" type="search" maxlength="1000" aria-label="Поисковый запрос" placeholder="Опишите письмо или событие"
+        autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggestion-options">
+      <div class="suggestions" id="suggestions" hidden>
+        <p class="meta">Помните другое письмо или событие?</p>
+        <ul id="suggestion-options" role="listbox" aria-label="Как уточнить поиск"></ul>
+      </div>
+    </div>
     <button class="primary" id="submit" disabled>Найти</button>
   </form>
-  <div class="examples" aria-label="Примеры на демоданных">
-    <button type="button" data-example="Смета после письма про билеты в Казань">После письма</button>
-    <button type="button" data-example="Договор до письма с приглашением на встречу">До письма</button>
-    <button type="button" data-example="Ищу смету на ремонт. Я примерно тогда покупал билеты в Казань">Примерно тогда</button>
-    <button type="button" data-example="Письма рядом с покупкой билетов в Казань">Письма рядом</button>
-  </div>
   <p id="source-note"></p>
   <p id="status" role="status"></p>
   <main>

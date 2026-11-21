@@ -12,6 +12,8 @@ const rows = get("rows");
 const actions = get("actions");
 const reader = get("reader");
 const message = get("message");
+const suggestions = get("suggestions");
+const suggestionOptions = get("suggestion-options");
 const help = "Для поиска по ориентиру бэкенду нужны GET /api/search с dated_only=true и POST /api/search/nearby.";
 const demoMailbox = "Казань · демо";
 const demoDate = "2026-05-24";
@@ -33,6 +35,8 @@ let submitted = "";
 let searchVersion = 0;
 let messageVersion = 0;
 let activeRow = null;
+let activeSuggestion = -1;
+let completion = "";
 
 function parse(text) {
   const clean = value => value.trim().replace(/[.!?]+$/, "").trim();
@@ -298,6 +302,48 @@ function resetDate() {
   asOf.value = boxes[mailbox.value] || localDate;
 }
 
+function hideSuggestions() {
+  suggestions.hidden = true;
+  activeSuggestion = -1;
+  query.setAttribute("aria-expanded", "false");
+  query.removeAttribute("aria-activedescendant");
+}
+
+function applySuggestion(value) {
+  query.value = completion = value;
+  hideSuggestions();
+  query.focus();
+}
+
+function suggest() {
+  hideSuggestions();
+  const text = query.value.trim();
+  if (text.length < 2 || parse(text) || text === completion.trim()) return;
+
+  const list = /^письма(?:\s+рядом(?:\s+с)?)?$/iu.test(text) ? [
+    ["Письма рядом с ", "Например, с покупкой билетов в Казань"]
+  ] : [
+    [text + " после письма про ", "Например, про билеты в Казань"],
+    [text + " до письма про ", "Например, про приглашение на встречу"],
+    [text + " примерно тогда, когда ", "Например, когда пришло подтверждение брони"]
+  ];
+  suggestionOptions.replaceChildren();
+  for (const [value, example] of list) {
+    if (value.length >= query.maxLength) continue;
+    const option = node("li", "");
+    option.id = "suggestion-" + suggestionOptions.children.length;
+    option.setAttribute("role", "option");
+    option.setAttribute("aria-selected", "false");
+    option.append(node("strong", value + "…"), node("small", example, "meta"));
+    option.addEventListener("pointerdown", event => event.preventDefault());
+    option.addEventListener("click", () => applySuggestion(value));
+    suggestionOptions.append(option);
+  }
+  if (!suggestionOptions.children.length) return;
+  suggestions.hidden = false;
+  query.setAttribute("aria-expanded", "true");
+}
+
 async function loadSource() {
   const version = start("Загружаем ящики…");
   const demo = source.value === "demo";
@@ -329,8 +375,39 @@ async function loadSource() {
 
 get("search").addEventListener("submit", event => {
   event.preventDefault();
+  hideSuggestions();
+  if (completion && query.value.trim() === completion.trim()) {
+    status.textContent = "Допишите, какое письмо или событие вы помните.";
+    query.focus();
+    return;
+  }
   submitted = query.value.trim();
   runSearch();
+});
+query.addEventListener("input", event => {
+  if (!event.isComposing) suggest();
+});
+query.addEventListener("compositionend", suggest);
+query.addEventListener("blur", hideSuggestions);
+query.addEventListener("keydown", event => {
+  if (suggestions.hidden || event.isComposing) return;
+  const options = [...suggestionOptions.children];
+  if (event.key === "Escape") {
+    event.preventDefault();
+    hideSuggestions();
+  } else if (event.key === "Enter" && activeSuggestion >= 0) {
+    event.preventDefault();
+    options[activeSuggestion].click();
+  } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+    event.preventDefault();
+    options[activeSuggestion]?.setAttribute("aria-selected", "false");
+    const step = event.key === "ArrowDown" ? 1 : -1;
+    activeSuggestion = activeSuggestion < 0 ? (step === 1 ? 0 : options.length - 1) :
+      (activeSuggestion + step + options.length) % options.length;
+    const selected = options[activeSuggestion];
+    selected.setAttribute("aria-selected", "true");
+    query.setAttribute("aria-activedescendant", selected.id);
+  }
 });
 mailbox.addEventListener("change", () => { resetDate(); runSearch(); });
 asOf.addEventListener("change", () => {
@@ -347,12 +424,5 @@ rows.addEventListener("keydown", event => {
   const step = event.key === "ArrowDown" ? 1 : -1;
   choices[(choices.indexOf(event.target) + step + choices.length) % choices.length].focus();
 });
-for (const button of document.querySelectorAll("[data-example]")) {
-  button.addEventListener("click", () => {
-    query.value = submitted = button.dataset.example;
-    source.value = "demo";
-    loadSource();
-  });
-}
 if (new URLSearchParams(location.search).get("demo") === "1") source.value = "demo";
 loadSource();
