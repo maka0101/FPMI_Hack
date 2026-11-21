@@ -19,6 +19,7 @@ import uvicorn
 import yaml
 
 from .ml_profiles import Digest, Encoder, Profile, file_hash, read_profile, stable_hash
+from .search import DATE_IN_QUERY
 
 
 INDEX_FORMAT = 1
@@ -50,6 +51,8 @@ def index_identity(data_dir: Path, profile: Profile) -> dict:
     dependencies = ["numpy"]
     if profile.adapter == "sentence-transformers":
         dependencies.extend(["sentence-transformers", "transformers", "torch", "tokenizers"])
+    elif profile.adapter == "onnx-e5":
+        dependencies.extend(["onnxruntime", "tokenizers"])
     identity = {
         "format_version": INDEX_FORMAT,
         "corpus_sha256": file_hash(data_dir / "documents.jsonl"),
@@ -98,18 +101,25 @@ def build_index(source: Path, directory: Path, profile: Profile, encoder: Encode
                 raise ValueError("empty synthetic_user in corpus")
             doc_ids.add(doc_id)
             rows.append([doc_id, mailbox, date.fromisoformat(day).isoformat() if day is not None else None])
-            texts.append(profile.document_template.replace("{doc}", document["doc"]))
+            text = document["doc"].strip() if profile.adapter == "onnx-e5" else document["doc"]
+            texts.append(profile.document_template.replace("{doc}", text))
     if digest.hexdigest() != identity["corpus_sha256"]:
         raise ValueError("corpus changed during preparation, run prepare again")
     (directory / "rows.json").write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
     vectors = np.lib.format.open_memmap(directory / "vectors.npy", mode="w+", dtype=np.float32,
                                         shape=(len(rows), profile.dimensions))
-    for start in range(0, len(rows), 64):
-        batch = texts[start:start + 64]
-        encoded = encoder.encode(batch)
-        if encoded.shape != (len(batch), profile.dimensions) or not np.isfinite(encoded).all():
+    order = range(len(rows))
+    batch_size = 64
+    if profile.adapter == "onnx-e5":
+        # Group similar lengths to reduce padding while preserving the row mapping.
+        order = sorted(order, key=lambda idx: len(texts[idx]))
+        batch_size = 32
+    for start in range(0, len(rows), batch_size):
+        batch_rows = list(order[start:start + batch_size])
+        encoded = encoder.encode([texts[idx] for idx in batch_rows])
+        if encoded.shape != (len(batch_rows), profile.dimensions) or not np.isfinite(encoded).all():
             raise ValueError("encoder returned invalid vectors")
-        vectors[start:start + len(batch)] = encoded
+        vectors[batch_rows] = encoded
     vectors.flush()
     del vectors
     manifest = {
@@ -151,6 +161,7 @@ class VectorIndex:
         self.metadata = describe(profile, manifest)
         self.encoder = Encoder(profile, root)
         self.query_prefix = profile.query_prefix
+        self.strip_query_date = profile.adapter == "onnx-e5"
         self.encode_lock = Lock()
         self.vectors = np.load(directory / "vectors.npy", mmap_mode="r", allow_pickle=False)
         rows = json.loads((directory / "rows.json").read_text(encoding="utf-8"))
@@ -170,8 +181,11 @@ class VectorIndex:
                     if (day is None or day <= as_of) and (target is None or day == target)]
         if not eligible:
             return []
+        text = request.query
+        if self.strip_query_date:
+            text = " ".join(DATE_IN_QUERY.sub(" ", text, count=1).split())
         with self.encode_lock:
-            query_vector = self.encoder.encode([self.query_prefix + request.query])[0]
+            query_vector = self.encoder.encode([self.query_prefix + text])[0]
         if not np.isfinite(query_vector).all():
             raise ValueError("encoder returned non-finite query vector")
         indexes, doc_ids = zip(*eligible)

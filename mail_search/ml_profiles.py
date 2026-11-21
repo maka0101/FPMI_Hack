@@ -32,7 +32,7 @@ def file_hash(path: Path) -> str:
 class Profile(BaseModel):
     model_config = ConfigDict(extra='forbid')
     profile_id: Identifier
-    adapter: Literal['word-hash', 'subword-hash', 'sentence-transformers']
+    adapter: Literal['word-hash', 'subword-hash', 'sentence-transformers', 'onnx-e5']
     model_id: str = Field(min_length=1)
     model_revision: str = Field(min_length=1)
     tokenizer_id: str = Field(min_length=1)
@@ -50,9 +50,11 @@ class Profile(BaseModel):
     def check_artifacts(self):
         if self.document_template.count('{doc}') != 1:
             raise ValueError('document_template must contain {doc} once')
-        if self.adapter == 'sentence-transformers':
+        if self.adapter in {'sentence-transformers', 'onnx-e5'}:
             if not self.weights_dir or not self.files_sha256:
                 raise ValueError('weights_dir and files_sha256 are required')
+            if self.adapter == 'onnx-e5' and not {'model_quantized.onnx', 'tokenizer.json'} <= self.files_sha256.keys():
+                raise ValueError('ONNX and tokenizer checksums are required')
             for revision in (self.model_revision, self.tokenizer_revision):
                 if not re.fullmatch(r'[0-9a-f]{40}', revision):
                     raise ValueError('use a pinned 40-character revision')
@@ -84,11 +86,15 @@ class Encoder:
     def __init__(self, profile: Profile, artifact_dir: Path):
         self.profile = profile
         self.model = None
-        if profile.adapter == 'sentence-transformers':
+        if profile.adapter in {'sentence-transformers', 'onnx-e5'}:
             weights = artifact_dir / profile.weights_dir
             for name, expected in profile.files_sha256.items():
                 if file_hash(weights / name) != expected:
                     raise ValueError(f'weight/tokenizer checksum mismatch for {name}')
+        if profile.adapter == 'onnx-e5':
+            from .onnx_e5 import OnnxE5
+            self.model = OnnxE5(weights, profile.max_length)
+        elif profile.adapter == 'sentence-transformers':
             from sentence_transformers import SentenceTransformer
             self.model = SentenceTransformer(str(weights.resolve()), device='cpu', local_files_only=True,
                                              trust_remote_code=False)
@@ -98,6 +104,8 @@ class Encoder:
 
     def encode(self, texts: list[str]) -> np.ndarray:
         profile = self.profile
+        if profile.adapter == 'onnx-e5':
+            return self.model.encode(texts, normalize=profile.normalize)
         if self.model is not None:
             vectors = self.model.encode(texts, convert_to_numpy=True, normalize_embeddings=profile.normalize,
                                         batch_size=16, show_progress_bar=False)

@@ -27,6 +27,7 @@ services:
       context: .
       args:
         INSTALL_TRANSFORMERS: ${INSTALL_TRANSFORMERS:-0}
+        INSTALL_ONNX: ${INSTALL_ONNX:-0}
     command: ["python", "-m", "mail_search.ml", "--data", "/data", "--profile", "${MODEL_PROFILE:-encoder-a}", "--host", "0.0.0.0", "--port", "8001"]
     environment:
       DATA_DIR: /data

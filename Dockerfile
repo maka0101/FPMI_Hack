@@ -1,6 +1,7 @@
 FROM python:3.11-slim
 
 ARG INSTALL_TRANSFORMERS=0
+ARG INSTALL_ONNX=0
 WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -9,11 +10,10 @@ ENV PYTHONUNBUFFERED=1 \
 
 RUN pip install --no-cache-dir uv==0.11.8
 COPY pyproject.toml uv.lock ./
-RUN if [ "$INSTALL_TRANSFORMERS" = "1" ]; then \
-      uv sync --locked --no-dev --extra transformers; \
-    else \
-      uv sync --locked --no-dev; \
-    fi
+RUN set -- --locked --no-dev; \
+    if [ "$INSTALL_TRANSFORMERS" = "1" ]; then set -- "$@" --extra transformers; fi; \
+    if [ "$INSTALL_ONNX" = "1" ]; then set -- "$@" --extra onnx; fi; \
+    uv sync "$@"
 COPY mail_search ./mail_search
 COPY models ./models
 

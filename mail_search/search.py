@@ -21,7 +21,8 @@ DATE_IN_QUERY = re.compile(
     r"|(?P<iso>\d{4}-\d{2}-\d{2})\b"
     r"|(?P<numeric>\d{1,2}\.\d{1,2}\.\d{4})\b"
     r"|(?P<day>\d{1,2})\s+(?P<month>" + "|".join(MONTHS) + r")\b"
-    r"(?:\s+(?P<year>\d{4})(?:\s+года\b)?)?)"
+    r"(?:\s+(?P<year>\d{4})(?:\s+года\b)?)?)",
+    re.IGNORECASE,
 )
 STOP_WORDS = set(
     "а без в во где для до за и из как ли мне на найди найти о об от по покажи "
