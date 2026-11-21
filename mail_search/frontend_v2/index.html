@@ -22,16 +22,24 @@
     input, select, .primary { padding: .58rem .75rem; border-radius: .55rem; border: 1px solid #a5b7b0; background: #fff; }
     .search-field { position: relative; flex: 1 1 12rem; min-width: 0; }
     .search-field input { width: 100%; }
-    .suggestions {
-      position: absolute; z-index: 2; inset: calc(100% + .35rem) 0 auto;
-      background: #fff; border: 1px solid #a5b7b0; border-radius: .65rem;
-      box-shadow: 0 .45rem 1.2rem #18242a22; overflow: hidden;
-    }
-    #suggestion-options { list-style: none; margin: 0; padding: 0; }
-    #suggestion-options li { padding: .65rem .8rem; cursor: pointer; overflow-wrap: anywhere; }
-    #suggestion-options li:hover, #suggestion-options [aria-selected="true"] { background: #e5f3ee; }
-    #suggestion-options small { display: block; }
-    .suggestions p { margin: 0; padding: .5rem .8rem .3rem; font-size: .85rem; }
+    #rows, #timeline-rows { max-height: min(54vh, 34rem); overflow-y: auto; }
+    #recall-entry, #recall-controls, #timeline-nav { padding: .7rem 1rem; border-top: 1px solid #d1dcd9; }
+    #recall-entry { background: #e5f3ee; }
+    #recall-toggle { width: 100%; text-decoration: none; font-weight: 650; }
+    #recall-controls { display: grid; gap: .75rem; }
+    .recall-header, .recall-buttons, .date-fields { display: flex; flex-wrap: wrap; gap: .65rem; align-items: center; }
+    .recall-header { justify-content: space-between; }
+    #recall-controls h2 { padding: 0; }
+    #recall-controls form { display: grid; gap: .45rem; }
+    #recall-controls input { max-width: 100%; }
+    #recall-controls p { margin: 0; }
+    #recall-candidates { border: 1px solid #d1dcd9; border-radius: .55rem; overflow: hidden; }
+    #recall-candidates .row:first-child { border-top: 0; }
+    #period-preview { background: #e5f3ee; padding: .65rem .8rem; border-radius: .55rem; overflow-wrap: anywhere; }
+    #recall-dialog { margin: auto 0 0; width: 100%; max-width: none; max-height: 85dvh; border: 0; border-radius: 1rem 1rem 0 0; padding: 0; color: inherit; }
+    #recall-dialog::backdrop { background: #18242a66; }
+    .timeline-day { margin: 0; padding: .65rem 1rem; font-size: .9rem; background: #f0f3f2; }
+    #timeline-back, #timeline-period, #timeline-status, #timeline-recovery { margin: .5rem 1rem; }
     .primary { color: white; background: #1a564b; border-color: #1a564b; }
     button { cursor: pointer; }
     :focus-visible { outline: 2px solid #257c66; outline-offset: 2px; }
@@ -53,7 +61,7 @@
     #back { display: none; margin-bottom: .7rem; }
     @media (max-width: 700px) {
       main { grid-template-columns: 1fr; }
-      #reader:not(.reading), main:has(.reading) #list { display: none; }
+      #reader:not(.reading), main:has(.reading) #list, main:has(.reading) #timeline { display: none; }
       #back { display: inline-block; }
     }
   </style>
@@ -67,12 +75,7 @@
   </div>
   <form id="search" class="search" role="search">
     <div class="search-field" id="search-field">
-      <input id="query" type="search" maxlength="1000" aria-label="Поисковый запрос" placeholder="Опишите письмо или событие"
-        autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggestion-options">
-      <div class="suggestions" id="suggestions" hidden>
-        <p class="meta">Помните другое письмо или событие?</p>
-        <ul id="suggestion-options" role="listbox" aria-label="Как уточнить поиск"></ul>
-      </div>
+      <input id="query" type="search" maxlength="1000" aria-label="Поисковый запрос" placeholder="Опишите письмо, которое ищете">
     </div>
     <button class="primary" id="submit" disabled>Найти</button>
   </form>
@@ -84,11 +87,67 @@
       <h2 id="heading" tabindex="-1">Письма</h2>
       <div id="rows"></div>
       <div id="actions" class="actions"></div>
+      <div id="recall-entry" hidden>
+        <button id="recall-toggle" class="link" type="button" aria-controls="recall-controls" aria-expanded="false"></button>
+      </div>
+      <div id="recall-slot">
+        <section id="recall-controls" aria-labelledby="recall-title" hidden>
+          <div class="recall-header">
+            <h2 id="recall-title">Вспомнить по событию</h2>
+            <button id="recall-close" class="link" type="button">Свернуть</button>
+          </div>
+          <form id="recall-form">
+            <label for="recall-input">Что ещё происходило в эти дни?</label>
+            <input id="recall-input" required maxlength="1000" placeholder="Примерно тогда покупал билеты в Казань">
+            <div class="recall-buttons">
+              <button class="primary" type="submit">Подобрать период</button>
+              <button id="recall-dates" class="link" type="button">Указать даты</button>
+            </div>
+          </form>
+          <p id="recall-status" role="status"></p>
+          <div id="recall-recovery" class="recall-buttons"></div>
+          <div id="recall-candidates" hidden></div>
+          <form id="date-form" hidden>
+            <div class="date-fields">
+              <label for="period-from">От</label><input id="period-from" type="date" required>
+              <label for="period-to">До</label><input id="period-to" type="date" required>
+            </div>
+            <button class="link" type="submit">Подтвердить даты</button>
+          </form>
+          <div id="period-editor" class="recall-buttons" hidden>
+            <label for="period-direction">Относительно письма</label>
+            <select id="period-direction">
+              <option value="around">Примерно тогда</option>
+              <option value="before">До письма</option>
+              <option value="after">После письма</option>
+            </select>
+            <button id="recall-change-anchor" class="link" type="button">Другое письмо</button>
+          </div>
+          <div id="period-preview" hidden>
+            <p id="period-summary"></p>
+            <div class="recall-buttons">
+              <button id="refine" class="primary" type="button">Уточнить поиск</button>
+              <button id="timeline-open" class="link" type="button">Посмотреть письма вокруг события</button>
+              <button id="period-edit" class="link" type="button">Изменить</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+    <section id="timeline" class="panel" aria-labelledby="timeline-title" hidden>
+      <button id="timeline-back" class="link" type="button">Назад</button>
+      <h2 id="timeline-title" tabindex="-1">Почта вокруг события</h2>
+      <p id="timeline-period"></p>
+      <div id="timeline-rows"></div>
+      <p id="timeline-status" role="status"></p>
+      <div id="timeline-recovery" class="recall-buttons"></div>
+      <div id="timeline-nav" class="recall-buttons"></div>
     </section>
     <article id="reader" class="panel" aria-label="Открытое письмо">
       <button id="back" class="link" type="button">К результатам</button>
       <div id="message" aria-live="polite"><p>Выберите письмо из списка.</p></div>
     </article>
   </main>
+  <dialog id="recall-dialog" aria-labelledby="recall-title"></dialog>
 </body>
 </html>

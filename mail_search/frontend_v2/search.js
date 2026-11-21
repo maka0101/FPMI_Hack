@@ -12,9 +12,6 @@ const rows = get("rows");
 const actions = get("actions");
 const reader = get("reader");
 const message = get("message");
-const suggestions = get("suggestions");
-const suggestionOptions = get("suggestion-options");
-const help = "Для поиска по ориентиру бэкенду нужны GET /api/search с dated_only=true и POST /api/search/nearby.";
 const demoMailbox = "Личный ящик · демо";
 const demoDate = "2026-06-06";
 const demoMail = [
@@ -107,24 +104,6 @@ let submitted = "";
 let searchVersion = 0;
 let messageVersion = 0;
 let activeRow = null;
-let activeSuggestion = -1;
-let completion = "";
-
-function parse(text) {
-  const clean = value => value.trim().replace(/[.!?]+$/, "").trim();
-  const browse = text.match(/^письма\s+рядом\s+с\s+(.+)$/iu);
-  if (browse) return { target: "", event: clean(browse[1]), direction: "around" };
-  const parts = [...text.matchAll(/\s+(после|до)\s+письма\s+(?:про\s+|о\s+|об\s+|с\s+)?|[\s.,]+(?:я\s+)?примерно\s+(?:тогда(?:\s+же)?|в\s+то\s+же\s+время)(?:,?\s+когда)?\s+/giu)];
-  if (parts.length !== 1) return null;
-  const [separator, relation] = parts[0];
-  const target = clean(text.slice(0, parts[0].index).replace(/^ищу\s+/iu, ""));
-  const event = clean(text.slice(parts[0].index + separator.length)
-    .replace(/^пришло\s+письмо\s+(?:про\s+|о\s+|об\s+|с\s+)?/iu, ""));
-  if (!target || !event) return null;
-  const direction = { до: "before", после: "after" }[relation?.toLowerCase()] || "around";
-  return { target, event, direction };
-}
-
 async function request(path, params = {}, payload) {
   const url = new URL(path, location.origin);
   url.search = new URLSearchParams(params);
@@ -159,20 +138,6 @@ function demoMatches(text, candidates) {
   })).filter(({ score }) => !words.length || score);
 }
 
-function demoNearby(context, intent, anchor, size) {
-  const day = dayNumber(anchor.day);
-  const from = day - (intent.direction === "after" ? 0 : size);
-  const to = Math.min(dayNumber(context.as_of), day + (intent.direction === "before" ? 0 : size));
-  const eligible = demoMail.filter(item => item.doc_id !== anchor.doc_id &&
-    dayNumber(item.day) >= from && dayNumber(item.day) <= to);
-  const results = demoMatches(intent.target, eligible).map(({ item, score }) => ({
-    item: { ...item, delta_days: dayNumber(item.day) - day }, score
-  })).sort((a, b) => b.score - a.score ||
-    Math.abs(a.item.delta_days) - Math.abs(b.item.delta_days) ||
-    a.item.doc_id.localeCompare(b.item.doc_id));
-  return { window: { from: dateString(from), to: dateString(to) }, results: results.slice(0, 10).map(row => row.item) };
-}
-
 function closeMessage(restoreFocus = false) {
   ++messageVersion;
   reader.classList.remove("reading");
@@ -199,11 +164,12 @@ function start(label) {
   return version;
 }
 
-function action(label, handler) {
+function action(label, handler, container = actions) {
   const button = node("button", label, "link");
   button.type = "button";
   button.addEventListener("click", handler);
-  actions.append(button);
+  container.append(button);
+  return button;
 }
 
 function relative(delta) {
@@ -214,7 +180,7 @@ function relative(delta) {
   return delta < 0 ? "За " + amount + " до" : "Через " + amount;
 }
 
-function renderRows(items, select) {
+function renderRows(items, select, container = rows) {
   for (const item of items) {
     const row = node("button", "", "row");
     row.type = "button";
@@ -222,7 +188,8 @@ function renderRows(items, select) {
       node("small", displayDate(item.day), "meta"), node("span", item.preview || ""));
     if (Number.isInteger(item.delta_days)) row.append(node("small", relative(item.delta_days), "relative"));
     row.addEventListener("click", () => select(item, row));
-    rows.append(row);
+    if (item.isAnchor) row.append(node("small", "Письмо-ориентир", "relative"));
+    container.append(row);
   }
 }
 
@@ -264,12 +231,14 @@ async function ordinary(context, text) {
         .sort((a, b) => b.score - a.score || b.item.day.localeCompare(a.item.day)).map(row => row.item)
     } : await request("/api/search", { ...context.scope, q: text });
     if (version !== searchVersion) return;
-    heading.textContent = data.length ? (text ? "Результаты поиска" : "Последние письма") : "Письма не найдены";
+    heading.textContent = data.length ? (text ? "Результаты поиска" : "Последние письма") :
+      (text ? "По запросу «" + text + "» писем не найдено" : "Писем пока нет");
     renderRows(data, (item, row) => openMessage(context, item, row));
     const day = headers?.get("X-Target-Day");
     const fallback = headers?.get("X-Search-Mode") === "bm25-fallback";
     status.textContent = "Писем: " + data.length + (day ? " · За " + displayDate(day) : "") +
       (fallback ? " · Поиск по словам" : "");
+    configureRecall(context, Boolean(text && !data.length));
   } catch (error) {
     if (version !== searchVersion) return;
     heading.textContent = "Поиск недоступен";
@@ -285,138 +254,14 @@ function demoAction() {
   });
 }
 
-async function chooseAnchor(context, intent) {
-  const version = start("Ищем письма об этом событии…");
-  try {
-    const candidates = context.demo ?
-      demoMatches(intent.event, demoMail.filter(item => item.day <= context.scope.as_of))
-        .sort((a, b) => b.score - a.score).slice(0, 3).map(row => row.item) :
-      (await request("/api/search", { ...context.scope, q: intent.event, limit: 3, dated_only: true })).data;
-    if (version !== searchVersion) return;
-    if (!Array.isArray(candidates) || candidates.some(item => !item.day || item.day > context.scope.as_of)) {
-      throw new Error("Ответ поиска ориентиров нарушает условия по дате.");
-    }
-    if (candidates.length) {
-      heading.textContent = {
-        before: "До какого письма искать?",
-        after: "После какого письма искать?",
-        around: "Какое письмо поможет вспомнить дату?"
-      }[intent.direction];
-      status.textContent = intent.target ? "Ищем «" + intent.target + "»" : "Ищем соседние письма";
-      renderRows(candidates.slice(0, 3), item => nearby(context, intent, item, 3));
-    } else {
-      heading.textContent = "Не нашли письмо об этом событии";
-      if (!context.demo) {
-        status.textContent = help;
-        demoAction();
-      }
-      action("Изменить запрос", () => query.focus());
-    }
-    action("Искать всю фразу", () => ordinary(context, context.text));
-    heading.focus();
-  } catch (error) {
-    if (version !== searchVersion) return;
-    heading.textContent = "Поиск по ориентиру недоступен";
-    status.textContent = describeError(error) + " " + help;
-    action("Повторить", () => chooseAnchor(context, intent));
-    action("Искать всю фразу", () => ordinary(context, context.text));
-    demoAction();
-    heading.focus();
-  }
-}
-
-async function nearby(context, intent, anchor, size) {
-  const version = start("Ищем письма по дате…");
-  try {
-    const data = context.demo ? demoNearby(context.scope, intent, anchor, size) :
-      (await request("/api/search/nearby", {}, {
-        ...context.scope, q: intent.target, anchor_doc_id: anchor.doc_id,
-        direction: intent.direction, window_days: size, limit: 10
-      })).data;
-    if (version !== searchVersion) return;
-    const relation = { before: "до", after: "после", around: "вокруг даты" }[intent.direction];
-    const topic = intent.target || "Соседние письма";
-    condition.textContent = topic + " · " + displayDate(data.window.from) + " — " +
-      displayDate(data.window.to) + " · " + relation + " письма «" + (anchor.subject || "Без темы") + "»";
-    condition.hidden = false;
-    heading.textContent = data.results.length ? "Результаты поиска" : "В пределах " + size + " дней ничего не найдено";
-    status.textContent = "Писем: " + data.results.length;
-    renderRows(data.results, (item, row) => openMessage(context, item, row));
-    if (!data.results.length && size === 3) action("Расширить до 7 дней", () => nearby(context, intent, anchor, 7));
-    action("Сменить письмо", () => chooseAnchor(context, intent));
-    if (!data.results.length && size === 7 && intent.target) {
-      action("Искать во всём ящике", () => ordinary(context, intent.target));
-    }
-  } catch (error) {
-    if (version !== searchVersion) return;
-    heading.textContent = "Поиск по дате недоступен";
-    status.textContent = describeError(error) + " " + help;
-    if (error.status !== 400 && error.status !== 404) action("Повторить", () => nearby(context, intent, anchor, size));
-    action("Сменить письмо", () => chooseAnchor(context, intent));
-    if (error.status === 400) action("Изменить запрос", () => query.focus());
-    if (intent.target) action("Искать во всём ящике", () => ordinary(context, intent.target));
-    demoAction();
-  }
-  heading.focus();
-}
-
-function runSearch() {
-  if (!mailbox.value || !asOf.value) return;
-  const context = { demo: source.value === "demo", scope: { mailbox: mailbox.value, as_of: asOf.value }, text: submitted };
-  const intent = parse(submitted);
-  if (intent) chooseAnchor(context, intent);
-  else ordinary(context, submitted);
-}
-
 function resetDate() {
   const today = new Date();
   const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
   asOf.value = boxes[mailbox.value] || localDate;
 }
 
-function hideSuggestions() {
-  suggestions.hidden = true;
-  activeSuggestion = -1;
-  query.setAttribute("aria-expanded", "false");
-  query.removeAttribute("aria-activedescendant");
-}
-
-function applySuggestion(value) {
-  query.value = completion = value;
-  hideSuggestions();
-  query.focus();
-}
-
-function suggest() {
-  hideSuggestions();
-  const text = query.value.trim();
-  if (text.length < 2 || parse(text) || text === completion.trim()) return;
-
-  const list = /^письма(?:\s+рядом(?:\s+с)?)?$/iu.test(text) ? [
-    ["Письма рядом с ", "Например, с покупкой билетов в Казань"]
-  ] : [
-    [text + " после письма про ", "Например, про билеты в Казань"],
-    [text + " до письма про ", "Например, про приглашение на встречу"],
-    [text + " примерно тогда, когда ", "Например, когда пришло подтверждение брони"]
-  ];
-  suggestionOptions.replaceChildren();
-  for (const [value, example] of list) {
-    if (value.length >= query.maxLength) continue;
-    const option = node("li", "");
-    option.id = "suggestion-" + suggestionOptions.children.length;
-    option.setAttribute("role", "option");
-    option.setAttribute("aria-selected", "false");
-    option.append(node("strong", value + "…"), node("small", example, "meta"));
-    option.addEventListener("pointerdown", event => event.preventDefault());
-    option.addEventListener("click", () => applySuggestion(value));
-    suggestionOptions.append(option);
-  }
-  if (!suggestionOptions.children.length) return;
-  suggestions.hidden = false;
-  query.setAttribute("aria-expanded", "true");
-}
-
 async function loadSource() {
+  resetRecall();
   const version = start("Загружаем ящики…");
   const demo = source.value === "demo";
   mailbox.replaceChildren();
@@ -447,45 +292,11 @@ async function loadSource() {
 
 get("search").addEventListener("submit", event => {
   event.preventDefault();
-  hideSuggestions();
-  if (completion && query.value.trim() === completion.trim()) {
-    status.textContent = "Допишите, какое письмо или событие вы помните.";
-    query.focus();
-    return;
-  }
   submitted = query.value.trim();
   runSearch();
 });
-query.addEventListener("input", event => {
-  if (!event.isComposing) suggest();
-});
-query.addEventListener("compositionend", suggest);
-query.addEventListener("blur", hideSuggestions);
-query.addEventListener("keydown", event => {
-  if (suggestions.hidden || event.isComposing) return;
-  const options = [...suggestionOptions.children];
-  if (event.key === "Escape") {
-    event.preventDefault();
-    hideSuggestions();
-  } else if (event.key === "Enter" && activeSuggestion >= 0) {
-    event.preventDefault();
-    options[activeSuggestion].click();
-  } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-    event.preventDefault();
-    options[activeSuggestion]?.setAttribute("aria-selected", "false");
-    const step = event.key === "ArrowDown" ? 1 : -1;
-    activeSuggestion = activeSuggestion < 0 ? (step === 1 ? 0 : options.length - 1) :
-      (activeSuggestion + step + options.length) % options.length;
-    const selected = options[activeSuggestion];
-    selected.setAttribute("aria-selected", "true");
-    query.setAttribute("aria-activedescendant", selected.id);
-  }
-});
 mailbox.addEventListener("change", () => { resetDate(); runSearch(); });
-asOf.addEventListener("change", () => {
-  if (asOf.value) runSearch();
-  else start("Выберите дату отсчёта");
-});
+asOf.addEventListener("change", runSearch);
 source.addEventListener("change", loadSource);
 get("back").addEventListener("click", () => closeMessage(true));
 rows.addEventListener("keydown", event => {
@@ -496,5 +307,403 @@ rows.addEventListener("keydown", event => {
   const step = event.key === "ArrowDown" ? 1 : -1;
   choices[(choices.indexOf(event.target) + step + choices.length) % choices.length].focus();
 });
+
+const controls = get("recall-controls");
+const recallDialog = get("recall-dialog");
+const recallInput = get("recall-input");
+const recallToggle = get("recall-toggle");
+const notice = get("recall-status");
+const recovery = get("recall-recovery");
+const candidates = get("recall-candidates");
+const dateForm = get("date-form");
+const periodEditor = get("period-editor");
+const preview = get("period-preview");
+const fromField = get("period-from");
+const toField = get("period-to");
+const timeline = get("timeline");
+const timelineRows = get("timeline-rows");
+const timelineNav = get("timeline-nav");
+
+let recallContext;
+let recallVersion = 0;
+let period;
+let suggestion;
+let timelineOrigin;
+let timelinePosition;
+
+function toggleRecall(open, focus = true) {
+  if (!open) {
+    controls.hidden = true;
+    if (recallDialog.open) recallDialog.close();
+    get("recall-slot").append(controls);
+    if (focus) recallToggle.focus({ preventScroll: true });
+  } else {
+    controls.hidden = false;
+    if (focus && matchMedia("(max-width: 700px)").matches && !recallDialog.open) {
+      recallDialog.append(controls);
+      recallDialog.showModal();
+    }
+    if (focus) recallInput.focus();
+  }
+  recallToggle.setAttribute("aria-expanded", String(open));
+}
+
+function resetRecall() {
+  ++recallVersion;
+  recallContext = period = suggestion = timelineOrigin = null;
+  timeline.hidden = true;
+  get("list").hidden = false;
+  get("recall-entry").hidden = true;
+  toggleRecall(false, false);
+  recallInput.value = fromField.value = toField.value = "";
+  notice.textContent = "";
+  recovery.replaceChildren();
+  candidates.replaceChildren();
+  candidates.hidden = dateForm.hidden = periodEditor.hidden = preview.hidden = true;
+}
+
+function configureRecall(context, empty) {
+  recallContext = context;
+  recallToggle.textContent = context.text ? "Помните, что было примерно в то же время? ›" :
+    "Посмотреть почту вокруг события ›";
+  get("recall-entry").hidden = false;
+  if (empty) toggleRecall(true, false);
+}
+
+function runSearch() {
+  resetRecall();
+  if (!mailbox.value || !asOf.value) return start("Выберите дату отсчёта");
+  const scope = { mailbox: mailbox.value, as_of: asOf.value };
+  ordinary({ scope, text: submitted, demo: source.value === "demo" }, submitted);
+}
+
+function eventRequest(operation, payload, context = recallContext) {
+  return request("/api/event-recall/" + operation, {}, { ...context.scope, ...payload }).then(response => response.data);
+}
+
+async function recallOperation(operation, work, render, retry, output = notice, buttons = recovery) {
+  const version = ++recallVersion;
+  const context = recallContext;
+  output.textContent = operation;
+  buttons.replaceChildren();
+  try {
+    const data = await work();
+    if (version !== recallVersion) return;
+    output.textContent = "";
+    render(data);
+  } catch (error) {
+    if (version !== recallVersion) return;
+    output.textContent = describeError(error);
+    action("Повторить", retry, buttons);
+    if (!context.demo) {
+      if (error.status === 404 || error.status === 405 || error.status === 501) {
+        output.textContent = "Почтовому API пока нужна операция «Вспомнить по событию».";
+      }
+      action("Открыть демоданные", () => {
+        const hint = recallInput.value;
+        source.value = "demo";
+        loadSource().then(() => {
+          if (!recallContext?.demo) return;
+          recallInput.value = hint;
+          toggleRecall(true);
+        });
+      }, buttons);
+    }
+  }
+}
+
+const months = "января февраля марта апреля мая июня июля августа сентября октября ноября декабря".split(" ");
+
+function validDate(value) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(dayNumber(value)) &&
+    dateString(dayNumber(value)) === value;
+}
+
+function demoSuggest(text, asOfDate) {
+  const relation = text.match(/^(?:это было\s+)?\s*(до|после)\s+/iu);
+  const direction = relation ? { до: "before", после: "after" }[relation[1].toLowerCase()] : "around";
+  const term = text.replace(/^(?:это было\s+)?\s*(?:до|после|примерно тогда(?: же)?(?:,? когда)?|примерно в то же время(?:,? когда)?)\s+/iu, "")
+    .replace(/^(?:я\s+|письма\s+(?:про|о|об)\s+)/iu, "").trim();
+  const relativeDates = { сегодня: 0, вчера: 1, позавчера: 2 };
+  const offset = relativeDates[term.toLowerCase()];
+  const iso = Number.isInteger(offset) ? [term, dateString(dayNumber(asOfDate) - offset)] :
+    term.match(/^(\d{4}-\d{2}-\d{2})(?:\s*[-–—]\s*(\d{4}-\d{2}-\d{2}))?$/);
+  const named = term.match(/^(?:с\s+)?(\d{1,2})(?:(?:\s*[-–—]\s*|\s+по\s+)(\d{1,2}))?\s+([а-яё]+)(?:\s+(\d{4}))?$/iu);
+  if (iso || named) {
+    const year = named?.[4] || asOfDate.slice(0, 4);
+    const month = String(months.indexOf(named?.[3]?.toLowerCase()) + 1).padStart(2, "0");
+    const from = iso?.[1] || year + "-" + month + "-" + named[1].padStart(2, "0");
+    const to = iso?.[2] || (named?.[2] ? year + "-" + month + "-" + named[2].padStart(2, "0") : from);
+    if (!validDate(from) || !validDate(to) || from > to) {
+      return { kind: "clarify", message: "Проверьте даты и укажите начало и конец периода." };
+    }
+    const range = from !== to;
+    if (direction === "after") return { kind: "period", from: dateString(dayNumber(to) + Number(range)), to: dateString(dayNumber(to) + 3) };
+    if (direction === "before") return { kind: "period", from: dateString(dayNumber(from) - 3), to: dateString(dayNumber(from) - Number(range)) };
+    if (!range && /^примерно/iu.test(text)) {
+      return { kind: "period", from: dateString(dayNumber(from) - 3), to: dateString(dayNumber(to) + 3) };
+    }
+    return { kind: "period", from, to };
+  }
+  if (/праздник|прошл(?:ой|ую) недел|конец месяц/iu.test(term)) {
+    return { kind: "clarify", message: direction === "after" ? "После какой даты?" :
+      direction === "before" ? "До какой даты?" : "Какой период вы помните?" };
+  }
+  const matches = term.length < 3 ? [] : demoMatches(term, demoMail.filter(item => item.day <= asOfDate))
+    .sort((a, b) => b.score - a.score).slice(0, 3).map(row => row.item);
+  return { kind: "anchors", direction, candidates: matches };
+}
+
+function showDates() {
+  dateForm.hidden = false;
+  fromField.value = period?.from || fromField.value;
+  toField.value = period?.to || toField.value;
+  fromField.max = toField.max = recallContext.scope.as_of;
+  fromField.focus();
+}
+
+function resolveHint() {
+  const text = recallInput.value.trim();
+  if (!text) return;
+  const { scope, demo } = recallContext;
+  period = suggestion = null;
+  candidates.hidden = dateForm.hidden = preview.hidden = periodEditor.hidden = true;
+  recallOperation("Подбираем период…", () => demo ? demoSuggest(text, scope.as_of) : eventRequest("suggest", { text }), data => {
+    if (data.kind === "period") confirmPeriod({ from: data.from, to: data.to });
+    else if (data.kind === "clarify") {
+      notice.textContent = data.message;
+      showDates();
+    } else {
+      suggestion = data;
+      showCandidates();
+    }
+  }, resolveHint);
+}
+
+function showCandidates() {
+  candidates.replaceChildren();
+  candidates.hidden = !suggestion.candidates.length;
+  notice.textContent = candidates.hidden ? "Попробуйте описать событие иначе или укажите даты." : {
+    before: "До какого письма искать?",
+    after: "После какого письма искать?",
+    around: "Какое письмо поможет вспомнить дату?"
+  }[suggestion.direction];
+  renderRows(suggestion.candidates, anchor => confirmPeriod({ anchor, direction: suggestion.direction, size: 3 }), candidates);
+}
+
+function localPeriod(selection, asOfDate) {
+  let { from, to } = selection;
+  if (selection.anchor) {
+    const { anchor, direction, size } = selection;
+    const day = dayNumber(anchor.day);
+    from = dateString(day - (direction === "after" ? 0 : size));
+    to = dateString(day + (direction === "before" ? 0 : size));
+  }
+  to = to < asOfDate ? to : asOfDate;
+  if (!validDate(from) || !validDate(to) || from > to) throw new Error("Укажите доступный период до даты отсчёта.");
+  return { from, to };
+}
+
+function periodPayload(selection) {
+  return selection.anchor ? {
+    anchor_doc_id: selection.anchor.doc_id, direction: selection.direction, window_days: selection.size
+  } : { from: selection.from, to: selection.to };
+}
+
+function periodLabel(selection) {
+  const dates = displayDate(selection.from) + " — " + displayDate(selection.to);
+  if (!selection.anchor) return dates;
+  const phrase = { before: "до письма", after: "после письма", around: "примерно тогда же, когда пришло письмо" };
+  return dates + " · " + phrase[selection.direction] + " «" + (selection.anchor.subject || "Без темы") + "»";
+}
+
+function confirmPeriod(selection, after) {
+  const context = recallContext;
+  preview.hidden = true;
+  recallOperation("Проверяем даты…", () => context.demo ? localPeriod(selection, context.scope.as_of) :
+    eventRequest("period", periodPayload(selection), context), window => {
+    period = { ...selection, ...window };
+    candidates.hidden = dateForm.hidden = periodEditor.hidden = true;
+    preview.hidden = false;
+    get("period-summary").textContent = periodLabel(period);
+    get("period-direction").value = period.direction || "around";
+    get("refine").hidden = !context.text;
+    get("timeline-open").textContent = context.text ? "Посмотреть письма вокруг события" : "Показать письма за этот период";
+    get("timeline-open").className = context.text ? "link" : "primary";
+    if (after) after(period);
+    else (context.text ? get("refine") : get("timeline-open")).focus({ preventScroll: true });
+  }, () => confirmPeriod(selection, after));
+}
+
+function matchingPeriod(context, selected) {
+  const anchorDay = selected.anchor ? dayNumber(selected.anchor.day) : null;
+  const eligible = demoMail.filter(item => item.day >= selected.from && item.day <= selected.to &&
+    item.doc_id !== selected.anchor?.doc_id);
+  return demoMatches(context.text, eligible).map(({ item, score }) => ({
+    item: anchorDay === null ? item : { ...item, delta_days: dayNumber(item.day) - anchorDay }, score
+  })).sort((a, b) => b.score - a.score ||
+    Math.abs(a.item.delta_days ?? 0) - Math.abs(b.item.delta_days ?? 0) ||
+    a.item.doc_id.localeCompare(b.item.doc_id)).slice(0, 10).map(entry => entry.item);
+}
+
+function refine(selected = period) {
+  const context = recallContext;
+  const retry = () => refine(selected);
+  recallOperation("Ищем письма в выбранном периоде…", () => context.demo ?
+    { results: matchingPeriod(context, selected) } :
+    eventRequest("search", { ...periodPayload(selected), q: context.text, limit: 10 }, context), data => {
+    toggleRecall(false, false);
+    start(data.results.length ? "Результаты за выбранный период" : "За этот период писем не найдено");
+    condition.textContent = context.text + " · " + periodLabel({ ...selected, ...data.window });
+    condition.hidden = false;
+    renderRows(data.results, (item, row) => openMessage(context, item, row));
+    status.textContent = "Писем: " + data.results.length;
+    action("Снять период", () => {
+      ++recallVersion;
+      ordinary(context, context.text).then(() => heading.focus());
+    });
+    if (!data.results.length) {
+      if (selected.size === 3) action("Расширить до 7 дней", () => {
+        toggleRecall(true);
+        confirmPeriod({ ...selected, size: 7 }, refine);
+      });
+      action("Изменить период", () => { toggleRecall(true); showDates(); });
+    }
+    action("Посмотреть письма вокруг события", () => openTimeline(selected));
+    heading.focus();
+  }, retry);
+}
+
+const timelineNotice = get("timeline-status");
+const timelineRecovery = get("timeline-recovery");
+const pageSize = 12;
+let lastDay;
+
+function openTimeline(selected) {
+  timelineOrigin = {
+    status: status.textContent, activeRow, scroll: rows.scrollTop,
+    message: [...message.childNodes], reading: reader.classList.contains("reading"),
+    trigger: document.activeElement
+  };
+  toggleRecall(false, false);
+  get("list").hidden = true;
+  timeline.hidden = false;
+  loadTimeline({ from: selected.from, to: selected.to, anchor: selected.anchor });
+}
+
+function readTimeline(context, selection, cursor) {
+  const anchorId = selection.anchor?.doc_id;
+  if (!context.demo) return eventRequest("timeline", {
+    from: selection.from, to: selection.to, anchor_doc_id: anchorId, cursor, limit: pageSize
+  }, context);
+  const eligible = demoMail.filter(item => item.day >= selection.from && item.day <= selection.to)
+    .sort((a, b) => a.day.localeCompare(b.day) || a.doc_id.localeCompare(b.doc_id));
+  const offset = cursor || 0;
+  const end = offset + pageSize;
+  return { results: eligible.slice(offset, end), next_cursor: end < eligible.length ? end : null };
+}
+
+function loadTimeline(selection, cursor = null) {
+  const context = recallContext;
+  timelinePosition = selection;
+  if (cursor === null) {
+    closeMessage();
+    activeRow = null;
+    lastDay = null;
+    timelineRows.replaceChildren();
+    timelineNav.replaceChildren();
+    timelineRows.scrollTop = 0;
+    get("timeline-period").textContent = displayDate(selection.from) + " — " + displayDate(selection.to) +
+      (selection.anchor ? " · «" + (selection.anchor.subject || "Без темы") + "»" : "");
+    get("timeline-title").focus({ preventScroll: true });
+  } else timelineNav.querySelectorAll("button").forEach(button => { button.disabled = true; });
+
+  recallOperation("Загружаем письма за этот период…", () => readTimeline(context, selection, cursor), data => {
+    for (const item of data.results) {
+      if (item.day !== lastDay) {
+        timelineRows.append(node("h3", displayDate(item.day), "timeline-day"));
+        lastDay = item.day;
+      }
+      renderRows([{ ...item, isAnchor: item.doc_id === selection.anchor?.doc_id }],
+        (mail, row) => openMessage(context, mail, row), timelineRows);
+    }
+    if (cursor === null && !data.results.length) timelineNotice.textContent = "За этот период писем нет.";
+    renderTimelineNav(data.next_cursor);
+  }, () => loadTimeline(selection, cursor), timelineNotice, timelineRecovery);
+}
+
+function renderTimelineNav(nextCursor) {
+  const { from, to, anchor } = timelinePosition;
+  const first = dayNumber(from);
+  const last = dayNumber(to);
+  const cutoff = dayNumber(recallContext.scope.as_of);
+  timelineNav.replaceChildren();
+  action("Предыдущие 7 дней", () => loadTimeline({
+    from: dateString(first - 7), to: dateString(first - 1), anchor
+  }), timelineNav);
+  const next = action("Следующие 7 дней", () => loadTimeline({
+    from: dateString(last + 1), to: dateString(Math.min(last + 7, cutoff)), anchor
+  }), timelineNav);
+  next.disabled = last >= cutoff;
+  if (nextCursor != null) action("Показать ещё", () => loadTimeline(timelinePosition, nextCursor), timelineNav);
+}
+
+function closeTimeline() {
+  ++recallVersion;
+  ++messageVersion;
+  const previous = timelineOrigin;
+  timelineOrigin = null;
+  timeline.hidden = true;
+  get("list").hidden = false;
+  status.textContent = previous.status;
+  activeRow = previous.activeRow;
+  message.replaceChildren(...previous.message);
+  reader.classList.toggle("reading", previous.reading);
+  rows.scrollTop = previous.scroll;
+  const trigger = previous.trigger;
+  (previous.reading ? message.querySelector("h2") :
+    trigger && !controls.contains(trigger) ? trigger : recallToggle)?.focus({ preventScroll: true });
+}
+
+recallToggle.addEventListener("click", () => toggleRecall(controls.hidden));
+get("recall-close").addEventListener("click", () => toggleRecall(false));
+recallDialog.addEventListener("cancel", event => {
+  event.preventDefault();
+  toggleRecall(false);
+});
+controls.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    event.preventDefault();
+    toggleRecall(false);
+  }
+});
+get("recall-form").addEventListener("submit", event => {
+  event.preventDefault();
+  resolveHint();
+});
+get("recall-dates").addEventListener("click", () => {
+  ++recallVersion;
+  notice.textContent = "";
+  recovery.replaceChildren();
+  showDates();
+});
+dateForm.addEventListener("submit", event => {
+  event.preventDefault();
+  confirmPeriod({ from: fromField.value, to: toField.value });
+});
+get("period-edit").addEventListener("click", () => {
+  periodEditor.hidden = !period.anchor;
+  showDates();
+});
+get("period-direction").addEventListener("change", event => confirmPeriod({ ...period, direction: event.target.value }));
+get("recall-change-anchor").addEventListener("click", () => {
+  preview.hidden = dateForm.hidden = periodEditor.hidden = true;
+  showCandidates();
+  (candidates.querySelector("button") || recallInput).focus();
+});
+get("refine").addEventListener("click", () => refine());
+get("timeline-open").addEventListener("click", () => openTimeline(period));
+get("timeline-back").addEventListener("click", closeTimeline);
+
 if (new URLSearchParams(location.search).get("demo") === "1") source.value = "demo";
 loadSource();
