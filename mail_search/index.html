@@ -7,173 +7,304 @@
   <style>
     :root {
       font: 16px/1.5 system-ui, sans-serif;
-      color: #172442;
-      background: #edf1f8;
+      color: #18243a;
+      background: #f1f4fa;
       --surface: #fff;
-      --muted: #4e607d;
-      --line: #dbe3f0;
-      --blue: #234ec9;
-      --tint: #edf2ff;
+      --muted: #54637c;
+      --line: #e0e7f2;
+      --blue: #3157ce;
+      --tint: #eaf0ff;
+      --sidebar: #1b2943;
+      --sidebar-field: #263752;
     }
 
     * { box-sizing: border-box; }
     body {
-      margin: 0 auto;
-      max-width: 1440px;
-      padding: clamp(1rem, 3vw, 2.5rem);
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
+      margin: 0;
+      display: grid;
+      grid-template-columns: 15rem minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      grid-template-areas: "brand toolbar" "sidebar workspace";
       min-height: 100svh;
       height: 100svh;
     }
     h1, h2, p { margin: 0; }
-    h1 { font-size: clamp(1.55rem, 3vw, 2.3rem); letter-spacing: -.04em; }
-    h2 { font-size: 1.125rem; }
+    h1 { font-size: 1.25rem; font-weight: 750; letter-spacing: -.025em; }
+    h2 { font-size: 1.25rem; letter-spacing: -.025em; }
     button, input, select { font: inherit; color: inherit; }
     button { cursor: pointer; }
-    input, select {
+    button:disabled { cursor: default; opacity: .65; }
+    :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+    [hidden] { display: none !important; }
+
+    .brand {
+      grid-area: brand;
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      padding: 1rem 1.15rem;
+      background: var(--sidebar);
+      color: white;
+    }
+    .brand-mark, .reader-mark {
+      display: grid;
+      place-items: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: .6rem;
+      background: var(--blue);
+      color: white;
+    }
+    .envelope {
+      display: block;
+      position: relative;
+      width: 1rem;
+      height: .75rem;
+      border: 1.5px solid currentColor;
+      border-radius: .18rem;
+      overflow: hidden;
+    }
+    .envelope::after {
+      content: "";
+      position: absolute;
+      top: -.34rem;
+      left: .13rem;
+      width: .54rem;
+      height: .54rem;
+      border: solid currentColor;
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg);
+    }
+
+    .toolbar {
+      grid-area: toolbar;
+      padding: .9rem clamp(1rem, 2.3vw, 2rem);
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+    }
+    fieldset { padding: 0; margin: 0; border: 0; min-width: 0; }
+    .query-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: .55rem;
+      max-width: 50rem;
+    }
+    .search-input { position: relative; }
+    .search-input::before, .search-input::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      color: var(--muted);
+    }
+    .search-input::before {
+      top: .85rem;
+      left: .9rem;
+      width: .62rem;
+      height: .62rem;
+      border: 1.5px solid currentColor;
+      border-radius: 50%;
+    }
+    .search-input::after {
+      top: 1.53rem;
+      left: 1.59rem;
+      width: .36rem;
+      border-bottom: 1.5px solid currentColor;
+      transform: rotate(45deg);
+      transform-origin: left;
+    }
+    #query {
+      width: 100%;
+      min-width: 0;
+      min-height: 2.75rem;
+      padding: .5rem .8rem .5rem 2.45rem;
+      border: 1px solid var(--line);
+      border-radius: .6rem;
+      background: #f3f6fc;
+    }
+    .primary {
+      padding: .5rem 1.15rem;
+      border: 1px solid var(--blue);
+      border-radius: .6rem;
+      background: var(--blue);
+      color: white;
+      font-weight: 650;
+    }
+    .primary:not(:disabled):hover { background: #2648b3; }
+
+    .sidebar {
+      grid-area: sidebar;
+      min-width: 0;
+      padding: .6rem .9rem 1rem;
+      background: var(--sidebar);
+      color: white;
+      overflow: auto;
+    }
+    .sidebar :focus-visible { outline-color: #b7caff; }
+    #mailbox-fields { display: grid; gap: .9rem; }
+    .sidebar label { display: grid; gap: .35rem; color: #d0dbee; font-size: .8125rem; font-weight: 600; min-width: 0; }
+    .select-wrap { position: relative; display: block; min-width: 0; }
+    .select-wrap::after {
+      content: "";
+      width: .43rem;
+      height: .43rem;
+      border: solid #c8d8f5;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      position: absolute;
+      right: .9rem;
+      top: calc(50% - .32rem);
+      pointer-events: none;
+    }
+    #mailbox, #as-of {
+      display: block;
       width: 100%;
       min-width: 0;
       min-height: 2.75rem;
       padding: .55rem .7rem;
-      border: 1px solid #a4b3cc;
-      border-radius: .5rem;
-      background: var(--surface);
-    }
-    button:disabled { cursor: default; }
-    :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
-    [hidden] { display: none !important; }
-
-    form { display: grid; gap: .9rem; }
-    fieldset {
-      display: grid;
-      gap: .85rem;
-      padding: 0;
-      margin: 0;
-      border: 0;
-      min-width: 0;
-    }
-    label { display: grid; gap: .3rem; font-size: .875rem; font-weight: 650; min-width: 0; }
-    label input, label select { font-weight: 400; font-size: 1rem; }
-    .context { display: grid; grid-template-columns: minmax(0, 16rem) minmax(0, 10rem); gap: .75rem; }
-    .query-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: .65rem; }
-    .query-row input { min-height: 3rem; }
-    .primary {
-      background: var(--blue);
+      border: 1px solid #526482;
+      border-radius: .6rem;
+      background: var(--sidebar-field);
       color: white;
-      border: 1px solid var(--blue);
-      border-radius: .5rem;
-      min-height: 3rem;
-      padding: .55rem 1.25rem;
+      font-size: .875rem;
+    }
+    #mailbox { appearance: none; padding-right: 2rem; cursor: pointer; }
+    #mailbox option { background: var(--surface); color: #18243a; }
+    #as-of { color-scheme: dark; }
+    #inbox {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      min-height: 2.75rem;
+      padding: .5rem .7rem;
+      background: transparent;
+      border: 0;
+      border-radius: .6rem;
+      color: white;
+      text-align: left;
       font-weight: 650;
     }
-    .primary:disabled { opacity: .65; }
+    #inbox:not(:disabled):hover, #inbox[aria-current] { background: #304873; }
+    .date-field { padding-top: .75rem; border-top: 1px solid #40516d; }
+
+    main {
+      grid-area: workspace;
+      display: grid;
+      grid-template-columns: minmax(15rem, 2fr) minmax(0, 3fr);
+      min-width: 0;
+      min-height: 0;
+      margin: 1rem clamp(1rem, 2.3vw, 2rem);
+      border: 1px solid var(--line);
+      border-radius: .85rem;
+      background: var(--surface);
+      box-shadow: 0 3px 12px #24385c0a;
+    }
+    .list-pane, .reader { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+    .list-heading { padding: .9rem 1rem; border-bottom: 1px solid var(--line); }
+    .list-heading h2 { margin-bottom: .35rem; }
+    .search-info { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .55rem; color: var(--muted); font-size: .8125rem; }
+    #target-day {
+      background: var(--tint);
+      color: #25469e;
+      border-radius: .4rem;
+      padding: .15rem .45rem;
+      font-weight: 650;
+    }
+    #results { overflow: auto; flex: 1; min-height: 0; border-radius: 0 0 0 .85rem; }
+    #results button {
+      width: 100%;
+      display: grid;
+      gap: .3rem;
+      text-align: left;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-inline-start: 3px solid transparent;
+      background: var(--surface);
+      padding: .75rem .9rem;
+      overflow-wrap: anywhere;
+    }
+    #results button:hover { background: #f6f8fd; }
+    #results button[aria-current="true"] { background: var(--tint); border-inline-start-color: var(--blue); }
+    #results button:focus-visible { outline-offset: -4px; }
+    .row-title { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .15rem .5rem; }
+    .row-title strong { font-size: .875rem; }
+    #results small, .preview { color: var(--muted); font-size: .8125rem; }
+    .preview { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+
+    .reader { border-inline-start: 1px solid var(--line); }
+    #message { overflow: auto; flex: 1; min-height: 0; padding: clamp(1rem, 2.5vw, 2.2rem); }
+    #message:focus-visible { outline-offset: -4px; }
+    #message h2 { font-size: clamp(1.25rem, 2.2vw, 1.65rem); overflow-wrap: anywhere; }
+    #message p { color: var(--muted); }
+    #message .mail-date { margin: .35rem 0 1.25rem; }
+    .reader-empty { display: grid; place-content: center; justify-items: center; gap: .8rem; height: 100%; text-align: center; }
+    .reader-mark { width: 2.75rem; height: 2.75rem; background: var(--tint); color: var(--blue); }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; line-height: 1.65; max-width: 72ch; margin: 0; padding-top: 1rem; border-top: 1px solid var(--line); }
     .secondary {
       background: var(--surface);
-      color: #1d40a2;
-      border: 1px solid #a4b3cc;
-      border-radius: .5rem;
+      color: #25469e;
+      border: 1px solid #aab9d2;
+      border-radius: .55rem;
       padding: .5rem .75rem;
       min-height: 2.75rem;
       width: fit-content;
     }
     .secondary:hover { background: var(--tint); }
-
-    main {
-      flex: 1;
-      min-height: 16rem;
-      display: grid;
-      grid-template-columns: minmax(16rem, 2fr) minmax(0, 3fr);
-      border: 1px solid var(--line);
-      border-radius: .8rem;
-      background: var(--surface);
-    }
-    .list-pane, .reader { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
-    .list-heading { padding: .9rem 1rem; border-bottom: 1px solid var(--line); }
-    .list-heading h2 { margin-bottom: .4rem; }
-    .search-info { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .6rem; color: var(--muted); font-size: .875rem; }
-    #target-day {
-      background: var(--tint);
-      color: #1d40a2;
-      border-radius: .35rem;
-      padding: .15rem .45rem;
-      font-weight: 650;
-    }
-    #results { overflow: auto; flex: 1; min-height: 0; border-radius: 0 0 0 .8rem; }
-    #results button {
-      width: 100%;
-      display: grid;
-      gap: .25rem;
-      text-align: left;
-      border: 0;
-      border-bottom: 1px solid var(--line);
-      border-inline-start: 4px solid transparent;
-      background: var(--surface);
-      padding: .85rem .75rem;
-      overflow-wrap: anywhere;
-    }
-    #results button:hover { background: #f5f7fc; }
-    #results button[aria-current="true"] { background: var(--tint); border-inline-start-color: var(--blue); }
-    #results button:focus-visible { outline-offset: -4px; }
-    .row-title { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .25rem .6rem; }
-    .row-title strong { font-size: .9375rem; }
-    #results small, .preview { color: var(--muted); font-size: .8125rem; }
-    .preview { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-
-    .reader { border-inline-start: 1px solid var(--line); }
-    #message { overflow: auto; min-height: 0; padding: clamp(1rem, 2.8vw, 2.25rem); }
-    #message:focus-visible { outline-offset: -4px; }
-    #message h2 { font-size: clamp(1.25rem, 2.2vw, 1.75rem); overflow-wrap: anywhere; }
-    #message p { color: var(--muted); }
-    #message .mail-date { margin: .35rem 0 1.25rem; }
-    pre {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      font: inherit;
-      line-height: 1.7;
-      max-width: 72ch;
-      margin: 0;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--line);
-    }
     #search-retry, #message .secondary { margin-top: .65rem; }
     #back { display: none; margin: 1rem 1rem 0; }
 
-    @media (max-width: 48rem) {
-      body { height: auto; min-height: 100svh; }
-      main { display: block; min-height: 0; }
-      #results { border-radius: 0 0 .8rem .8rem; }
+    @media (max-width: 55rem) {
+      body {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto auto 1fr;
+        grid-template-areas: "brand" "toolbar" "sidebar" "workspace";
+        height: auto;
+      }
+      .brand { padding: .75rem 1rem; }
+      .toolbar { padding: .65rem 1rem; }
+      .sidebar { overflow: visible; padding: .7rem 1rem; }
+      #mailbox-fields { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: end; gap: .6rem; }
+      #inbox { grid-column: 1 / -1; }
+      .date-field { padding-top: 0; border-top: 0; }
+      main { display: block; margin: .75rem 1rem 1rem; }
+      #results { border-radius: 0 0 .85rem .85rem; }
       .reader { display: none; border: 0; }
-      body[data-reading] form, body[data-reading] .list-pane { display: none; }
+      body[data-reading] { grid-template-rows: auto 0 0 1fr; }
+      body[data-reading] .toolbar, body[data-reading] .sidebar, body[data-reading] .list-pane { display: none; }
       body[data-reading] .reader { display: flex; }
       #back { display: block; }
-    }
-
-    @media (max-width: 26rem) {
-      .context { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-      .primary { padding-inline: .8rem; }
     }
   </style>
 </head>
 <body>
-  <header><h1>Поиск по почте</h1></header>
-  <form id="search" role="search">
+  <header class="brand">
+    <span class="brand-mark" aria-hidden="true"><span class="envelope"></span></span>
+    <h1>Почта</h1>
+  </header>
+  <form id="search" class="toolbar" role="search">
     <fieldset id="search-fields" disabled>
-      <div class="context">
-        <label>Почтовый ящик<select id="mailbox" required></select></label>
-        <label>Дата отсчёта<input id="as-of" type="date" required></label>
-      </div>
       <div class="query-row">
-        <label>Запрос<input id="query" type="search" maxlength="1000" placeholder="Электронные чеки за вчера"></label>
+        <div class="search-input">
+          <input id="query" aria-label="Запрос" type="search" maxlength="1000" placeholder="Поиск по письмам">
+        </div>
         <button class="primary" type="submit">Найти</button>
       </div>
     </fieldset>
   </form>
+  <aside class="sidebar" aria-label="Почтовый ящик и папки">
+    <fieldset id="mailbox-fields" disabled>
+      <label>
+        Почтовый ящик
+        <span class="select-wrap"><select id="mailbox" form="search" required></select></span>
+      </label>
+      <label class="date-field">Дата отсчёта<input id="as-of" form="search" type="date" required></label>
+      <button id="inbox" type="button" aria-current="page"><span class="envelope" aria-hidden="true"></span>Входящие</button>
+    </fieldset>
+  </aside>
   <main>
     <section class="list-pane" aria-labelledby="results-heading">
       <div class="list-heading">
-        <h2 id="results-heading">Письма</h2>
+        <h2 id="results-heading">Входящие</h2>
         <div class="search-info" role="status">
           <span id="status"></span>
           <span id="target-day" hidden></span>
@@ -185,12 +316,22 @@
     </section>
     <section class="reader" aria-label="Открытое письмо">
       <button id="back" class="secondary" type="button">К результатам</button>
-      <article id="message" tabindex="-1" aria-live="polite"><p>Выберите письмо из списка.</p></article>
+      <article id="message" tabindex="-1" aria-live="polite"></article>
     </section>
   </main>
+  <template id="reader-placeholder">
+    <div class="reader-empty">
+      <span class="reader-mark" aria-hidden="true"><span class="envelope"></span></span>
+      <p>Выберите письмо из списка.</p>
+    </div>
+  </template>
   <script>
     const form = document.querySelector("#search");
     const fields = document.querySelector("#search-fields");
+    const mailboxFields = document.querySelector("#mailbox-fields");
+    const inbox = document.querySelector("#inbox");
+    const heading = document.querySelector("#results-heading");
+    const readerPlaceholder = document.querySelector("#reader-placeholder");
     const mailbox = document.querySelector("#mailbox");
     const asOf = document.querySelector("#as-of");
     const query = document.querySelector("#query");
@@ -201,7 +342,7 @@
     const searchMode = document.querySelector("#search-mode");
     const searchRetry = document.querySelector("#search-retry");
     const back = document.querySelector("#back");
-    const mobile = window.matchMedia("(max-width: 48rem)");
+    const mobile = window.matchMedia("(max-width: 55rem)");
     const dateFormat = new Intl.DateTimeFormat("ru-RU", {
       day: "numeric", month: "long", year: "numeric", timeZone: "UTC"
     });
@@ -235,6 +376,7 @@
         String(today.getDate()).padStart(2, "0")
       ].join("-");
       asOf.value = mailboxes[mailbox.value] || localDay;
+      mailbox.title = mailbox.value;
     }
 
     async function get(path, params = {}) {
@@ -247,6 +389,10 @@
       return { data: await response.json(), headers: response.headers };
     }
 
+    function resetReader() {
+      message.replaceChildren(readerPlaceholder.content.cloneNode(true));
+    }
+
     function focusMessage() {
       if (mobile.matches) message.focus({ preventScroll: true });
     }
@@ -254,7 +400,7 @@
     function returnToResults() {
       ++messageVersion;
       document.body.removeAttribute("data-reading");
-      message.replaceChildren(node("p", "Выберите письмо из списка."));
+      resetReader();
       results.querySelector("[aria-current]")?.focus({ preventScroll: true });
       window.scrollTo(0, scrollBeforeReading);
     }
@@ -321,17 +467,20 @@
       searchMode.hidden = true;
       searchRetry.hidden = true;
       status.textContent = "Ищем письма…";
-      message.replaceChildren(node("p", "Выберите письмо из списка."));
+      resetReader();
       results.replaceChildren();
       const requestScope = scope();
       const requestQuery = query.value.trim();
+      heading.textContent = requestQuery ? "Результаты поиска" : "Входящие";
+      if (requestQuery) inbox.removeAttribute("aria-current");
+      else inbox.setAttribute("aria-current", "page");
       try {
         const { data: rows, headers } = await get("/api/search", { ...requestScope, q: requestQuery });
         if (version !== searchVersion) return;
         if (requestQuery) {
           status.textContent = rows.length ? `Писем в выдаче: ${rows.length}` : "Письма не найдены. Попробуйте другой запрос.";
         } else {
-          status.textContent = rows.length ? "Последние письма" : "На эту дату в ящике нет писем.";
+          status.textContent = rows.length ? `Показано: ${rows.length}` : "На эту дату в ящике нет писем.";
         }
         const day = headers.get("X-Target-Day");
         if (day) {
@@ -358,9 +507,15 @@
           status.textContent = "Нет доступных почтовых ящиков.";
           return;
         }
-        mailbox.replaceChildren(...ids.map(id => new Option(id, id)));
+        const options = ids.map((id, index) => {
+          const number = String(index + 1).padStart(2, "0");
+          const suffix = id.slice(-4);
+          return new Option(`Ящик ${number} · ${suffix}`, id);
+        });
+        mailbox.replaceChildren(...options);
         setDefaultDay();
         fields.disabled = false;
+        mailboxFields.disabled = false;
         search();
       } catch {
         showSearchError("Не удалось загрузить почтовые ящики.", loadMailboxes);
@@ -371,7 +526,12 @@
       event.preventDefault();
       search();
     });
+    inbox.addEventListener("click", () => {
+      query.value = "";
+      search();
+    });
     mailbox.addEventListener("change", () => {
+      query.value = "";
       setDefaultDay();
       search();
     });
@@ -385,6 +545,7 @@
     });
     back.addEventListener("click", returnToResults);
 
+    resetReader();
     loadMailboxes();
   </script>
 </body>
