@@ -59,13 +59,18 @@ def test_public_routes_and_search_parity():
         assert client.get("/missing").json() == {"error": "Страница не найдена"}
 
 
-def test_default_search_returns_top_three_and_preserves_inbox():
-    with closing(Engine(FIXTURES)) as engine, TestClient(create_app(engine)) as client:
+def test_default_search_returns_top_five_and_preserves_inbox(tmp_path):
+    rows = (FIXTURES / "documents.jsonl").read_text().splitlines()
+    receipt = json.loads(rows[0])
+    for i in range(2):
+        rows.append(json.dumps({**receipt, "doc_id": f"extra-receipt-{i}"}))
+    (tmp_path / "documents.jsonl").write_text("\n".join(rows))
+    with closing(Engine(tmp_path)) as engine, TestClient(create_app(engine)) as client:
         params = {"mailbox": "box-a", "q": "чек"}
         ranked = client.get("/api/search", params={**params, "limit": 20}).json()
-        assert len(ranked) == 4
-        assert client.get("/api/search", params=params).json() == ranked[:3]
-        assert len(client.get("/api/search", params={"mailbox": "box-a"}).json()) == 5
+        assert len(ranked) == 6
+        assert client.get("/api/search", params=params).json() == ranked[:5]
+        assert len(client.get("/api/search", params={"mailbox": "box-a"}).json()) == 7
 
 
 @pytest.mark.parametrize("fields", [
