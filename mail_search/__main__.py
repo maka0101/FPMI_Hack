@@ -109,9 +109,11 @@ def create_server(index, port, *, quiet=False):
                     if mode not in modes:
                         raise ValueError(f"Доступные режимы поиска: {', '.join(modes)}")
                     limit = int(params.get("limit", ["20"])[0])
+                    weight = params.get("bm25_weight")
                     result = index.search(
                         mailbox, query, as_of, limit, hybrid=mode != "bm25", rerank=mode.endswith("-rerank"),
                         summary_branch="-summary" in mode, protect_exact="-raw" not in mode,
+                        bm25_weight=float(weight[0]) if weight else None,
                     )
                 else:
                     doc_id = params.get("doc_id", [""])[0]

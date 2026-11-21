@@ -34,17 +34,19 @@ def dcg(gains):
     return sum((2 ** gain - 1) / log2(rank + 1) for rank, gain in enumerate(gains, 1))
 
 
-def request_search(port, query, mode, limit=LIMIT):
-    params = urlencode({
+def request_search(port, query, mode, limit=LIMIT, *, bm25_weight=None):
+    params = {
         "mailbox": query["synthetic_user"],
         "as_of": query["query_date"],
         "q": query["query"],
         "mode": mode,
         "limit": limit,
-    })
+    }
+    if bm25_weight is not None:
+        params["bm25_weight"] = bm25_weight
     connection = HTTPConnection("127.0.0.1", port, timeout=30)
     try:
-        connection.request("GET", f"/api/search?{params}")
+        connection.request("GET", f"/api/search?{urlencode(params)}")
         response = connection.getresponse()
         payload = json.loads(response.read())
         if response.status != 200:
@@ -55,7 +57,7 @@ def request_search(port, query, mode, limit=LIMIT):
         connection.close()
 
 
-def compare(server, index, data_dir, paraphrases_path, repeats, output, include_undated=False):
+def query_groups(data_dir, paraphrases_path, include_undated=False):
     originals = list(read_jsonl(data_dir / "queries_dev.jsonl"))
     paraphrase_rows = list(read_jsonl(paraphrases_path))
     paraphrases = {row["query_id"]: row["query"] for row in paraphrase_rows}
@@ -71,12 +73,18 @@ def compare(server, index, data_dir, paraphrases_path, repeats, output, include_
             raise ValueError(f"Некорректная перефразировка запроса {row['query_id']}")
         rewritten.append({**row, "query": text})
 
-    gold = read_relevance(data_dir)
     corpora = {"original": originals, "paraphrase": rewritten}
     if include_undated:
         corpora["paraphrase_no_day"] = [
             {**row, "query": DATE_IN_QUERY.sub(" ", row["query"], count=1).strip()} for row in rewritten
         ]
+    return corpora
+
+
+def compare(server, index, data_dir, paraphrases_path, repeats, output, include_undated=False):
+    corpora = query_groups(data_dir, paraphrases_path, include_undated)
+    originals = corpora["original"]
+    gold = read_relevance(data_dir)
     modes = (*MODES, "hybrid-rerank") if index.reranker else MODES
     receipts = [row for row in originals if "электронными чеками" in row["query"].lower()]
     jobs = [(name, mode, row) for name, rows in corpora.items() for mode in modes for row in rows]

@@ -131,11 +131,15 @@ class MailboxIndex:
             self.embeddings = embedder.index(passages, embeddings_cache)
 
     def search(self, mailbox, query, as_of, limit=20, *, hybrid=True, rerank=False,
-               summary_branch=True, protect_exact=True):
+               summary_branch=True, protect_exact=True, bm25_weight=None):
         if mailbox not in self.mailboxes:
             raise ValueError("Неизвестный почтовый ящик")
         if not 1 <= limit <= 1000:
             raise ValueError("Лимит должен быть от 1 до 1000")
+        if bm25_weight is not None and not 0 <= bm25_weight <= 1:
+            raise ValueError("Вес BM25 должен быть от 0 до 1")
+        if bm25_weight is not None and (summary_branch or rerank or not hybrid or self.embedder is None):
+            raise ValueError("Параметр bm25_weight доступен в режиме hybrid")
 
         words, target_day, semantic_query = split_query(query, as_of)
         if target_day and target_day > as_of:
@@ -146,7 +150,7 @@ class MailboxIndex:
             filters += " AND m.day = ?"
             params.append(target_day.isoformat())
 
-        use_vectors = hybrid and self.embedder is not None and bool(words)
+        use_vectors = hybrid and self.embedder is not None and bool(words) and bm25_weight != 1
         fields = "m.id, m.doc_id, m.subject, m.day, substr(m.body, 1, 240) AS preview"
         pool_size = max(limit, CANDIDATE_POOL) if use_vectors else limit
         if words:
@@ -162,8 +166,10 @@ class MailboxIndex:
                 ORDER BY m.day DESC, m.doc_id LIMIT ?
             """
             sql_params = [*params, limit]
-        with self.lock:
-            lexical = self.db.execute(sql, sql_params).fetchall()
+        lexical = []
+        if not use_vectors or bm25_weight != 0:
+            with self.lock:
+                lexical = self.db.execute(sql, sql_params).fetchall()
         if not use_vectors:
             return [search_result(row) for row in lexical]
 
@@ -185,7 +191,8 @@ class MailboxIndex:
                 if summary_ids and summary_ids != dense_ids:
                     rankings.append(summary_ids)
         rerank_limit = RERANK_LIMIT if rerank and self.reranker else 0
-        ranked = reciprocal_rank_fusion(*rankings)[:max(limit, rerank_limit)]
+        weights = None if bm25_weight is None else (bm25_weight, 1 - bm25_weight)
+        ranked = reciprocal_rank_fusion(*rankings, weights=weights)[:max(limit, rerank_limit)]
         apply_rerank = rerank_limit and len(ranked) > 1
         result_fields = fields + ", m.body" if apply_rerank else fields
         placeholders = ",".join("?" for _ in ranked)
@@ -212,11 +219,15 @@ class MailboxIndex:
         return dict(row) if row else None
 
 
-def reciprocal_rank_fusion(*rankings):
+def reciprocal_rank_fusion(*rankings, weights=None):
     scores = {}
-    for ranking in rankings:
+    if weights is None:
+        weights = [1.0] * len(rankings)
+    for ranking, weight in zip(rankings, weights):
+        if weight == 0:
+            continue
         for position, mail_id in enumerate(ranking, start=1):
-            scores[mail_id] = scores.get(mail_id, 0.0) + 1 / (60 + position)
+            scores[mail_id] = scores.get(mail_id, 0.0) + weight / (60 + position)
     return sorted(scores, key=scores.__getitem__, reverse=True)
 
 

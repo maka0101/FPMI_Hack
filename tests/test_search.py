@@ -66,6 +66,25 @@ class HybridSearchTest(TestCase):
     def test_fusion_keeps_candidates_unique_to_either_list(self):
         self.assertEqual(reciprocal_rank_fusion([1, 2], [3, 2]), [2, 1, 3])
 
+    def test_weight_grid_endpoints_run_only_the_active_branch(self):
+        def results(weight):
+            rows = self.index.search("box", "Счёт вчера", self.as_of, 10,
+                                     summary_branch=False, bm25_weight=weight)
+            return [row["doc_id"] for row in rows]
+
+        with patch.object(self.encoder, "top_ids", side_effect=AssertionError):
+            self.assertEqual(results(1), ["lexical"])
+        statements = []
+        self.index.db.set_trace_callback(statements.append)
+        self.assertEqual(results(0), ["semantic", "lexical"])
+        self.assertFalse(any("mail_fts MATCH" in sql for sql in statements))
+
+    def test_weight_orders_conflicting_lists_and_preserves_equal_weight_ties(self):
+        rankings = ([1, 2], [2, 1])
+        self.assertEqual(reciprocal_rank_fusion(*rankings, weights=(.4, .6)), [2, 1])
+        self.assertEqual(reciprocal_rank_fusion(*rankings, weights=(.5, .5)), [1, 2])
+        self.assertEqual(reciprocal_rank_fusion(*rankings, weights=(.6, .4)), [1, 2])
+
     def test_reranker_can_promote_a_candidate_below_the_output_limit(self):
         reranker = RecordingReranker()
         self.index.reranker = reranker
