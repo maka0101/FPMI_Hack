@@ -1,0 +1,202 @@
+{
+  "embedder": {
+    "name": "multilingual-e5-small",
+    "device": "cpu",
+    "precision": "int8"
+  },
+  "mode": "hybrid",
+  "seed": 20261121,
+  "cutoff": 5,
+  "candidate_pool": 50,
+  "rrf_constant": 60,
+  "repeats": 3,
+  "sha256": {
+    "documents.jsonl": "06feb4791a52faeb777f1a8d4c22d99efd26a279943a19bdfbd0b14bc9c8daa5",
+    "queries_dev.jsonl": "7a5b587ee7361ca2e35e1929cbbfdcc3154b4302b6fb830ae1c41846518d6017",
+    "qrels_dev.jsonl": "826362ae5592d58b3bb1cd382103dc0aef151cf014025258f0cddba0fefa0dd4"
+  },
+  "results": {
+    "original": [
+      {
+        "bm25_weight": 0.85,
+        "dense_weight": 0.15,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8496058300648318,
+        "ndcg_at_5": 0.9778960044461972,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 7.491542
+      },
+      {
+        "bm25_weight": 0.86,
+        "dense_weight": 0.14,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8496058300648318,
+        "ndcg_at_5": 0.9778960044461972,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 7.6965
+      },
+      {
+        "bm25_weight": 0.87,
+        "dense_weight": 0.13,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8496058300648318,
+        "ndcg_at_5": 0.9778960044461972,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 7.1915
+      },
+      {
+        "bm25_weight": 0.88,
+        "dense_weight": 0.12,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8496058300648318,
+        "ndcg_at_5": 0.9778960044461972,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 7.797458
+      },
+      {
+        "bm25_weight": 0.89,
+        "dense_weight": 0.11,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8496058300648318,
+        "ndcg_at_5": 0.9781037373145123,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 7.605458
+      },
+      {
+        "bm25_weight": 0.9,
+        "dense_weight": 0.1,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8496058300648318,
+        "ndcg_at_5": 0.9781037373145123,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 7.649792
+      },
+      {
+        "bm25_weight": 0.91,
+        "dense_weight": 0.09,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8496058300648318,
+        "ndcg_at_5": 0.9784323435418945,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 7.607833
+      },
+      {
+        "bm25_weight": 0.92,
+        "dense_weight": 0.08,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8496058300648318,
+        "ndcg_at_5": 0.9784323435418945,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 7.576833
+      },
+      {
+        "bm25_weight": 0.93,
+        "dense_weight": 0.07,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8496058300648318,
+        "ndcg_at_5": 0.9784323435418945,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 7.897542
+      },
+      {
+        "bm25_weight": 0.94,
+        "dense_weight": 0.06,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8549930354520372,
+        "ndcg_at_5": 0.9815914028353256,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 7.395917
+      },
+      {
+        "bm25_weight": 0.95,
+        "dense_weight": 0.05,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8549930354520372,
+        "ndcg_at_5": 0.9815914028353256,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 8.001042
+      },
+      {
+        "bm25_weight": 0.96,
+        "dense_weight": 0.04,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8549930354520372,
+        "ndcg_at_5": 0.9815914028353256,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 7.551167
+      },
+      {
+        "bm25_weight": 0.97,
+        "dense_weight": 0.03,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8549930354520372,
+        "ndcg_at_5": 0.9815914028353256,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 7.300417
+      },
+      {
+        "bm25_weight": 0.98,
+        "dense_weight": 0.02,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8549930354520372,
+        "ndcg_at_5": 0.9815914028353256,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9755892255892256,
+        "latency_samples": 297,
+        "server_p99_ms": 7.527417
+      },
+      {
+        "bm25_weight": 0.99,
+        "dense_weight": 0.01,
+        "queries": 99,
+        "single_target_queries": 42,
+        "recall_at_5": 0.8549930354520372,
+        "ndcg_at_5": 0.9822120346328457,
+        "mrr_at_5_single": 1.0,
+        "mrr_at_5_all": 0.9772727272727273,
+        "latency_samples": 297,
+        "server_p99_ms": 7.914334
+      }
+    ]
+  }
+}

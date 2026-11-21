@@ -19,7 +19,7 @@ COARSE_PERCENT = range(0, 101, 10)
 FINE_PERCENT = {"harrier270": range(65, 86), "e5": range(85, 100), "granite97": range(85, 100)}
 
 
-def measure(server, groups, gold, repeats, weights):
+def measure(server, groups, gold, repeats, weights, cutoff):
     port = server.server_port
     rng = Random(SEED)
     jobs = [(group, query, i) for group, rows in groups.items() for query in rows for i in weights]
@@ -32,16 +32,18 @@ def measure(server, groups, gold, repeats, weights):
         for group, rows in groups.items():
             for row in rng.sample(rows, min(8, len(rows))):
                 for i in (weights[0], weights[len(weights) // 2], weights[-1]):
-                    request_search(port, row, "hybrid", bm25_weight=i / 100)
+                    request_search(port, row, "hybrid", cutoff, bm25_weight=i / 100)
             for row in rows:
                 for i, mode in ((50, "hybrid"), (100, "bm25")):
                     if i in weights:
-                        controls[group, row["query_id"], i] = request_search(port, row, mode)[0]
+                        controls[group, row["query_id"], i] = request_search(port, row, mode, cutoff)[0]
         for repeat in range(repeats):
             rng.shuffle(jobs)
             for group, query, i in jobs:
                 qid = query["query_id"]
-                ids, ms = request_search(port, query, "hybrid", bm25_weight=i / 100)
+                ids, ms = request_search(port, query, "hybrid", cutoff, bm25_weight=i / 100)
+                if len(ids) > cutoff or len(set(ids)) != len(ids):
+                    raise ValueError(f"Некорректная выдача для {qid}")
                 key = group, i
                 timings[key].append(ms)
                 if repeat:
@@ -50,7 +52,7 @@ def measure(server, groups, gold, repeats, weights):
                 if control is not None and ids != control:
                     raise ValueError(f"Разошлись контрольные выдачи для {group}/{qid}/{i}")
                 relevant = gold[qid]
-                recall, ndcg = ranking_metrics(ids, relevant, LIMIT)
+                recall, ndcg = ranking_metrics(ids, relevant, cutoff)
                 rr = next((1 / pos for pos, doc in enumerate(ids, 1) if doc in relevant), 0)
                 scores[key][qid] = (recall, ndcg, rr)
             print(f"Проход {repeat + 1}/{repeats}, {len(jobs)} HTTP-запросов", flush=True)
@@ -69,10 +71,10 @@ def measure(server, groups, gold, repeats, weights):
             results[group].append({
                 "bm25_weight": i / 100, "dense_weight": (100 - i) / 100,
                 "queries": len(values), "single_target_queries": len(single),
-                "recall_at_10": mean(v[0] for v in values.values()),
-                "ndcg_at_10": mean(v[1] for v in values.values()),
-                "mrr_at_10_single": mean(single) if single else None,
-                "mrr_at_10_all": mean(v[2] for v in values.values()),
+                f"recall_at_{cutoff}": mean(v[0] for v in values.values()),
+                f"ndcg_at_{cutoff}": mean(v[1] for v in values.values()),
+                f"mrr_at_{cutoff}_single": mean(single) if single else None,
+                f"mrr_at_{cutoff}_all": mean(v[2] for v in values.values()),
                 "latency_samples": len(times), "server_p99_ms": times[ceil(.99 * len(times)) - 1],
             })
     return results
@@ -82,12 +84,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--embedder", required=True, choices=("harrier270", "granite97", "e5"))
     parser.add_argument("--repeats", type=int, default=3)
+    parser.add_argument("--cutoff", type=int, default=LIMIT)
     parser.add_argument("--fine", action="store_true", help="Шаг 0,01 вокруг лучших весов на исходных запросах")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--data", type=Path, default=DEFAULT_DATA)
     parser.add_argument("--paraphrases", type=Path, default=DEFAULT_DATA.parent / "benchmarks/paraphrases.jsonl")
     parser.set_defaults(model_dir=None, embeddings_cache=None, reranker=None, device="auto")
     args = parser.parse_args()
+    if not 1 <= args.cutoff <= 1000:
+        parser.error("--cutoff должен быть от 1 до 1000")
     if args.repeats < 1:
         parser.error("--repeats должен быть положительным")
     inputs = [args.data / filename for filename in ("documents.jsonl", "queries_dev.jsonl", "qrels_dev.jsonl")]
@@ -103,10 +108,10 @@ def main():
         raise ValueError("Запрос без положительной разметки")
     index = build_index(args)
     with create_server(index, 0, quiet=True) as server:
-        results = measure(server, groups, gold, args.repeats, weights)
+        results = measure(server, groups, gold, args.repeats, weights, args.cutoff)
     report = {
         "embedder": model_metadata(index.embedder), "mode": "hybrid", "seed": SEED,
-        "cutoff": LIMIT, "candidate_pool": CANDIDATE_POOL, "rrf_constant": 60, "repeats": args.repeats,
+        "cutoff": args.cutoff, "candidate_pool": CANDIDATE_POOL, "rrf_constant": 60, "repeats": args.repeats,
         "sha256": {p.name: sha256(p.read_bytes()).hexdigest() for p in inputs}, "results": results,
     }
     args.output.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
