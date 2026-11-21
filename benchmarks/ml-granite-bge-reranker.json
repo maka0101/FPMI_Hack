@@ -1,0 +1,94 @@
+{
+  "limit": 10,
+  "repeats": 3,
+  "embedder": {
+    "name": "ibm-granite/granite-embedding-97m-multilingual-r2",
+    "device": "mps",
+    "precision": "bfloat16"
+  },
+  "reranker": {
+    "name": "BAAI/bge-reranker-v2-m3",
+    "device": "mps",
+    "precision": "bfloat16"
+  },
+  "results": {
+    "original": {
+      "bm25": {
+        "queries": 99,
+        "server_p99_ms": 5.46425,
+        "latency_samples": 297,
+        "recall_at_10": 0.9248814168600265,
+        "ndcg_at_10": 0.9784775007591382
+      },
+      "hybrid": {
+        "queries": 99,
+        "server_p99_ms": 12.634875,
+        "latency_samples": 297,
+        "recall_at_10": 0.9157717093100337,
+        "ndcg_at_10": 0.9722647517440649
+      },
+      "hybrid-rerank": {
+        "queries": 99,
+        "server_p99_ms": 1160.357334,
+        "latency_samples": 297,
+        "recall_at_10": 0.9265200980441622,
+        "ndcg_at_10": 0.9726244126680806
+      }
+    },
+    "paraphrase": {
+      "bm25": {
+        "queries": 99,
+        "server_p99_ms": 5.856666,
+        "latency_samples": 297,
+        "recall_at_10": 0.6236268287070426,
+        "ndcg_at_10": 0.6351261247931285
+      },
+      "hybrid": {
+        "queries": 99,
+        "server_p99_ms": 12.760667,
+        "latency_samples": 297,
+        "recall_at_10": 0.8024153183912542,
+        "ndcg_at_10": 0.8144370501494668
+      },
+      "hybrid-rerank": {
+        "queries": 99,
+        "server_p99_ms": 1020.911167,
+        "latency_samples": 297,
+        "recall_at_10": 0.824494976700859,
+        "ndcg_at_10": 0.8377878828976268
+      }
+    },
+    "paraphrase_no_day": {
+      "bm25": {
+        "queries": 99,
+        "server_p99_ms": 6.559208,
+        "latency_samples": 297,
+        "known_target_recall_at_10": 0.14823187309818325
+      },
+      "hybrid": {
+        "queries": 99,
+        "server_p99_ms": 15.418125,
+        "latency_samples": 297,
+        "known_target_recall_at_10": 0.2351387752011638
+      },
+      "hybrid-rerank": {
+        "queries": 99,
+        "server_p99_ms": 1235.369792,
+        "latency_samples": 297,
+        "known_target_recall_at_10": 0.262674759221105
+      }
+    }
+  },
+  "rerank_candidates": {
+    "limit": 20,
+    "sha256": "f8d44c71b19c34980c51884915b4ea7774f75537c3539ef103d3d6df19370d7d"
+  },
+  "receipts_missed_by_bm25": {
+    "bm25_candidate_limit": 50,
+    "query_document_pairs": 18,
+    "recovered_at_10": {
+      "hybrid": 9,
+      "hybrid-rerank": 10
+    }
+  }
+}
