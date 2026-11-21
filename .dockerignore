@@ -1,0 +1,10 @@
+*
+!Dockerfile
+!pyproject.toml
+!uv.lock
+!mail_search
+!mail_search/*.py
+!mail_search/index.html
+!models
+!models/profiles
+!models/profiles/*.yaml

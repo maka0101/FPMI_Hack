@@ -1,0 +1,66 @@
+services:
+  backend:
+    image: fpmi-mail-backend:${MAIL_RELEASE:-local}
+    build: .
+    environment:
+      DATA_DIR: /data
+      SEARCH_MODE: ${SEARCH_MODE:-bm25}
+      MODEL_PROFILE: ${MODEL_PROFILE:-encoder-a}
+      ML_URL: ${ML_URL:-http://ml:8001}
+      ML_TIMEOUT: ${ML_TIMEOUT:-0.5}
+      DEMO_FALLBACK: ${DEMO_FALLBACK:-0}
+    volumes:
+      - ${MAIL_DATA:-./mipt_mail_search_participants}:/data:ro
+    ports:
+      - "127.0.0.1:${MAIL_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/readyz', timeout=2).close()"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 20s
+
+  ml:
+    profiles: [semantic]
+    image: fpmi-mail-ml:${MAIL_RELEASE:-local}
+    build:
+      context: .
+      args:
+        INSTALL_TRANSFORMERS: ${INSTALL_TRANSFORMERS:-0}
+    command: ["python", "-m", "mail_search.ml", "--data", "/data", "--profile", "${MODEL_PROFILE:-encoder-a}", "--host", "0.0.0.0", "--port", "8001"]
+    environment:
+      DATA_DIR: /data
+      PROFILE_DIR: /profiles
+      ARTIFACT_DIR: /artifacts
+      MAIL_RELEASE: ${MAIL_RELEASE:-local}
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+    volumes:
+      - ${MAIL_DATA:-./mipt_mail_search_participants}:/data:ro
+      - ${MODEL_PROFILES:-./models/profiles}:/profiles:ro
+      - ${ML_ARTIFACTS:-./.artifacts}:/artifacts
+      - ./runs:/app/runs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/readyz', timeout=2).close()"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 30s
+
+  caddy:
+    image: caddy:2.10-alpine
+    profiles: [public]
+    environment:
+      MAIL_DOMAIN: ${MAIL_DOMAIN:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  caddy_data:

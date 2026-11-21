@@ -1,0 +1,12 @@
+profile_id: encoder-a
+adapter: word-hash
+model_id: local/word-hash
+model_revision: v1
+tokenizer_id: local/unicode-words
+tokenizer_revision: v1
+parameter_count: 0
+dimensions: 384
+max_length: 256
+document_template: '{doc}'
+query_prefix: ''
+normalize: true

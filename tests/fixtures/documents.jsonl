@@ -1,0 +1,6 @@
+{"doc_id":"receipt-a","synthetic_user":"box-a","doc_dt":"2028-10-01","doc":"Тема: Чек за оплату заказа\nЭлектронный чек по заказу 101."}
+{"doc_id":"receipt-b","synthetic_user":"box-a","doc_dt":"2028-10-01","doc":"Тема: Электронный чек\nОплата заказа 102 прошла."}
+{"doc_id":"travel","synthetic_user":"box-a","doc_dt":"2028-09-30","doc":"Тема: Рейс перенесён\nНовое время вылета. Бронь AB123."}
+{"doc_id":"future","synthetic_user":"box-a","doc_dt":"2028-10-03","doc":"Тема: Чек из будущего\nЗаказ 103."}
+{"doc_id":"undated","synthetic_user":"box-a","doc_dt":null,"doc":"Тема: Чек без даты\nЗаказ 104."}
+{"doc_id":"other-user","synthetic_user":"box-b","doc_dt":"2028-10-01","doc":"Тема: Чек в другом ящике\nЗаказ 105."}
