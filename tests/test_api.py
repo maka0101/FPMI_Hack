@@ -138,3 +138,21 @@ def test_fallback_only_for_hybrid_demo_timeout(caplog):
 def test_rrf_agreement_and_tie_break():
     a, b, c = ({"doc_id": key} for key in "abc")
     assert fuse([b, a], [c, a], 3) == [a, b, c]
+
+
+def test_frontend_versions_are_separate_and_demo_is_opt_in(monkeypatch):
+    monkeypatch.delenv("MAIL_SEARCH_FRONTEND_V2", raising=False)
+    with closing(Engine(FIXTURES)) as engine:
+        with TestClient(create_app(engine)) as client:
+            assert client.get("/").content == client.get("/v1").content
+            assert client.get("/v2").status_code == 404
+            assert client.get("/v2/search.js").status_code == 404
+        monkeypatch.setenv("MAIL_SEARCH_FRONTEND_V2", "1")
+        with TestClient(create_app(engine)) as client:
+            old_page = client.get("/v1")
+            new_page = client.get("/v2")
+            assert client.get("/").content == old_page.content
+            assert new_page.status_code == 200
+            assert new_page.content != old_page.content
+            assert 'src="/v2/search.js"' in new_page.text
+            assert client.get("/v2/search.js").status_code == 200
