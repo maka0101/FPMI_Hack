@@ -69,7 +69,7 @@
       const response = await fetch(path + "?" + new URLSearchParams(params));
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
-      return data;
+      return { data, headers: response.headers };
     }
 
     function scope() {
@@ -86,7 +86,7 @@
       button.setAttribute("aria-current", "true");
       message.replaceChildren(node("p", "Открываем письмо…"));
       try {
-        const mail = await get("/api/message", { ...messageScope, doc_id: docId });
+        const { data: mail } = await get("/api/message", { ...messageScope, doc_id: docId });
         if (version !== messageVersion) return;
         message.replaceChildren(
           node("h2", mail.subject || "Письмо"),
@@ -107,11 +107,15 @@
       const requestScope = scope();
       const requestQuery = query.value.trim();
       try {
-        const rows = await get("/api/search", { ...requestScope, q: requestQuery });
+        const { data: rows, headers } = await get("/api/search", { ...requestScope, q: requestQuery });
         if (version !== searchVersion) return;
         status.textContent = rows.length
           ? (requestQuery ? `Писем в выдаче: ${rows.length}` : "Последние письма")
           : "Письма не найдены.";
+        const targetDay = headers.get("X-Target-Day");
+        if (targetDay) status.textContent += " · За " + targetDay;
+        if (headers.get("X-Search-Mode") === "bm25-fallback")
+          status.textContent += " · Поиск по словам (таймаут модели)";
         for (const row of rows) {
           const button = node("button", "");
           const preview = row.subject ? row.preview.split("\n").slice(1).join(" ").trim() : row.preview;
@@ -136,7 +140,7 @@
       if (asOf.value) search();
     });
 
-    get("/api/mailboxes").then(data => {
+    get("/api/mailboxes").then(({ data }) => {
       mailboxes = data;
       for (const id of Object.keys(data)) {
         const option = node("option", id);

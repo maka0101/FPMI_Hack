@@ -1,0 +1,57 @@
+name: Mail search
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.11.8"
+      - run: uv sync --locked --python 3.11
+      - run: uv run --locked pytest -q
+      - name: Validate the browser script
+        run: |
+          python3 -c 'from pathlib import Path; print(Path("mail_search/index.html").read_text().split("<script>", 1)[1].split("</script>", 1)[0])' | node --check
+      - name: Prepare a small index
+        run: docker compose run --build --rm --no-deps ml python -m mail_search prepare --profiles encoder-a,encoder-b
+        env:
+          MAIL_DATA: ./tests/fixtures
+      - name: Search through the containers
+        env:
+          MAIL_DATA: ./tests/fixtures
+          SEARCH_MODE: hybrid
+        run: |
+          for model in encoder-a encoder-b encoder-a; do
+            export MODEL_PROFILE="$model"
+            docker compose --profile semantic up --build -d --wait --wait-timeout 120
+            curl -fsS http://127.0.0.1:8000/readyz
+            curl -fsSG -D /tmp/mail-headers -o /tmp/mail-search.json http://127.0.0.1:8000/api/search \
+              --data-urlencode mailbox=box-a --data-urlencode as_of=2028-10-02 \
+              --data-urlencode 'q=чек вчера' --data-urlencode limit=10
+            grep -qi '^x-target-day: 2028-10-01' /tmp/mail-headers
+            docker compose exec -T backend python -m mail_search benchmark --limit 10 --output /tmp/rankings.jsonl
+            docker compose exec -T backend cat /tmp/rankings.jsonl > /tmp/mail-rankings.jsonl
+            python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          http_ids = [row["doc_id"] for row in json.loads(Path("/tmp/mail-search.json").read_text())]
+          rankings = [json.loads(line) for line in Path("/tmp/mail-rankings.jsonl").read_text().splitlines()]
+          assert "receipt-a" in http_ids
+          assert http_ids == next(row["doc_ids"] for row in rankings if row["query_id"] == "q-yesterday")
+          PY
+          done
+          curl -fsSG http://127.0.0.1:8000/api/message \
+            --data-urlencode mailbox=box-a --data-urlencode doc_id=receipt-a \
+            --data-urlencode as_of=2028-10-02
+      - name: Compose logs
+        if: failure()
+        run: docker compose --profile semantic logs
+      - name: Stop smoke services
+        if: always()
+        run: docker compose --profile semantic down

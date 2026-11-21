@@ -46,7 +46,10 @@ def parse_query(text, as_of):
     target = None
     if match:
         if match["relative"]:
-            target = as_of - timedelta(days=RELATIVE_DAYS[match["relative"]])
+            try:
+                target = as_of - timedelta(days=RELATIVE_DAYS[match["relative"]])
+            except OverflowError as error:
+                raise ValueError("Вычисленная дата выходит за допустимый диапазон") from error
         elif match["iso"]:
             target = date.fromisoformat(match["iso"])
         elif match["numeric"]:
@@ -122,6 +125,9 @@ class MailboxIndex:
             raise ValueError("Лимит должен быть от 1 до 1000")
 
         words, target_day = parse_query(query, as_of)
+        return self.search_parsed(mailbox, words, as_of, target_day, limit)
+
+    def search_parsed(self, mailbox, words, as_of, target_day, limit):
         if target_day and target_day > as_of:
             return []
         filters = "m.mailbox = ? AND (m.day IS NULL OR m.day <= ?)"
@@ -145,6 +151,23 @@ class MailboxIndex:
             """
         with self.lock:
             return [dict(row) for row in self.db.execute(sql, [*params, limit])]
+
+    def candidate_rows(self, doc_ids, mailbox, as_of, target_day):
+        """Resolve the ML ranking against the same visibility rules as FTS."""
+        if not doc_ids:
+            return []
+        sql = """
+            SELECT m.doc_id, m.subject, m.day, substr(m.body, 1, 240) AS preview
+            FROM json_each(?) AS candidate JOIN mail AS m ON m.doc_id = candidate.value
+            WHERE m.mailbox = ? AND (m.day IS NULL OR m.day <= ?)
+        """
+        params = [json.dumps(doc_ids), mailbox, as_of.isoformat()]
+        if target_day:
+            sql += " AND m.day = ?"
+            params.append(target_day.isoformat())
+        with self.lock:
+            rows = {row["doc_id"]: dict(row) for row in self.db.execute(sql, params)}
+        return [rows[doc_id] for doc_id in doc_ids if doc_id in rows]
 
     def message(self, mailbox, doc_id, as_of):
         with self.lock:
