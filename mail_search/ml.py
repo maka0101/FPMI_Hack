@@ -53,11 +53,16 @@ def index_identity(data_dir: Path, profile: Profile) -> dict:
         dependencies.extend(["sentence-transformers", "transformers", "torch", "tokenizers"])
     elif profile.adapter == "onnx-e5":
         dependencies.extend(["onnxruntime", "tokenizers"])
+    runtime = {name: version(name) for name in dependencies}
+    if profile.adapter == "harrier":
+        from .harrier import device
+        runtime.update({name: version(name) for name in ("torch", "transformers", "tokenizers")})
+        runtime["device"] = device()
     identity = {
         "format_version": INDEX_FORMAT,
         "corpus_sha256": file_hash(data_dir / "documents.jsonl"),
         "document_settings": profile.document_settings(),
-        "runtime": {name: version(name) for name in dependencies},
+        "runtime": runtime,
     }
     return {**identity, "index_version": stable_hash(identity)}
 
@@ -101,7 +106,7 @@ def build_index(source: Path, directory: Path, profile: Profile, encoder: Encode
                 raise ValueError("empty synthetic_user in corpus")
             doc_ids.add(doc_id)
             rows.append([doc_id, mailbox, date.fromisoformat(day).isoformat() if day is not None else None])
-            text = document["doc"].strip() if profile.adapter == "onnx-e5" else document["doc"]
+            text = document["doc"].strip() if profile.adapter in {"onnx-e5", "harrier"} else document["doc"]
             texts.append(profile.document_template.replace("{doc}", text))
     if digest.hexdigest() != identity["corpus_sha256"]:
         raise ValueError("corpus changed during preparation, run prepare again")
@@ -110,7 +115,7 @@ def build_index(source: Path, directory: Path, profile: Profile, encoder: Encode
                                         shape=(len(rows), profile.dimensions))
     order = range(len(rows))
     batch_size = 64
-    if profile.adapter == "onnx-e5":
+    if profile.adapter in {"onnx-e5", "harrier"}:
         # Group similar lengths to reduce padding while preserving the row mapping.
         order = sorted(order, key=lambda idx: len(texts[idx]))
         batch_size = 32
@@ -161,7 +166,7 @@ class VectorIndex:
         self.metadata = describe(profile, manifest)
         self.encoder = Encoder(profile, root)
         self.query_prefix = profile.query_prefix
-        self.strip_query_date = profile.adapter == "onnx-e5"
+        self.strip_query_date = profile.adapter in {"onnx-e5", "harrier"}
         self.encode_lock = Lock()
         self.vectors = np.load(directory / "vectors.npy", mmap_mode="r", allow_pickle=False)
         rows = json.loads((directory / "rows.json").read_text(encoding="utf-8"))
@@ -230,7 +235,7 @@ def create_app(data_dir: Path, profile_id: str) -> FastAPI:
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=Path(os.getenv("DATA_DIR", "mipt_mail_search_participants")))
-    parser.add_argument("--profile", default=os.getenv("MODEL_PROFILE", "encoder-a"))
+    parser.add_argument("--profile", default=os.getenv("MODEL_PROFILE", "harrier270"))
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8001)
     args = parser.parse_args()

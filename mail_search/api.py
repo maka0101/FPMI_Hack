@@ -82,7 +82,7 @@ def create_app(engine: Engine, demo_fallback: bool = False) -> FastAPI:
     def search(response: Response, mailbox: str = "", q: str = "", as_of: str | None = None,
                limit: Annotated[int | None, Query(ge=1, le=1000)] = None):
         if limit is None:
-            limit = 5 if q.strip() else 20
+            limit = 10 if q.strip() else 20
         day = reference_date(mailbox, as_of)
         rows, mode, target = engine.search_with_info(mailbox, q, day, limit, demo_fallback=demo_fallback)
         response.headers["X-Search-Mode"] = mode

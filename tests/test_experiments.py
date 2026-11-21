@@ -36,7 +36,7 @@ def test_quality_denominators_and_rank_changes():
 def test_export_without_any_qrels(tmp_path, monkeypatch):
     (tmp_path / "documents.jsonl").write_bytes((FIXTURE / "documents.jsonl").read_bytes())
     output = tmp_path / "nested" / "ids.jsonl"
-    monkeypatch.setattr(sys, "argv", ["mail_search", "--data", str(tmp_path), "export",
+    monkeypatch.setattr(sys, "argv", ["mail_search", "--data", str(tmp_path), "export", "--mode", "bm25",
                         "--queries", str(FIXTURE / "queries_dev.jsonl"), "--output", str(output)])
     assert main() == 0
     rows = list(read_jsonl(output))

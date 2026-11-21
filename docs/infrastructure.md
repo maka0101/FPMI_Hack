@@ -20,11 +20,13 @@ FastAPI обслуживает интерфейс, письма и BM25. Веб-
 
 ```sh
 cp .env.example .env
-docker compose up --build -d --wait backend
+# Сначала скачайте веса в .artifacts/weights/harrier270 по команде из README.
+docker compose run --build --rm --no-deps ml python -m mail_search prepare --profiles harrier270
+docker compose up --build -d --wait
 curl -fsS http://127.0.0.1:8000/readyz
 ```
 
-Откройте http://127.0.0.1:8000. Для первого запуска с моделью используйте одну и ту же конфигурацию корпуса и артефактов для подготовки, backend и ML.
+Откройте http://127.0.0.1:8000. Для проверки других профилей используйте одну и ту же конфигурацию корпуса и артефактов для подготовки, backend и ML.
 
 ```sh
 docker compose run --build --rm --no-deps ml python -m mail_search prepare --profiles encoder-a,encoder-b
@@ -36,8 +38,8 @@ curl -fsS http://127.0.0.1:8000/readyz
 
 | Переменная | По умолчанию | Назначение |
 |---|---|---|
-| `SEARCH_MODE` | `bm25` | `bm25`, `encoder`, `hybrid` |
-| `MODEL_PROFILE` | `encoder-a` | Имя YAML-профиля |
+| `SEARCH_MODE` | `hybrid` | `bm25`, `encoder`, `hybrid` |
+| `MODEL_PROFILE` | `harrier270` | Имя YAML-профиля |
 | `ML_URL` | `http://ml:8001` в Compose | Адрес ML для backend. При запуске из venv используется `http://127.0.0.1:8001`. Можно указать адрес SSH-туннеля |
 | `ML_TIMEOUT` | `0.5` | Таймаут сетевого запроса к ML в секундах |
 | `DEMO_FALLBACK` | `0` | `1` разрешает BM25 при таймауте ML в гибридном веб-режиме |
@@ -47,7 +49,7 @@ curl -fsS http://127.0.0.1:8000/readyz
 | `MAIL_PORT` | `8000` | Порт backend на loopback хоста |
 | `MAIL_DOMAIN` | `localhost` | DNS-имя публичного стенда для Caddy |
 | `MAIL_RELEASE` | `local` | Тег образов backend и ML. Для публичной сборки задайте SHA коммита |
-| `INSTALL_TRANSFORMERS` | `0` | Установить зависимости адаптера Sentence Transformers при сборке образа ML |
+| `INSTALL_TRANSFORMERS` | `1` | Установить зависимости адаптера Sentence Transformers при сборке образа ML |
 
 Адреса каталогов внутри контейнеров передаются через `DATA_DIR`, `PROFILE_DIR` и `ARTIFACT_DIR`. Ограничьте доступ к Docker-хосту и используйте для публичного демо корпус хакатона. Выбор ящика в UI предназначен для этого корпуса. Запросы к поиску и тексты писем не пишутся в журнал backend. При ошибке готовности проверьте `docker compose logs backend ml`, выбранный профиль и совпадение SHA-256 корпуса.
 

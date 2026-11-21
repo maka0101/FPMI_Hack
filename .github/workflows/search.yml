@@ -6,6 +6,8 @@ on:
 
 jobs:
   test:
+    env:
+      INSTALL_TRANSFORMERS: "0"  # Smoke tests use the hash-based encoders.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

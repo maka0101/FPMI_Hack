@@ -93,24 +93,25 @@ class MLClient:
         return ids
 
 
-def fuse(lexical, semantic, limit):
+def fuse(lexical, semantic, limit, bm25_weight=0.5):
     scores = {}
     rows = {}
-    for ranking in (lexical, semantic):
+    for ranking, weight in ((lexical, bm25_weight), (semantic, 1 - bm25_weight)):
         for position, row in enumerate(ranking, 1):
             doc_id = row["doc_id"]
-            scores[doc_id] = scores.get(doc_id, 0.0) + 1.0 / (60 + position)
+            scores[doc_id] = scores.get(doc_id, 0.0) + weight / (60 + position)
             rows[doc_id] = row
     return [rows[doc_id] for doc_id in sorted(rows, key=lambda key: (-scores[key], key))[:limit]]
 
 
 class Engine:
-    def __init__(self, data_dir: Path, mode="bm25", profile_id="encoder-a",
+    def __init__(self, data_dir: Path, mode="hybrid", profile_id="harrier270",
                  ml_url="http://127.0.0.1:8001", timeout=0.5):
         if mode not in {"bm25", "encoder", "hybrid"}:
             raise ValueError("Неизвестный режим поиска")
         if not math.isfinite(timeout) or timeout <= 0:
             raise ValueError("Таймаут ML должен быть положительным")
+        self.bm25_weight = 0.85 if profile_id == "harrier270" else 0.5
         self.mode = mode
         self.index = MailboxIndex(data_dir)
         self.mailboxes = self.index.mailboxes
@@ -121,6 +122,8 @@ class Engine:
 
     def ready(self):
         info = {"status": "ready", "mode": self.mode, "corpus_sha256": self.corpus_sha256}
+        if self.mode == "hybrid":
+            info["bm25_weight"] = self.bm25_weight
         if self.ml:
             info.update(self.ml.ready().model_dump())
         return info
@@ -132,7 +135,7 @@ class Engine:
             self.ml.http.close()
         self.index.db.close()
 
-    def search(self, mailbox: str, query: str, as_of: date, limit: int = 20):
+    def search(self, mailbox: str, query: str, as_of: date, limit: int = 10):
         rows, _, _ = self.search_with_info(mailbox, query, as_of, limit)
         return rows
 
@@ -163,4 +166,4 @@ class Engine:
             logging.getLogger(__name__).warning("ML timeout in hybrid demo, returning BM25")
             return lexical[:limit], "bm25-fallback", target
         semantic = self.index.candidate_rows(ids, mailbox, as_of, target)
-        return fuse(lexical, semantic, limit), self.mode, target
+        return fuse(lexical, semantic, limit, self.bm25_weight), self.mode, target

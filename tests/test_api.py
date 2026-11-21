@@ -17,7 +17,7 @@ SEARCH = {"mailbox": "box-a", "q": "чек вчера", "as_of": DAY.isoformat()
 
 
 def mock_ml(engine, candidates, *, ready=None):
-    identity = {"profile_id": "encoder-a", "index_version": "v1", "profile_sha256": "a" * 64}
+    identity = {"profile_id": engine.ml.profile_id, "index_version": "v1", "profile_sha256": "a" * 64}
     meta = {**identity, "corpus_sha256": engine.corpus_sha256}
     requests = []
 
@@ -38,7 +38,7 @@ def mock_ml(engine, candidates, *, ready=None):
 
 
 def test_public_routes_and_search_parity():
-    with closing(Engine(FIXTURES)) as engine, TestClient(create_app(engine)) as client:
+    with closing(Engine(FIXTURES, "bm25")) as engine, TestClient(create_app(engine)) as client:
         assert client.get("/").headers["content-type"].startswith("text/html")
         assert client.get("/api/mailboxes").json() == {"box-a": "2028-10-03", "box-b": "2028-10-01"}
         assert client.get("/healthz").status_code == client.get("/readyz").status_code == 200
@@ -59,18 +59,20 @@ def test_public_routes_and_search_parity():
         assert client.get("/missing").json() == {"error": "Страница не найдена"}
 
 
-def test_default_search_returns_top_five_and_preserves_inbox(tmp_path):
+def test_default_search_returns_top_ten_and_preserves_inbox(tmp_path):
     rows = (FIXTURES / "documents.jsonl").read_text().splitlines()
     receipt = json.loads(rows[0])
-    for i in range(2):
+    for i in range(8):
         rows.append(json.dumps({**receipt, "doc_id": f"extra-receipt-{i}"}))
     (tmp_path / "documents.jsonl").write_text("\n".join(rows))
     with closing(Engine(tmp_path)) as engine, TestClient(create_app(engine)) as client:
+        assert engine.mode == "hybrid" and engine.ml.profile_id == "harrier270"
+        mock_ml(engine, [])
         params = {"mailbox": "box-a", "q": "чек"}
         ranked = client.get("/api/search", params={**params, "limit": 20}).json()
-        assert len(ranked) == 6
-        assert client.get("/api/search", params=params).json() == ranked[:5]
-        assert len(client.get("/api/search", params={"mailbox": "box-a"}).json()) == 7
+        assert len(ranked) == 12
+        assert client.get("/api/search", params=params).json() == ranked[:10]
+        assert len(client.get("/api/search", params={"mailbox": "box-a"}).json()) == 13
 
 
 @pytest.mark.parametrize("fields", [
@@ -79,7 +81,7 @@ def test_default_search_returns_top_five_and_preserves_inbox(tmp_path):
     {"q": "вчера", "as_of": "0001-01-01"},
 ])
 def test_input_errors(fields):
-    with closing(Engine(FIXTURES)) as engine, TestClient(create_app(engine)) as client:
+    with closing(Engine(FIXTURES, "bm25")) as engine, TestClient(create_app(engine)) as client:
         response = client.get("/api/search", params={**SEARCH, **fields})
         assert response.status_code == 400
         assert set(response.json()) == {"error"}
@@ -126,7 +128,7 @@ def test_incompatible_ml_is_never_substituted(bad):
 
 def test_readiness_pins_corpus_and_profile():
     with closing(Engine(FIXTURES, "encoder")) as engine, TestClient(create_app(engine)) as client:
-        ready = {"profile_id": "encoder-a", "index_version": "v1", "corpus_sha256": "f" * 64}
+        ready = {"profile_id": engine.ml.profile_id, "index_version": "v1", "corpus_sha256": "f" * 64}
         mock_ml(engine, [], ready=ready)
         assert client.get("/readyz").status_code == 503
         ready.update(corpus_sha256=engine.corpus_sha256, profile_sha256="a" * 64)
@@ -152,3 +154,9 @@ def test_fallback_only_for_hybrid_demo_timeout(caplog):
 def test_rrf_agreement_and_tie_break():
     a, b, c = ({"doc_id": key} for key in "abc")
     assert fuse([b, a], [c, a], 3) == [a, b, c]
+
+
+def test_harrier_fusion_prefers_lexical_order_on_conflicting_ranks():
+    a, b = ({"doc_id": key} for key in "ab")
+    assert fuse([b, a], [a, b], 2, 0.85) == [b, a]
+    assert fuse([b, a], [a, b], 2, 0.5) == [a, b]

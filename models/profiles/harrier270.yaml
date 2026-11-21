@@ -1,0 +1,19 @@
+profile_id: harrier270
+adapter: harrier
+model_id: microsoft/harrier-oss-v1-270m
+model_revision: 31de22b673913c7d658c0f03f792d77c2dcf8ebd
+tokenizer_id: microsoft/harrier-oss-v1-270m
+tokenizer_revision: 31de22b673913c7d658c0f03f792d77c2dcf8ebd
+parameter_count: 270000000
+dimensions: 640
+max_length: 512
+document_template: "{doc}"
+query_prefix: "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery: "
+normalize: true
+weights_dir: weights/harrier270
+files_sha256:
+  model.safetensors: 90933b6826b61afd9331e0ebe3c0598b421a32eda5fb301a114fe36f306cb51a
+  config.json: f77ed9972d4c5d69e58c4e1ee831d8e38bdbacfa358dfe0ce9a9d1885528976c
+  tokenizer.json: 6852f8d561078cc0cebe70ca03c5bfdd0d60a45f9d2e0e1e4cc05b68e9ec329e
+  tokenizer_config.json: 0227c7691ee78ae2e96b0cb7088a29caa74edb7be592d36d9479086b0bac403d
+  special_tokens_map.json: 2f7b0adf4fb469770bb1490e3e35df87b1dc578246c5e7e6fc76ecf33213a397
