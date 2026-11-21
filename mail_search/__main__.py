@@ -1,5 +1,4 @@
 import argparse
-from collections import defaultdict
 from datetime import date
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
@@ -8,6 +7,7 @@ from pathlib import Path
 from time import perf_counter
 from urllib.parse import parse_qs, urlsplit
 
+from .comparison import compare, ranking_metrics, read_relevance
 from .search import MailboxIndex, read_jsonl
 
 
@@ -16,10 +16,7 @@ DEFAULT_DATA = Path(__file__).resolve().parent.parent / "mipt_mail_search_partic
 
 def benchmark(index, data_dir, limit, output):
     queries = list(read_jsonl(data_dir / "queries_dev.jsonl"))
-    gold = defaultdict(dict)
-    for row in read_jsonl(data_dir / "qrels_dev.jsonl"):
-        if row["relevance"] > 0:
-            gold[row["query_id"]][row["doc_id"]] = row["relevance"]
+    gold = read_relevance(data_dir)
 
     recalls, ndcgs, mrrs, timings, rankings = [], [], [], [], []
     for query in queries:
@@ -33,9 +30,9 @@ def benchmark(index, data_dir, limit, output):
 
         gains = [relevance.get(doc_id, 0) for doc_id in ids]
         if relevance:
-            recalls.append(sum(gain > 0 for gain in gains) / len(relevance))
-            ideal = sorted(relevance.values(), reverse=True)[:limit]
-            ndcgs.append(dcg(gains) / dcg(ideal))
+            recall, ndcg = ranking_metrics(ids, relevance, limit)
+            recalls.append(recall)
+            ndcgs.append(ndcg)
         if len(relevance) == 1:
             mrrs.append(next((1 / rank for rank, gain in enumerate(gains, 1) if gain), 0))
 
@@ -54,20 +51,27 @@ def benchmark(index, data_dir, limit, output):
         print(f"Search p99: {timings[math.ceil(0.99 * len(timings)) - 1]:.2f} ms")
 
 
-def dcg(gains):
-    return sum((2 ** gain - 1) / math.log2(rank + 1) for rank, gain in enumerate(gains, 1))
-
-
-def serve(index, port):
+def create_server(index, port, *, quiet=False):
     page = Path(__file__).with_name("index.html").read_bytes()
 
     class Handler(BaseHTTPRequestHandler):
-        def respond(self, status, content, content_type="application/json"):
+        def log_message(self, format_string, *args):
+            if not quiet:
+                super().log_message(format_string, *args)
+
+        def parse_request(self):
+            self.request_started_at = perf_counter()
+            return super().parse_request()
+
+        def respond(self, status, content, content_type="application/json", *, timed=False):
             if content_type == "application/json":
                 content = json.dumps(content, ensure_ascii=False).encode("utf-8")
+            duration = (perf_counter() - self.request_started_at) * 1000 if timed else None
             self.send_response(status)
             self.send_header("Content-Type", f"{content_type}; charset=utf-8")
             self.send_header("Content-Length", str(len(content)))
+            if duration is not None:
+                self.send_header("Server-Timing", f"search;dur={duration:.6f}")
             self.end_headers()
             self.wfile.write(content)
 
@@ -94,7 +98,13 @@ def serve(index, port):
                     query = params.get("q", [""])[0]
                     if len(query) > 1000:
                         raise ValueError("Запрос должен содержать не более 1000 символов")
-                    result = index.search(mailbox, query, as_of)
+                    mode = params.get("mode", ["hybrid" if index.embedder else "bm25"])[0]
+                    if mode not in {"bm25", "hybrid"}:
+                        raise ValueError("Режим поиска должен быть bm25 или hybrid")
+                    if mode == "hybrid" and index.embedder is None:
+                        raise ValueError("Для гибридного поиска требуется multilingual-e5-small")
+                    limit = int(params.get("limit", ["20"])[0])
+                    result = index.search(mailbox, query, as_of, limit, hybrid=mode == "hybrid")
                 else:
                     doc_id = params.get("doc_id", [""])[0]
                     result = index.message(mailbox, doc_id, as_of)
@@ -104,9 +114,13 @@ def serve(index, port):
             if result is None:
                 self.respond(404, {"error": "Письмо недоступно"})
                 return
-            self.respond(200, result)
+            self.respond(200, result, timed=request.path == "/api/search")
 
-    with ThreadingHTTPServer(("127.0.0.1", port), Handler) as server:
+    return ThreadingHTTPServer(("127.0.0.1", port), Handler)
+
+
+def serve(index, port):
+    with create_server(index, port) as server:
         print(f"Почта: http://127.0.0.1:{server.server_port}", flush=True)
         try:
             server.serve_forever()
@@ -123,12 +137,32 @@ def main():
     bench = commands.add_parser("benchmark", help="Оценить поиск на открытом бенчмарке")
     bench.add_argument("--limit", type=int, default=10)
     bench.add_argument("--output", type=Path, help="Сохранить ранжированные doc_id в JSONL")
+    comparison = commands.add_parser("compare", help="Сравнить BM25 с гибридом через HTTP")
+    comparison.add_argument("--paraphrases", type=Path,
+                            default=DEFAULT_DATA.parent / "benchmarks" / "paraphrases.jsonl")
+    comparison.add_argument("--repeats", type=int, default=5)
+    comparison.add_argument("--output", type=Path, help="Сохранить метрики в JSON")
+    for command in (server, comparison):
+        command.add_argument("--model-dir", type=Path, required=command is comparison,
+                             help="Каталог ONNX-модели multilingual-e5-small")
+        command.add_argument("--embeddings-cache", type=Path,
+                             default=DEFAULT_DATA.parent / ".cache" / "e5-embeddings.npz")
     args = parser.parse_args()
     if args.command == "benchmark" and not 1 <= args.limit <= 1000:
         parser.error("--limit должен быть от 1 до 1000")
-    index = MailboxIndex(args.data)
+    if args.command == "compare" and args.repeats < 1:
+        parser.error("--repeats должен быть положительным")
+    if getattr(args, "model_dir", None) is None:
+        index = MailboxIndex(args.data)
+    else:
+        from .embeddings import E5Encoder
+
+        index = MailboxIndex(args.data, E5Encoder(args.model_dir), args.embeddings_cache)
     if args.command == "serve":
         serve(index, args.port)
+    elif args.command == "compare":
+        with create_server(index, 0, quiet=True) as http_server:
+            compare(http_server, args.data, args.paraphrases, args.repeats, args.output)
     else:
         benchmark(index, args.data, args.limit, args.output)
 

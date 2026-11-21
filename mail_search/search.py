@@ -21,7 +21,8 @@ DATE_IN_QUERY = re.compile(
     r"|(?P<iso>\d{4}-\d{2}-\d{2})\b"
     r"|(?P<numeric>\d{1,2}\.\d{1,2}\.\d{4})\b"
     r"|(?P<day>\d{1,2})\s+(?P<month>" + "|".join(MONTHS) + r")\b"
-    r"(?:\s+(?P<year>\d{4})(?:\s+года\b)?)?)"
+    r"(?:\s+(?P<year>\d{4})(?:\s+года\b)?)?)",
+    re.IGNORECASE,
 )
 STOP_WORDS = set(
     "а без в во где для до за и из как ли мне на найди найти о об от по покажи "
@@ -40,24 +41,28 @@ def normalize(text):
     return text.lower().replace("ё", "е")
 
 
-def parse_query(text, as_of):
-    text = normalize(text)
+def split_query(text, as_of):
     match = DATE_IN_QUERY.search(text)
     target = None
     if match:
         if match["relative"]:
-            target = as_of - timedelta(days=RELATIVE_DAYS[match["relative"]])
+            target = as_of - timedelta(days=RELATIVE_DAYS[match["relative"].lower()])
         elif match["iso"]:
             target = date.fromisoformat(match["iso"])
         elif match["numeric"]:
             day, month, year = map(int, match["numeric"].split("."))
             target = date(year, month, day)
         else:
-            target = date(int(match["year"] or as_of.year), MONTHS[match["month"]], int(match["day"]))
+            target = date(int(match["year"] or as_of.year), MONTHS[match["month"].lower()], int(match["day"]))
         text = text[:match.start()] + " " + text[match.end():]
 
-    words = list(dict.fromkeys(WORD.findall(text)))
-    return [word for word in words if word not in STOP_WORDS][:32], target
+    words = list(dict.fromkeys(WORD.findall(normalize(text))))
+    return [word for word in words if word not in STOP_WORDS][:32], target, " ".join(text.split())
+
+
+def parse_query(text, as_of):
+    words, target, _ = split_query(text, as_of)
+    return words, target
 
 
 def fts_expression(words):
@@ -74,7 +79,8 @@ def fts_expression(words):
 
 
 class MailboxIndex:
-    def __init__(self, data_dir):
+    def __init__(self, data_dir, embedder=None, embeddings_cache=None):
+        self.embedder = embedder
         self.db = sqlite3.connect(":memory:", check_same_thread=False)
         self.db.row_factory = sqlite3.Row
         self.lock = Lock()
@@ -114,14 +120,17 @@ class MailboxIndex:
                 "SELECT mailbox, max(day) AS latest_day FROM mail GROUP BY mailbox ORDER BY mailbox"
             )
         }
+        if embedder is not None:
+            passages = [row["body"] for row in self.db.execute("SELECT body FROM mail ORDER BY id")]
+            self.embeddings = embedder.index(passages, embeddings_cache)
 
-    def search(self, mailbox, query, as_of, limit=20):
+    def search(self, mailbox, query, as_of, limit=20, *, hybrid=True):
         if mailbox not in self.mailboxes:
             raise ValueError("Неизвестный почтовый ящик")
         if not 1 <= limit <= 1000:
             raise ValueError("Лимит должен быть от 1 до 1000")
 
-        words, target_day = parse_query(query, as_of)
+        words, target_day, semantic_query = split_query(query, as_of)
         if target_day and target_day > as_of:
             return []
         filters = "m.mailbox = ? AND (m.day IS NULL OR m.day <= ?)"
@@ -130,21 +139,47 @@ class MailboxIndex:
             filters += " AND m.day = ?"
             params.append(target_day.isoformat())
 
-        fields = "m.doc_id, m.subject, m.day, substr(m.body, 1, 240) AS preview"
+        use_vectors = hybrid and self.embedder is not None and bool(words)
+        fields = "m.id, m.doc_id, m.subject, m.day, substr(m.body, 1, 240) AS preview"
+        pool_size = max(limit, 50) if use_vectors else limit
         if words:
             sql = f"""
                 SELECT {fields} FROM mail_fts JOIN mail AS m ON m.id = mail_fts.rowid
                 WHERE mail_fts MATCH ? AND {filters}
                 ORDER BY bm25(mail_fts, 3.0, 1.0), m.day DESC, m.doc_id LIMIT ?
             """
-            params.insert(0, fts_expression(words))
+            sql_params = [fts_expression(words), *params, pool_size]
         else:
             sql = f"""
                 SELECT {fields} FROM mail AS m WHERE {filters}
                 ORDER BY m.day DESC, m.doc_id LIMIT ?
             """
+            sql_params = [*params, limit]
         with self.lock:
-            return [dict(row) for row in self.db.execute(sql, [*params, limit])]
+            lexical = self.db.execute(sql, sql_params).fetchall()
+        if not use_vectors:
+            return [search_result(row) for row in lexical]
+
+        with self.lock:
+            eligible = self.db.execute(
+                f"SELECT m.id FROM mail m WHERE {filters} ORDER BY m.day DESC, m.doc_id",
+                params,
+            ).fetchall()
+        if not eligible:
+            return []
+
+        eligible_ids = [row["id"] for row in eligible]
+        dense_ids = self.embedder.top_ids(self.embeddings, eligible_ids, semantic_query, pool_size)
+        ranked = reciprocal_rank_fusion([row["id"] for row in lexical], dense_ids)[:limit]
+        placeholders = ",".join("?" for _ in ranked)
+        with self.lock:
+            results = {
+                row["id"]: search_result(row)
+                for row in self.db.execute(
+                    f"SELECT {fields} FROM mail m WHERE m.id IN ({placeholders})", ranked
+                )
+            }
+        return [results[mail_id] for mail_id in ranked]
 
     def message(self, mailbox, doc_id, as_of):
         with self.lock:
@@ -154,3 +189,15 @@ class MailboxIndex:
                 (mailbox, doc_id, as_of.isoformat()),
             ).fetchone()
         return dict(row) if row else None
+
+
+def reciprocal_rank_fusion(*rankings):
+    scores = {}
+    for ranking in rankings:
+        for position, mail_id in enumerate(ranking, start=1):
+            scores[mail_id] = scores.get(mail_id, 0.0) + 1 / (60 + position)
+    return sorted(scores, key=scores.__getitem__, reverse=True)
+
+
+def search_result(row):
+    return {"doc_id": row["doc_id"], "subject": row["subject"], "day": row["day"], "preview": row["preview"]}
