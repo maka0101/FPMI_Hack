@@ -16,9 +16,9 @@ LIMIT = 10
 MODES = ("bm25", "hybrid")
 
 
-def read_relevance(data_dir):
+def read_relevance(data_dir, filename="qrels_dev.jsonl"):
     gold = defaultdict(dict)
-    for row in read_jsonl(data_dir / "qrels_dev.jsonl"):
+    for row in read_jsonl(data_dir / filename):
         if row["relevance"] > 0:
             gold[row["query_id"]][row["doc_id"]] = row["relevance"]
     return gold

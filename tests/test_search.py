@@ -3,7 +3,9 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest import TestCase
+from unittest.mock import patch
 
+from mail_search.query_summary import summarize_query
 from mail_search.search import MailboxIndex, reciprocal_rank_fusion
 
 
@@ -73,3 +75,33 @@ class HybridSearchTest(TestCase):
         self.assertEqual([row["doc_id"] for row in reranked], ["semantic"])
         self.assertEqual(reranker.query, "Счёт")
         self.assertEqual(reranker.passages, ["Тема: Счёт 123", "Тема: Платёжный документ"])
+
+    def test_summary_branch_can_add_a_candidate_inside_the_same_filters(self):
+        context = "Сначала я просмотрел старую переписку и собрал документы. " * 7
+        query = context + "Мне нужны счета, полученные вчера. Важно сохранить номер 123."
+        with patch.object(self.encoder, "top_ids", side_effect=([1], [2])) as top_ids:
+            results = self.index.search("box", query, self.as_of, 2, protect_exact=False)
+        self.assertEqual([row["doc_id"] for row in results], ["lexical", "semantic"])
+        original, summary = [call.args for call in top_ids.call_args_list]
+        self.assertEqual(original[1], [1, 2])
+        self.assertEqual(summary[1], [1, 2])
+        self.assertIn("нужны счета", summary[2])
+        self.assertIn("номер 123", summary[2])
+        self.assertNotIn("вчера", summary[2])
+        self.assertLess(len(summary[2]), len(original[2]))
+
+    def test_duplicate_dense_list_does_not_get_an_extra_vote(self):
+        query = "Я просмотрел старую переписку в архиве. " * 8 + "Найди счёт вчера."
+        with patch.object(self.encoder, "top_ids", side_effect=([2], [2])):
+            results = self.index.search("box", query, self.as_of, 1)
+        self.assertEqual([row["doc_id"] for row in results], ["lexical"])
+
+    def test_compact_query_is_not_summarized(self):
+        self.assertIsNone(summarize_query("Покажи счёт 123"))
+
+    def test_protected_mode_does_not_add_a_vote_for_an_exact_reference_or_amount(self):
+        background = "Я просмотрел старую переписку и заглянул в архив. " * 8
+        for intent in ("Покажи письмо с кодом SYN-83D5F19A.", "Мне нужны подтверждения на сумму 13 рублей и 50 копеек."):
+            query = background + intent
+            self.assertIsNone(summarize_query(query))
+            self.assertIsNotNone(summarize_query(query, protect_exact=False))

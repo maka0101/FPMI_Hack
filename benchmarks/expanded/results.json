@@ -1,0 +1,511 @@
+{
+  "queries": 858,
+  "cases": 429,
+  "blocks": 145,
+  "summary_policy": "protect_exact",
+  "queries_sha256": "08226065bf86ef831f36c0fb0fff8ab6f0eaae7780defb3f39a8e05d24b216a4",
+  "qrels_sha256": "f9d80a723a56301f58b4a00effa9e0ff3a94ae71784980f6a4e01306d98042e1",
+  "bootstrap_draws": 20000,
+  "familywise_confidence": 0.95,
+  "point_estimate_leader": "granite-ru",
+  "confirmed_winner": "granite-ru",
+  "unresolved_vs_leader": [],
+  "pairwise_ndcg": [
+    {
+      "first": "e5",
+      "second": "granite97",
+      "delta_ndcg": 0.009088565346003163,
+      "interval": [
+        -0.02780811656750144,
+        0.042133662234987386
+      ]
+    },
+    {
+      "first": "e5",
+      "second": "user2-small",
+      "delta_ndcg": 0.036451944812292525,
+      "interval": [
+        0.00035605083779043816,
+        0.06539028273281862
+      ]
+    },
+    {
+      "first": "e5",
+      "second": "harrier270",
+      "delta_ndcg": -0.01061658026161666,
+      "interval": [
+        -0.0498232083845701,
+        0.021281499443436946
+      ]
+    },
+    {
+      "first": "e5",
+      "second": "granite-ru",
+      "delta_ndcg": -0.21635135847807446,
+      "interval": [
+        -0.27718705636153873,
+        -0.16755185608329423
+      ]
+    },
+    {
+      "first": "granite97",
+      "second": "user2-small",
+      "delta_ndcg": 0.02736337946628936,
+      "interval": [
+        -0.001904324949290245,
+        0.05483967674777705
+      ]
+    },
+    {
+      "first": "granite97",
+      "second": "harrier270",
+      "delta_ndcg": -0.019705145607619823,
+      "interval": [
+        -0.05423951443135852,
+        0.010366690088297935
+      ]
+    },
+    {
+      "first": "granite97",
+      "second": "granite-ru",
+      "delta_ndcg": -0.22543992382407763,
+      "interval": [
+        -0.277469513681813,
+        -0.18657200847725047
+      ]
+    },
+    {
+      "first": "user2-small",
+      "second": "harrier270",
+      "delta_ndcg": -0.047068525073909184,
+      "interval": [
+        -0.07802414753769583,
+        -0.018781871133616825
+      ]
+    },
+    {
+      "first": "user2-small",
+      "second": "granite-ru",
+      "delta_ndcg": -0.252803303290367,
+      "interval": [
+        -0.30435670595584957,
+        -0.21398239929523208
+      ]
+    },
+    {
+      "first": "harrier270",
+      "second": "granite-ru",
+      "delta_ndcg": -0.2057347782164578,
+      "interval": [
+        -0.252784715968848,
+        -0.1696992342413385
+      ]
+    }
+  ],
+  "models": {
+    "e5": {
+      "embedder": {
+        "name": "multilingual-e5-small",
+        "device": "cpu",
+        "precision": "int8"
+      },
+      "reranker": null,
+      "summary_extracted": 69,
+      "two": {
+        "all": {
+          "queries": 858,
+          "recall_at_10": 0.4521986941964747,
+          "ndcg_at_10": 0.34892722876034266,
+          "server_p99_ms": 72.042167
+        },
+        "compact": {
+          "queries": 429,
+          "recall_at_10": 0.6959559290577971,
+          "ndcg_at_10": 0.5109200436534909,
+          "server_p99_ms": 12.628208
+        },
+        "long": {
+          "queries": 429,
+          "recall_at_10": 0.2084414593351523,
+          "ndcg_at_10": 0.18693441386719445,
+          "server_p99_ms": 73.65275
+        }
+      },
+      "three": {
+        "all": {
+          "queries": 858,
+          "recall_at_10": 0.4575520714576868,
+          "ndcg_at_10": 0.35835556174537136,
+          "server_p99_ms": 72.796875
+        },
+        "compact": {
+          "queries": 429,
+          "recall_at_10": 0.6959559290577971,
+          "ndcg_at_10": 0.5109200436534909,
+          "server_p99_ms": 12.628208
+        },
+        "long": {
+          "queries": 429,
+          "recall_at_10": 0.2191482138575764,
+          "ndcg_at_10": 0.2057910798372518,
+          "server_p99_ms": 73.65275
+        }
+      },
+      "three_by_kind": {
+        "event_amount": {
+          "queries": 520,
+          "recall_at_10": 0.4807371794871795,
+          "ndcg_at_10": 0.3053753503016113,
+          "server_p99_ms": 72.784792
+        },
+        "event_day": {
+          "queries": 138,
+          "recall_at_10": 0.3074010433142167,
+          "ndcg_at_10": 0.6204905393150533,
+          "server_p99_ms": 73.106208
+        },
+        "reference": {
+          "queries": 200,
+          "recall_at_10": 0.500875,
+          "ndcg_at_10": 0.315230976976067,
+          "server_p99_ms": 71.454041
+        }
+      },
+      "long_summary_ablation": {
+        "delta_ndcg": 0.018856665970057356,
+        "interval": [
+          0.00857107967343359,
+          0.03629850210770804
+        ]
+      }
+    },
+    "granite97": {
+      "embedder": {
+        "name": "ibm-granite/granite-embedding-97m-multilingual-r2",
+        "device": "mps",
+        "precision": "bfloat16"
+      },
+      "reranker": null,
+      "summary_extracted": 69,
+      "two": {
+        "all": {
+          "queries": 858,
+          "recall_at_10": 0.452843174620928,
+          "ndcg_at_10": 0.34340037116348837,
+          "server_p99_ms": 26.372042
+        },
+        "compact": {
+          "queries": 429,
+          "recall_at_10": 0.7041353691926406,
+          "ndcg_at_10": 0.5070865130515327,
+          "server_p99_ms": 15.12825
+        },
+        "long": {
+          "queries": 429,
+          "recall_at_10": 0.20155098004921532,
+          "ndcg_at_10": 0.17971422927544403,
+          "server_p99_ms": 27.372292
+        }
+      },
+      "three": {
+        "all": {
+          "queries": 858,
+          "recall_at_10": 0.457746823179801,
+          "ndcg_at_10": 0.34926699639936815,
+          "server_p99_ms": 26.523208
+        },
+        "compact": {
+          "queries": 429,
+          "recall_at_10": 0.7041353691926406,
+          "ndcg_at_10": 0.5070865130515327,
+          "server_p99_ms": 15.12825
+        },
+        "long": {
+          "queries": 429,
+          "recall_at_10": 0.21135827716696132,
+          "ndcg_at_10": 0.19144747974720364,
+          "server_p99_ms": 27.373959
+        }
+      },
+      "three_by_kind": {
+        "event_amount": {
+          "queries": 520,
+          "recall_at_10": 0.48070512820512823,
+          "ndcg_at_10": 0.3027924861850106,
+          "server_p99_ms": 27.372292
+        },
+        "event_day": {
+          "queries": 138,
+          "recall_at_10": 0.2860877363884244,
+          "ndcg_at_10": 0.5760199543317334,
+          "server_p99_ms": 26.942791
+        },
+        "reference": {
+          "queries": 200,
+          "recall_at_10": 0.5165,
+          "ndcg_at_10": 0.3136411819833659,
+          "server_p99_ms": 24.196167
+        }
+      },
+      "long_summary_ablation": {
+        "delta_ndcg": 0.011733250471759602,
+        "interval": [
+          0.003187090319766738,
+          0.025803371515169433
+        ]
+      }
+    },
+    "user2-small": {
+      "embedder": {
+        "name": "deepvk/USER2-small",
+        "device": "mps",
+        "precision": "bfloat16"
+      },
+      "reranker": null,
+      "summary_extracted": 69,
+      "two": {
+        "all": {
+          "queries": 858,
+          "recall_at_10": 0.4410839456632547,
+          "ndcg_at_10": 0.31822166006911706,
+          "server_p99_ms": 26.466666
+        },
+        "compact": {
+          "queries": 429,
+          "recall_at_10": 0.6839350310421375,
+          "ndcg_at_10": 0.46556222856430307,
+          "server_p99_ms": 15.055208
+        },
+        "long": {
+          "queries": 429,
+          "recall_at_10": 0.1982328602843719,
+          "ndcg_at_10": 0.17088109157393103,
+          "server_p99_ms": 27.549959
+        }
+      },
+      "three": {
+        "all": {
+          "queries": 858,
+          "recall_at_10": 0.4465731080007203,
+          "ndcg_at_10": 0.321903616933079,
+          "server_p99_ms": 26.466666
+        },
+        "compact": {
+          "queries": 429,
+          "recall_at_10": 0.6839350310421375,
+          "ndcg_at_10": 0.46556222856430307,
+          "server_p99_ms": 15.055208
+        },
+        "long": {
+          "queries": 429,
+          "recall_at_10": 0.20921118495930308,
+          "ndcg_at_10": 0.178245005301855,
+          "server_p99_ms": 27.549959
+        }
+      },
+      "three_by_kind": {
+        "event_amount": {
+          "queries": 520,
+          "recall_at_10": 0.47647435897435897,
+          "ndcg_at_10": 0.2742604709758038,
+          "server_p99_ms": 27.432834
+        },
+        "event_day": {
+          "queries": 138,
+          "recall_at_10": 0.27694246375327064,
+          "ndcg_at_10": 0.5149018147224954,
+          "server_p99_ms": 24.3595
+        },
+        "reference": {
+          "queries": 200,
+          "recall_at_10": 0.485875,
+          "ndcg_at_10": 0.31260703994729727,
+          "server_p99_ms": 23.225875
+        }
+      },
+      "long_summary_ablation": {
+        "delta_ndcg": 0.007363913727923985,
+        "interval": [
+          -0.00044517374561805665,
+          0.018971935546317133
+        ]
+      }
+    },
+    "harrier270": {
+      "embedder": {
+        "name": "microsoft/harrier-oss-v1-270m",
+        "device": "mps",
+        "precision": "bfloat16"
+      },
+      "reranker": null,
+      "summary_extracted": 69,
+      "two": {
+        "all": {
+          "queries": 858,
+          "recall_at_10": 0.48987800749369265,
+          "ndcg_at_10": 0.364332557242023,
+          "server_p99_ms": 54.8335
+        },
+        "compact": {
+          "queries": 429,
+          "recall_at_10": 0.7472266314261327,
+          "ndcg_at_10": 0.5320923746557177,
+          "server_p99_ms": 26.483583
+        },
+        "long": {
+          "queries": 429,
+          "recall_at_10": 0.23252938356125272,
+          "ndcg_at_10": 0.19657273982832832,
+          "server_p99_ms": 55.193584
+        }
+      },
+      "three": {
+        "all": {
+          "queries": 858,
+          "recall_at_10": 0.4920520642066967,
+          "ndcg_at_10": 0.36897214200698825,
+          "server_p99_ms": 65.604417
+        },
+        "compact": {
+          "queries": 429,
+          "recall_at_10": 0.7472266314261327,
+          "ndcg_at_10": 0.5320923746557177,
+          "server_p99_ms": 26.483583
+        },
+        "long": {
+          "queries": 429,
+          "recall_at_10": 0.23687749698726082,
+          "ndcg_at_10": 0.2058519093582588,
+          "server_p99_ms": 66.50275
+        }
+      },
+      "three_by_kind": {
+        "event_amount": {
+          "queries": 520,
+          "recall_at_10": 0.53125,
+          "ndcg_at_10": 0.32454698946739835,
+          "server_p99_ms": 54.56925
+        },
+        "event_day": {
+          "queries": 138,
+          "recall_at_10": 0.3074686310822158,
+          "ndcg_at_10": 0.5663715615150609,
+          "server_p99_ms": 66.50275
+        },
+        "reference": {
+          "queries": 200,
+          "recall_at_10": 0.5175,
+          "ndcg_at_10": 0.3482719391493519,
+          "server_p99_ms": 69.716334
+        }
+      },
+      "long_summary_ablation": {
+        "delta_ndcg": 0.009279169529930487,
+        "interval": [
+          0.001775960527161388,
+          0.020219555544121817
+        ]
+      }
+    },
+    "granite-ru": {
+      "embedder": {
+        "name": "ibm-granite/granite-embedding-97m-multilingual-r2",
+        "device": "mps",
+        "precision": "bfloat16"
+      },
+      "reranker": {
+        "name": "n-bor1sov/RuModernBERT-base-reranker-ru",
+        "device": "mps",
+        "precision": "bfloat16"
+      },
+      "summary_extracted": 69,
+      "two": {
+        "all": {
+          "queries": 858,
+          "recall_at_10": 0.5536483229955874,
+          "ndcg_at_10": 0.5705279911400617,
+          "server_p99_ms": 629.732667
+        },
+        "compact": {
+          "queries": 429,
+          "recall_at_10": 0.8388840643623323,
+          "ndcg_at_10": 0.8591788798045585,
+          "server_p99_ms": 562.029042
+        },
+        "long": {
+          "queries": 429,
+          "recall_at_10": 0.2684125816288425,
+          "ndcg_at_10": 0.28187710247556474,
+          "server_p99_ms": 636.739875
+        }
+      },
+      "three": {
+        "all": {
+          "queries": 858,
+          "recall_at_10": 0.5569365170892321,
+          "ndcg_at_10": 0.5747069202234458,
+          "server_p99_ms": 629.732667
+        },
+        "compact": {
+          "queries": 429,
+          "recall_at_10": 0.8388840643623323,
+          "ndcg_at_10": 0.8591788798045585,
+          "server_p99_ms": 562.029042
+        },
+        "long": {
+          "queries": 429,
+          "recall_at_10": 0.27498896981613186,
+          "ndcg_at_10": 0.290234960642333,
+          "server_p99_ms": 636.739875
+        }
+      },
+      "three_by_kind": {
+        "event_amount": {
+          "queries": 520,
+          "recall_at_10": 0.6065384615384616,
+          "ndcg_at_10": 0.5575743701343552,
+          "server_p99_ms": 629.732667
+        },
+        "event_day": {
+          "queries": 138,
+          "recall_at_10": 0.317583562772182,
+          "ndcg_at_10": 0.6547397059148846,
+          "server_p99_ms": 565.261667
+        },
+        "reference": {
+          "queries": 200,
+          "recall_at_10": 0.593125,
+          "ndcg_at_10": 0.5640289283279886,
+          "server_p99_ms": 633.442042
+        }
+      },
+      "long_summary_ablation": {
+        "delta_ndcg": 0.00835785816676828,
+        "interval": [
+          0.0010385635136366082,
+          0.020733939389872946
+        ]
+      }
+    }
+  },
+  "bm25_control": {
+    "all": {
+      "queries": 858,
+      "recall_at_10": 0.5462392460914111,
+      "ndcg_at_10": 0.4587921783387328,
+      "server_p99_ms": 9.751041
+    },
+    "compact": {
+      "queries": 429,
+      "recall_at_10": 0.8277586190188457,
+      "ndcg_at_10": 0.688627834259825,
+      "server_p99_ms": 6.585333
+    },
+    "long": {
+      "queries": 429,
+      "recall_at_10": 0.2647198731639764,
+      "ndcg_at_10": 0.22895652241764064,
+      "server_p99_ms": 10.102125
+    }
+  }
+}

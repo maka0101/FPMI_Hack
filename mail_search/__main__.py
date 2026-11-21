@@ -9,7 +9,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from .comparison import compare, ranking_metrics, read_relevance
 from .model_catalog import EMBEDDERS, RERANKERS
-from .search import MailboxIndex, read_jsonl
+from .search import MAX_QUERY_CHARS, MailboxIndex, read_jsonl
 
 
 DEFAULT_DATA = Path(__file__).resolve().parent.parent / "mipt_mail_search_participants"
@@ -57,9 +57,9 @@ def create_server(index, port, *, quiet=False):
     page = Path(__file__).with_name("index.html").read_bytes()
     modes = ["bm25"]
     if index.embedder:
-        modes.append("hybrid")
+        modes.extend(("hybrid", "hybrid-summary-raw", "hybrid-summary"))
     if index.reranker:
-        modes.append("hybrid-rerank")
+        modes.extend(("hybrid-rerank", "hybrid-summary-raw-rerank", "hybrid-summary-rerank"))
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, format_string, *args):
@@ -103,14 +103,15 @@ def create_server(index, port, *, quiet=False):
                 as_of = date.fromisoformat(params.get("as_of", [default_day])[0])
                 if request.path == "/api/search":
                     query = params.get("q", [""])[0]
-                    if len(query) > 1000:
-                        raise ValueError("Запрос должен содержать не более 1000 символов")
+                    if len(query) > MAX_QUERY_CHARS:
+                        raise ValueError(f"Запрос должен содержать не более {MAX_QUERY_CHARS} символов")
                     mode = params.get("mode", [modes[-1]])[0]
                     if mode not in modes:
                         raise ValueError(f"Доступные режимы поиска: {', '.join(modes)}")
                     limit = int(params.get("limit", ["20"])[0])
                     result = index.search(
-                        mailbox, query, as_of, limit, hybrid=mode != "bm25", rerank=mode == "hybrid-rerank",
+                        mailbox, query, as_of, limit, hybrid=mode != "bm25", rerank=mode.endswith("-rerank"),
+                        summary_branch="-summary" in mode, protect_exact="-raw" not in mode,
                     )
                 else:
                     doc_id = params.get("doc_id", [""])[0]
@@ -173,9 +174,14 @@ def main():
     comparison.add_argument("--repeats", type=int, default=5)
     comparison.add_argument("--output", type=Path, help="Сохранить метрики в JSON")
     comparison.add_argument("--include-undated", action="store_true", help="Проверить поиск известных писем без дня")
-    for command in (server, comparison):
+    expanded = commands.add_parser("evaluate-expanded", help="Сравнить две и три ветки на расширенной разметке")
+    expanded.add_argument("--suite", type=Path, default=DEFAULT_DATA.parent / "benchmarks" / "expanded")
+    expanded.add_argument("--output", type=Path, required=True)
+    expanded.add_argument("--bm25-control", action="store_true")
+    expanded.add_argument("--raw-summary", action="store_true", help="Отключить защиту точных кодов и сумм")
+    for command in (server, comparison, expanded):
         command.add_argument("--embedder", choices=("e5", *EMBEDDERS),
-                             default="e5" if command is comparison else None)
+                             default=None if command is server else "e5")
         command.add_argument("--model-dir", type=Path, help="Каталог весов энкодера")
         command.add_argument("--embeddings-cache", type=Path)
         command.add_argument("--reranker", choices=RERANKERS)
@@ -199,6 +205,11 @@ def main():
     elif args.command == "compare":
         with create_server(index, 0, quiet=True) as http_server:
             compare(http_server, index, args.data, args.paraphrases, args.repeats, args.output, args.include_undated)
+    elif args.command == "evaluate-expanded":
+        from .expanded_evaluation import evaluate_expanded
+
+        with create_server(index, 0, quiet=True) as http_server:
+            evaluate_expanded(http_server, index, args.suite, args.output, args.bm25_control, args.raw_summary)
 
 
 if __name__ == "__main__":

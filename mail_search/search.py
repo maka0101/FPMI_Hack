@@ -4,6 +4,8 @@ import sqlite3
 from datetime import date, timedelta
 from threading import Lock
 
+from .query_summary import summarize_query
+
 
 MONTHS = {
     name: month
@@ -30,6 +32,7 @@ STOP_WORDS = set(
 )
 CANDIDATE_POOL = 50
 RERANK_LIMIT = 20
+MAX_QUERY_CHARS = 4000
 
 
 def read_jsonl(path):
@@ -127,7 +130,8 @@ class MailboxIndex:
             passages = [row["body"] for row in self.db.execute("SELECT body FROM mail ORDER BY id")]
             self.embeddings = embedder.index(passages, embeddings_cache)
 
-    def search(self, mailbox, query, as_of, limit=20, *, hybrid=True, rerank=False):
+    def search(self, mailbox, query, as_of, limit=20, *, hybrid=True, rerank=False,
+               summary_branch=True, protect_exact=True):
         if mailbox not in self.mailboxes:
             raise ValueError("Неизвестный почтовый ящик")
         if not 1 <= limit <= 1000:
@@ -173,8 +177,15 @@ class MailboxIndex:
 
         eligible_ids = [row["id"] for row in eligible]
         dense_ids = self.embedder.top_ids(self.embeddings, eligible_ids, semantic_query, pool_size)
+        rankings = [[row["id"] for row in lexical], dense_ids]
+        if summary_branch:
+            summary = summarize_query(semantic_query, protect_exact=protect_exact)
+            if summary:
+                summary_ids = self.embedder.top_ids(self.embeddings, eligible_ids, summary, pool_size)
+                if summary_ids and summary_ids != dense_ids:
+                    rankings.append(summary_ids)
         rerank_limit = RERANK_LIMIT if rerank and self.reranker else 0
-        ranked = reciprocal_rank_fusion([row["id"] for row in lexical], dense_ids)[:max(limit, rerank_limit)]
+        ranked = reciprocal_rank_fusion(*rankings)[:max(limit, rerank_limit)]
         apply_rerank = rerank_limit and len(ranked) > 1
         result_fields = fields + ", m.body" if apply_rerank else fields
         placeholders = ",".join("?" for _ in ranked)
