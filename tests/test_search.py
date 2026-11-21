@@ -17,6 +17,13 @@ class RecordingEncoder:
         return eligible_ids[::-1][:limit]
 
 
+class RecordingReranker:
+    def rank(self, query, passages):
+        self.query = query
+        self.passages = passages
+        return list(reversed(range(len(passages))))
+
+
 class HybridSearchTest(TestCase):
     def setUp(self):
         self.directory = TemporaryDirectory()
@@ -56,3 +63,13 @@ class HybridSearchTest(TestCase):
 
     def test_fusion_keeps_candidates_unique_to_either_list(self):
         self.assertEqual(reciprocal_rank_fusion([1, 2], [3, 2]), [2, 1, 3])
+
+    def test_reranker_can_promote_a_candidate_below_the_output_limit(self):
+        reranker = RecordingReranker()
+        self.index.reranker = reranker
+        hybrid = self.index.search("box", "Счёт вчера", self.as_of, 1)
+        reranked = self.index.search("box", "Счёт вчера", self.as_of, 1, rerank=True)
+        self.assertEqual([row["doc_id"] for row in hybrid], ["lexical"])
+        self.assertEqual([row["doc_id"] for row in reranked], ["semantic"])
+        self.assertEqual(reranker.query, "Счёт")
+        self.assertEqual(reranker.passages, ["Тема: Счёт 123", "Тема: Платёжный документ"])

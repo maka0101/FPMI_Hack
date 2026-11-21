@@ -8,10 +8,12 @@ from time import perf_counter
 from urllib.parse import parse_qs, urlsplit
 
 from .comparison import compare, ranking_metrics, read_relevance
+from .model_catalog import EMBEDDERS, RERANKERS
 from .search import MailboxIndex, read_jsonl
 
 
 DEFAULT_DATA = Path(__file__).resolve().parent.parent / "mipt_mail_search_participants"
+DEFAULT_CACHE = DEFAULT_DATA.parent / ".cache"
 
 
 def benchmark(index, data_dir, limit, output):
@@ -53,6 +55,11 @@ def benchmark(index, data_dir, limit, output):
 
 def create_server(index, port, *, quiet=False):
     page = Path(__file__).with_name("index.html").read_bytes()
+    modes = ["bm25"]
+    if index.embedder:
+        modes.append("hybrid")
+    if index.reranker:
+        modes.append("hybrid-rerank")
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, format_string, *args):
@@ -98,13 +105,13 @@ def create_server(index, port, *, quiet=False):
                     query = params.get("q", [""])[0]
                     if len(query) > 1000:
                         raise ValueError("Запрос должен содержать не более 1000 символов")
-                    mode = params.get("mode", ["hybrid" if index.embedder else "bm25"])[0]
-                    if mode not in {"bm25", "hybrid"}:
-                        raise ValueError("Режим поиска должен быть bm25 или hybrid")
-                    if mode == "hybrid" and index.embedder is None:
-                        raise ValueError("Для гибридного поиска требуется multilingual-e5-small")
+                    mode = params.get("mode", [modes[-1]])[0]
+                    if mode not in modes:
+                        raise ValueError(f"Доступные режимы поиска: {', '.join(modes)}")
                     limit = int(params.get("limit", ["20"])[0])
-                    result = index.search(mailbox, query, as_of, limit, hybrid=mode == "hybrid")
+                    result = index.search(
+                        mailbox, query, as_of, limit, hybrid=mode != "bm25", rerank=mode == "hybrid-rerank",
+                    )
                 else:
                     doc_id = params.get("doc_id", [""])[0]
                     result = index.message(mailbox, doc_id, as_of)
@@ -128,6 +135,29 @@ def serve(index, port):
             pass
 
 
+def build_index(args):
+    name = args.embedder or ("e5" if args.model_dir else None)
+    if name is None:
+        return MailboxIndex(args.data)
+    if name == "e5":
+        from .embeddings import E5Encoder
+
+        embedder = E5Encoder(args.model_dir or DEFAULT_CACHE / "e5-model")
+    else:
+        from .torch_models import TorchEncoder
+
+        embedder = TorchEncoder(name, args.model_dir or DEFAULT_CACHE / "models" / name, args.device)
+
+    reranker = None
+    if args.reranker:
+        from .torch_models import CrossEncoder
+
+        model_dir = args.reranker_dir or DEFAULT_CACHE / "models" / args.reranker
+        reranker = CrossEncoder(args.reranker, model_dir, args.device)
+    cache = args.embeddings_cache or DEFAULT_CACHE / f"{name}-embeddings.npz"
+    return MailboxIndex(args.data, embedder, cache, reranker)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Поиск по корпусу писем хакатона")
     parser.add_argument("--data", type=Path, default=DEFAULT_DATA)
@@ -142,29 +172,33 @@ def main():
                             default=DEFAULT_DATA.parent / "benchmarks" / "paraphrases.jsonl")
     comparison.add_argument("--repeats", type=int, default=5)
     comparison.add_argument("--output", type=Path, help="Сохранить метрики в JSON")
+    comparison.add_argument("--include-undated", action="store_true", help="Проверить поиск известных писем без дня")
     for command in (server, comparison):
-        command.add_argument("--model-dir", type=Path, required=command is comparison,
-                             help="Каталог ONNX-модели multilingual-e5-small")
-        command.add_argument("--embeddings-cache", type=Path,
-                             default=DEFAULT_DATA.parent / ".cache" / "e5-embeddings.npz")
+        command.add_argument("--embedder", choices=("e5", *EMBEDDERS),
+                             default="e5" if command is comparison else None)
+        command.add_argument("--model-dir", type=Path, help="Каталог весов энкодера")
+        command.add_argument("--embeddings-cache", type=Path)
+        command.add_argument("--reranker", choices=RERANKERS)
+        command.add_argument("--reranker-dir", type=Path)
+        command.add_argument("--device", choices=("auto", "cpu", "mps", "cuda"), default="auto")
     args = parser.parse_args()
     if args.command == "benchmark" and not 1 <= args.limit <= 1000:
         parser.error("--limit должен быть от 1 до 1000")
     if args.command == "compare" and args.repeats < 1:
         parser.error("--repeats должен быть положительным")
-    if getattr(args, "model_dir", None) is None:
-        index = MailboxIndex(args.data)
-    else:
-        from .embeddings import E5Encoder
-
-        index = MailboxIndex(args.data, E5Encoder(args.model_dir), args.embeddings_cache)
+    if args.command == "benchmark":
+        benchmark(MailboxIndex(args.data), args.data, args.limit, args.output)
+        return
+    if args.reranker_dir and not args.reranker:
+        parser.error("--reranker-dir требует --reranker")
+    if args.reranker and not (args.embedder or args.model_dir):
+        parser.error("--reranker требует --embedder или --model-dir")
+    index = build_index(args)
     if args.command == "serve":
         serve(index, args.port)
     elif args.command == "compare":
         with create_server(index, 0, quiet=True) as http_server:
-            compare(http_server, args.data, args.paraphrases, args.repeats, args.output)
-    else:
-        benchmark(index, args.data, args.limit, args.output)
+            compare(http_server, index, args.data, args.paraphrases, args.repeats, args.output, args.include_undated)
 
 
 if __name__ == "__main__":

@@ -50,3 +50,24 @@ python -m mail_search compare --model-dir .cache/e5-model --repeats 5 \
 Бенчмарк отправляет 99 исходных запросов и 99 [парных перефразировок](benchmarks/paraphrases.jsonl). Перефразировки сделаны вручную по 12 группам запросов с сохранением ящика, дня и `query_id`, поэтому для них используются исходные оценки релевантности. После прогрева запросы выполняются по одному в перемешанном порядке. Сервер считает задержку с разбора HTTP-запроса до сериализованной выдачи, включая обработку запроса, инференс и ранжирование. Запуск, индексация и передача ответа клиенту в этот замер не входят. При пяти повторах p99 рассчитан по 495 вызовам каждой комбинации набора запросов и режима.
 
 [Результаты](benchmarks/results.json) получены на Apple M4 Pro с ONNX INT8 на CPU.
+
+## Сравнение моделей
+
+Кандидаты в ветке `ml-model-candidates` запускаются из локальных весов. Для PyTorch-кандидатов используйте Python 3.10+ и `requirements-ml.txt`.
+
+```sh
+python -m pip install -r requirements-ml.txt
+python -m mail_search.download_models all
+python -m mail_search serve --embedder granite97
+python -m mail_search serve --embedder granite97 --reranker ru-reranker
+```
+
+Энкодер выбирается через `--embedder e5|granite97|user2-small|harrier270`, ранжировщик — через `--reranker ru-reranker|bge-reranker`. Параметр `--device cpu|mps|cuda` позволяет задать устройство PyTorch. По умолчанию сервис использует доступный GPU, а при его отсутствии CPU. У E5 остаётся исходный ONNX на CPU. Для остальных моделей отдельные кэши формируются при первом запуске. С установленным ранжировщиком обычный `/api/search` применяет его к первым 20 кандидатам RRF. Чтобы посмотреть выдачу до ранжировщика, передайте `mode=hybrid`.
+
+```sh
+python -m mail_search compare --embedder granite97 --repeats 3 --include-undated
+python -m mail_search compare --embedder granite97 --reranker ru-reranker \
+  --repeats 3 --include-undated --output benchmarks/ml-granite-ru.json
+```
+
+Параметр `--include-undated` убирает день из перефразировок, сохраняя ящик и дату отсчёта. Для этих запросов отчёт показывает полноту по исходным известным целевым письмам. Другие письма на тот же сюжет могут тоже быть релевантны. Для сравнения ранжировщиков отчёт сохраняет SHA-256 упорядоченных top‑20 по каждому запросу. [Модели и методика эксперимента](benchmarks/models.md)

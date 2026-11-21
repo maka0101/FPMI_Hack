@@ -14,36 +14,23 @@ MAX_TOKENS = 512
 BATCH_SIZE = 32
 
 
-class E5Encoder:
-    def __init__(self, model_dir):
-        model = model_dir / "model_quantized.onnx"
-        if not model.is_file():
-            model = model_dir / "model.onnx"
-        tokenizer = model_dir / "tokenizer.json"
-        self.files = (model, tokenizer)
-        self.tokenizer = Tokenizer.from_file(str(tokenizer))
-        self.tokenizer.enable_truncation(max_length=MAX_TOKENS)
-        options = ort.SessionOptions()
-        options.intra_op_num_threads = min(4, os.cpu_count() or 1)
-        self.session = ort.InferenceSession(str(model), options, providers=["CPUExecutionProvider"])
-        self.input_names = {item.name for item in self.session.get_inputs()}
-
+class DenseEncoder:
     def index(self, passages, cache_path):
         cache_key = self.cache_key(passages) if cache_path else None
         if cache_path and cache_path.is_file():
             with np.load(cache_path, allow_pickle=False) as data:
                 if str(data["key"]) == cache_key:
                     vectors = data["vectors"]
-                    if vectors.shape == (len(passages), DIMENSION) and vectors.dtype == np.float32:
+                    if vectors.shape == (len(passages), self.dimension) and vectors.dtype == np.float32:
                         return vectors
 
-        print(f"Индекс multilingual-e5-small: {len(passages)} писем", file=sys.stderr, flush=True)
-        vectors = np.empty((len(passages), DIMENSION), dtype=np.float32)
+        print(f"Индекс {self.name}: {len(passages)} писем", file=sys.stderr, flush=True)
+        vectors = np.empty((len(passages), self.dimension), dtype=np.float32)
         # Similar text lengths in one batch reduce padding. Rows keep their original order.
         order = sorted(range(len(passages)), key=lambda i: len(passages[i]))
         for start in range(0, len(order), BATCH_SIZE):
             rows = order[start:start + BATCH_SIZE]
-            vectors[rows] = self.encode([f"passage: {passages[i]}" for i in rows])
+            vectors[rows] = self.encode([self.passage_prefix + passages[i] for i in rows])
             if start // BATCH_SIZE % 32 == 31:
                 print(f"Закодировано {start + len(rows)} из {len(order)} писем", file=sys.stderr, flush=True)
 
@@ -60,7 +47,7 @@ class E5Encoder:
         return vectors
 
     def cache_key(self, passages):
-        digest = sha256(f"multilingual-e5-small:{MAX_TOKENS}:mean-pooling-l2:v1".encode())
+        digest = sha256(self.cache_version.encode())
         for path in self.files:
             digest.update(path.name.encode())
             with path.open("rb") as stream:
@@ -71,6 +58,36 @@ class E5Encoder:
             digest.update(len(encoded).to_bytes(8, "big"))
             digest.update(encoded)
         return digest.hexdigest()
+
+    def top_ids(self, embeddings, eligible_ids, query, limit):
+        query_vector = self.encode([self.query_prefix + query])[0]
+        rows = np.asarray(eligible_ids) - 1  # SQLite row IDs start at 1.
+        scores = np.einsum("ij,j->i", embeddings[rows], query_vector)
+        order = np.argsort(-scores, kind="stable")[:limit]
+        return [eligible_ids[position] for position in order]
+
+
+class E5Encoder(DenseEncoder):
+    name = "multilingual-e5-small"
+    device = "cpu"
+    dimension = DIMENSION
+    passage_prefix = "passage: "
+    query_prefix = "query: "
+    cache_version = f"multilingual-e5-small:{MAX_TOKENS}:mean-pooling-l2:v1"
+
+    def __init__(self, model_dir):
+        model = model_dir / "model_quantized.onnx"
+        if not model.is_file():
+            model = model_dir / "model.onnx"
+        tokenizer = model_dir / "tokenizer.json"
+        self.files = (model, tokenizer)
+        self.precision = "int8" if model.name == "model_quantized.onnx" else "float32"
+        self.tokenizer = Tokenizer.from_file(str(tokenizer))
+        self.tokenizer.enable_truncation(max_length=MAX_TOKENS)
+        options = ort.SessionOptions()
+        options.intra_op_num_threads = min(4, os.cpu_count() or 1)
+        self.session = ort.InferenceSession(str(model), options, providers=["CPUExecutionProvider"])
+        self.input_names = {item.name for item in self.session.get_inputs()}
 
     def encode(self, texts):
         batch = self.tokenizer.encode_batch(texts)
@@ -90,10 +107,3 @@ class E5Encoder:
         vectors /= mask.sum(axis=1, dtype=np.float32)[:, None]
         vectors /= np.linalg.norm(vectors, axis=1, keepdims=True)
         return vectors
-
-    def top_ids(self, embeddings, eligible_ids, query, limit):
-        query_vector = self.encode([f"query: {query}"])[0]
-        rows = np.asarray(eligible_ids) - 1  # SQLite row IDs start at 1.
-        scores = np.einsum("ij,j->i", embeddings[rows], query_vector)
-        order = np.argsort(-scores, kind="stable")[:limit]
-        return [eligible_ids[position] for position in order]

@@ -28,6 +28,8 @@ STOP_WORDS = set(
     "а без в во где для до за и из как ли мне на найди найти о об от по покажи "
     "полученные письмо письма писем про с со что это".split()
 )
+CANDIDATE_POOL = 50
+RERANK_LIMIT = 20
 
 
 def read_jsonl(path):
@@ -79,8 +81,9 @@ def fts_expression(words):
 
 
 class MailboxIndex:
-    def __init__(self, data_dir, embedder=None, embeddings_cache=None):
+    def __init__(self, data_dir, embedder=None, embeddings_cache=None, reranker=None):
         self.embedder = embedder
+        self.reranker = reranker
         self.db = sqlite3.connect(":memory:", check_same_thread=False)
         self.db.row_factory = sqlite3.Row
         self.lock = Lock()
@@ -124,7 +127,7 @@ class MailboxIndex:
             passages = [row["body"] for row in self.db.execute("SELECT body FROM mail ORDER BY id")]
             self.embeddings = embedder.index(passages, embeddings_cache)
 
-    def search(self, mailbox, query, as_of, limit=20, *, hybrid=True):
+    def search(self, mailbox, query, as_of, limit=20, *, hybrid=True, rerank=False):
         if mailbox not in self.mailboxes:
             raise ValueError("Неизвестный почтовый ящик")
         if not 1 <= limit <= 1000:
@@ -141,7 +144,7 @@ class MailboxIndex:
 
         use_vectors = hybrid and self.embedder is not None and bool(words)
         fields = "m.id, m.doc_id, m.subject, m.day, substr(m.body, 1, 240) AS preview"
-        pool_size = max(limit, 50) if use_vectors else limit
+        pool_size = max(limit, CANDIDATE_POOL) if use_vectors else limit
         if words:
             sql = f"""
                 SELECT {fields} FROM mail_fts JOIN mail AS m ON m.id = mail_fts.rowid
@@ -170,16 +173,23 @@ class MailboxIndex:
 
         eligible_ids = [row["id"] for row in eligible]
         dense_ids = self.embedder.top_ids(self.embeddings, eligible_ids, semantic_query, pool_size)
-        ranked = reciprocal_rank_fusion([row["id"] for row in lexical], dense_ids)[:limit]
+        rerank_limit = RERANK_LIMIT if rerank and self.reranker else 0
+        ranked = reciprocal_rank_fusion([row["id"] for row in lexical], dense_ids)[:max(limit, rerank_limit)]
+        apply_rerank = rerank_limit and len(ranked) > 1
+        result_fields = fields + ", m.body" if apply_rerank else fields
         placeholders = ",".join("?" for _ in ranked)
         with self.lock:
             results = {
-                row["id"]: search_result(row)
+                row["id"]: row
                 for row in self.db.execute(
-                    f"SELECT {fields} FROM mail m WHERE m.id IN ({placeholders})", ranked
+                    f"SELECT {result_fields} FROM mail m WHERE m.id IN ({placeholders})", ranked
                 )
             }
-        return [results[mail_id] for mail_id in ranked]
+        if apply_rerank:
+            top = ranked[:rerank_limit]
+            positions = self.reranker.rank(semantic_query, [results[mail_id]["body"] for mail_id in top])
+            ranked = [top[position] for position in positions] + ranked[rerank_limit:]
+        return [search_result(results[mail_id]) for mail_id in ranked[:limit]]
 
     def message(self, mailbox, doc_id, as_of):
         with self.lock:

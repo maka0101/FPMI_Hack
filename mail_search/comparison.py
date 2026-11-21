@@ -1,5 +1,6 @@
 from collections import defaultdict
 from datetime import date
+from hashlib import sha256
 from http.client import HTTPConnection
 import json
 from math import ceil, log2
@@ -8,7 +9,7 @@ from statistics import mean
 from threading import Thread
 from urllib.parse import urlencode
 
-from .search import parse_query, read_jsonl
+from .search import CANDIDATE_POOL, DATE_IN_QUERY, RERANK_LIMIT, parse_query, read_jsonl
 
 
 LIMIT = 10
@@ -33,13 +34,13 @@ def dcg(gains):
     return sum((2 ** gain - 1) / log2(rank + 1) for rank, gain in enumerate(gains, 1))
 
 
-def request_search(port, query, mode):
+def request_search(port, query, mode, limit=LIMIT):
     params = urlencode({
         "mailbox": query["synthetic_user"],
         "as_of": query["query_date"],
         "q": query["query"],
         "mode": mode,
-        "limit": LIMIT,
+        "limit": limit,
     })
     connection = HTTPConnection("127.0.0.1", port, timeout=30)
     try:
@@ -54,7 +55,7 @@ def request_search(port, query, mode):
         connection.close()
 
 
-def compare(server, data_dir, paraphrases_path, repeats, output):
+def compare(server, index, data_dir, paraphrases_path, repeats, output, include_undated=False):
     originals = list(read_jsonl(data_dir / "queries_dev.jsonl"))
     paraphrase_rows = list(read_jsonl(paraphrases_path))
     paraphrases = {row["query_id"]: row["query"] for row in paraphrase_rows}
@@ -72,16 +73,25 @@ def compare(server, data_dir, paraphrases_path, repeats, output):
 
     gold = read_relevance(data_dir)
     corpora = {"original": originals, "paraphrase": rewritten}
-    jobs = [(name, mode, row) for name, rows in corpora.items() for mode in MODES for row in rows]
+    if include_undated:
+        corpora["paraphrase_no_day"] = [
+            {**row, "query": DATE_IN_QUERY.sub(" ", row["query"], count=1).strip()} for row in rewritten
+        ]
+    modes = (*MODES, "hybrid-rerank") if index.reranker else MODES
+    receipts = [row for row in originals if "электронными чеками" in row["query"].lower()]
+    jobs = [(name, mode, row) for name, rows in corpora.items() for mode in modes for row in rows]
     scores = defaultdict(list)
     timings = defaultdict(list)
+    rankings = defaultdict(dict)
+    receipt_pool_misses = {}
+    candidate_hash = sha256()
     rng = Random(42)
     worker = Thread(target=server.serve_forever, daemon=True)
     worker.start()
     try:
         for rows in corpora.values():
             for row in rng.sample(rows, min(8, len(rows))):
-                for mode in MODES:
+                for mode in modes:
                     request_search(server.server_port, row, mode)
         for repeat in range(repeats):
             rng.shuffle(jobs)
@@ -89,27 +99,66 @@ def compare(server, data_dir, paraphrases_path, repeats, output):
                 ids, duration = request_search(server.server_port, row, mode)
                 key = (name, mode)
                 timings[key].append(duration)
-                if repeat == 0 and gold[row["query_id"]]:
-                    scores[key].append(ranking_metrics(ids, gold[row["query_id"]], LIMIT))
+                if repeat == 0:
+                    query_id = row["query_id"]
+                    rankings[key][query_id] = ids
+                    if gold[query_id]:
+                        scores[key].append(ranking_metrics(ids, gold[query_id], LIMIT))
+        if index.reranker:
+            for name, rows in corpora.items():
+                for row in rows:
+                    candidates, _ = request_search(server.server_port, row, "hybrid", RERANK_LIMIT)
+                    query_id = row["query_id"]
+                    if not set(rankings[name, "hybrid-rerank"][query_id]).issubset(candidates):
+                        raise RuntimeError(f"Ранжировщик вернул письмо вне top-{RERANK_LIMIT}: {query_id}")
+                    candidate_hash.update(json.dumps([name, query_id, candidates]).encode())
+        for row in receipts:
+            query_id = row["query_id"]
+            lexical_pool, _ = request_search(server.server_port, row, "bm25", CANDIDATE_POOL)
+            receipt_pool_misses[query_id] = set(gold[query_id]).difference(lexical_pool)
     finally:
         server.shutdown()
         worker.join()
 
-    report = {"limit": LIMIT, "repeats": repeats, "results": {}}
+    report = {
+        "limit": LIMIT, "repeats": repeats,
+        "embedder": model_metadata(index.embedder), "reranker": model_metadata(index.reranker),
+        "results": {},
+    }
+    if index.reranker:
+        report["rerank_candidates"] = {"limit": RERANK_LIMIT, "sha256": candidate_hash.hexdigest()}
     for name, rows in corpora.items():
         report["results"][name] = {}
-        for mode in MODES:
+        for mode in modes:
             samples = sorted(timings[name, mode])
             recall, ndcg = zip(*scores[name, mode])
             result = {
                 "queries": len(rows),
-                "recall_at_10": mean(recall),
-                "ndcg_at_10": mean(ndcg),
                 "server_p99_ms": samples[ceil(0.99 * len(samples)) - 1],
                 "latency_samples": len(samples),
             }
+            if name == "paraphrase_no_day":
+                result["known_target_recall_at_10"] = mean(recall)
+                quality = f"Known target Recall@10 {mean(recall):.4f}"
+            else:
+                result.update(recall_at_10=mean(recall), ndcg_at_10=mean(ndcg))
+                quality = f"Recall@10 {mean(recall):.4f}  nDCG@10 {mean(ndcg):.4f}"
             report["results"][name][mode] = result
-            print(f"{name:10} {mode:6}  Recall@10 {result['recall_at_10']:.4f}  nDCG@10 {result['ndcg_at_10']:.4f}"
-                  f"  Server p99 {result['server_p99_ms']:.2f} ms ({len(samples)} запросов)")
+            print(f"{name:18} {mode:13} {quality}  Server p99 {result['server_p99_ms']:.2f} ms"
+                  f" ({len(samples)} запросов)", flush=True)
+    if receipts:
+        report["receipts_missed_by_bm25"] = {
+            "bm25_candidate_limit": CANDIDATE_POOL,
+            "query_document_pairs": sum(map(len, receipt_pool_misses.values())),
+            "recovered_at_10": {
+                mode: sum(len(doc_ids.intersection(rankings["original", mode][query_id]))
+                          for query_id, doc_ids in receipt_pool_misses.items())
+                for mode in modes if mode != "bm25"
+            },
+        }
     if output:
         output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def model_metadata(model):
+    return {"name": model.name, "device": model.device, "precision": model.precision} if model else None
