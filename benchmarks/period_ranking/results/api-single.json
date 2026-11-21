@@ -1,0 +1,10 @@
+{
+  "searcher": "dated-period:hybrid-subject",
+  "url": "http://127.0.0.1:8876/api/search",
+  "k": 20,
+  "requests": 387,
+  "concurrency": 1,
+  "server_p99_ms": 46.404,
+  "http_p99_ms": 47.402,
+  "server_p99_under_1s": true
+}

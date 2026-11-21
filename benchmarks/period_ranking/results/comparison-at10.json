@@ -1,0 +1,194 @@
+{
+  "dated:bm25": {
+    "holdout": {
+      "queries": 30,
+      "recall_at_10": 0.762129,
+      "ndcg_at_10": 0.802192
+    },
+    "paraphrase": {
+      "queries": 10,
+      "recall_at_10": 1.0,
+      "ndcg_at_10": 0.88232
+    },
+    "no_date": {
+      "queries": 10,
+      "recall_at_10": 0.625534,
+      "ndcg_at_10": 0.612978
+    },
+    "near_event": {
+      "queries": 10,
+      "recall_at_10": 0.660853,
+      "ndcg_at_10": 0.911278
+    },
+    "public": {
+      "queries": 99,
+      "recall_at_10": 0.893223,
+      "ndcg_at_10": 0.923932
+    },
+    "exact_received_date": {
+      "queries": 119,
+      "recall_at_10": 0.882669,
+      "ndcg_at_10": 0.919372
+    }
+  },
+  "dated:bm25-subject": {
+    "holdout": {
+      "queries": 30,
+      "recall_at_10": 0.818824,
+      "ndcg_at_10": 0.837589
+    },
+    "paraphrase": {
+      "queries": 10,
+      "recall_at_10": 1.0,
+      "ndcg_at_10": 0.88232
+    },
+    "no_date": {
+      "queries": 10,
+      "recall_at_10": 0.79562,
+      "ndcg_at_10": 0.719168
+    },
+    "near_event": {
+      "queries": 10,
+      "recall_at_10": 0.660853,
+      "ndcg_at_10": 0.911278
+    },
+    "public": {
+      "queries": 99,
+      "recall_at_10": 0.890751,
+      "ndcg_at_10": 0.936245
+    },
+    "exact_received_date": {
+      "queries": 119,
+      "recall_at_10": 0.880613,
+      "ndcg_at_10": 0.929616
+    }
+  },
+  "dated:dense": {
+    "holdout": {
+      "queries": 30,
+      "recall_at_10": 0.7362,
+      "ndcg_at_10": 0.82616
+    },
+    "paraphrase": {
+      "queries": 10,
+      "recall_at_10": 1.0,
+      "ndcg_at_10": 0.95
+    },
+    "no_date": {
+      "queries": 10,
+      "recall_at_10": 0.555609,
+      "ndcg_at_10": 0.562373
+    },
+    "near_event": {
+      "queries": 10,
+      "recall_at_10": 0.652992,
+      "ndcg_at_10": 0.966108
+    },
+    "public": {
+      "queries": 99,
+      "recall_at_10": 0.878346,
+      "ndcg_at_10": 0.924486
+    },
+    "exact_received_date": {
+      "queries": 119,
+      "recall_at_10": 0.869632,
+      "ndcg_at_10": 0.930128
+    }
+  },
+  "dated-period:hybrid-subject": {
+    "holdout": {
+      "queries": 30,
+      "recall_at_10": 0.782624,
+      "ndcg_at_10": 0.878184
+    },
+    "paraphrase": {
+      "queries": 10,
+      "recall_at_10": 1.0,
+      "ndcg_at_10": 0.910922
+    },
+    "no_date": {
+      "queries": 10,
+      "recall_at_10": 0.685791,
+      "ndcg_at_10": 0.749341
+    },
+    "near_event": {
+      "queries": 10,
+      "recall_at_10": 0.662083,
+      "ndcg_at_10": 0.974288
+    },
+    "public": {
+      "queries": 99,
+      "recall_at_10": 0.89064,
+      "ndcg_at_10": 0.94993
+    },
+    "exact_received_date": {
+      "queries": 119,
+      "recall_at_10": 0.880623,
+      "ndcg_at_10": 0.948699
+    }
+  },
+  "dated:hybrid": {
+    "holdout": {
+      "queries": 30,
+      "recall_at_10": 0.739078,
+      "ndcg_at_10": 0.837015
+    },
+    "paraphrase": {
+      "queries": 10,
+      "recall_at_10": 1.0,
+      "ndcg_at_10": 0.93232
+    },
+    "no_date": {
+      "queries": 10,
+      "recall_at_10": 0.589209,
+      "ndcg_at_10": 0.653692
+    },
+    "near_event": {
+      "queries": 10,
+      "recall_at_10": 0.628025,
+      "ndcg_at_10": 0.925032
+    },
+    "public": {
+      "queries": 99,
+      "recall_at_10": 0.889186,
+      "ndcg_at_10": 0.936457
+    },
+    "exact_received_date": {
+      "queries": 119,
+      "recall_at_10": 0.876552,
+      "ndcg_at_10": 0.935149
+    }
+  },
+  "dated-period:hybrid": {
+    "holdout": {
+      "queries": 30,
+      "recall_at_10": 0.753209,
+      "ndcg_at_10": 0.848422
+    },
+    "paraphrase": {
+      "queries": 10,
+      "recall_at_10": 1.0,
+      "ndcg_at_10": 0.910922
+    },
+    "no_date": {
+      "queries": 10,
+      "recall_at_10": 0.589209,
+      "ndcg_at_10": 0.653692
+    },
+    "near_event": {
+      "queries": 10,
+      "recall_at_10": 0.670416,
+      "ndcg_at_10": 0.98065
+    },
+    "public": {
+      "queries": 99,
+      "recall_at_10": 0.887253,
+      "ndcg_at_10": 0.945133
+    },
+    "exact_received_date": {
+      "queries": 119,
+      "recall_at_10": 0.878506,
+      "ndcg_at_10": 0.945243
+    }
+  }
+}

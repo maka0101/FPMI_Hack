@@ -28,4 +28,5 @@ SEARCH_MODE=hybrid MODEL_PROFILE=encoder-a python -m mail_search serve
 - Добавить модель, понять формат профиля и совместимость индекса. [Профили и индексы](profiles-and-indexes.md)
 - Проверить запрос к ML, готовность и правила фильтрации. [Контракт Backend ↔ ML](../contracts/ml-search-v1.md)
 - Сравнить результаты, повторить прогон и измерить задержку. [Эксперименты](experiments.md)
+- Сравнить BM25, USER2-base и гибриды на запросах к периоду. [Эксперимент с ранжированием писем](../ranking-evaluation.md)
 - Поднять Compose, подключить VM через SSH, переключить модель и проверить откат. [Инфраструктура](../infrastructure.md)

@@ -1,0 +1,3475 @@
+{
+  "all": {
+    "queries": 99,
+    "scored_queries": 99,
+    "max_returned": 20,
+    "metrics": {
+      "@10": {
+        "recall": 0.893223,
+        "ndcg": 0.923932,
+        "mrr": 0.921717
+      },
+      "@20": {
+        "recall": 0.953298,
+        "ndcg": 0.93746,
+        "mrr": 0.922494
+      }
+    }
+  },
+  "mixed_same_day": {
+    "queries": 50,
+    "scored_queries": 50,
+    "max_returned": 20,
+    "metrics": {
+      "@10": {
+        "recall": 0.841722,
+        "ndcg": 0.849386,
+        "mrr": 0.845
+      },
+      "@20": {
+        "recall": 0.94458,
+        "ndcg": 0.876171,
+        "mrr": 0.846538
+      }
+    }
+  },
+  "counts": {
+    "correct_topic": 99,
+    "correct_date": 99,
+    "unavoidable_at_10": 196,
+    "lost_slots_at_10": 35,
+    "missed_at_10_in_top_20": 110,
+    "missed_at_20": 121,
+    "unavoidable_at_20": 104,
+    "queries_with_improvable_rank": 14,
+    "queries_with_improvable_in_top_20": 11,
+    "improvable_in_top_20": 20
+  },
+  "queries_with_misses": 21,
+  "cases": [
+    {
+      "query_id": "H-c520a90e0f715e6cd77d",
+      "synthetic_user": "box-2d28af4e4602",
+      "query": "Найди письма с электронными чеками, полученные 1 октября 2028 года.",
+      "query_date": "2028-10-02",
+      "expected_day": "2028-10-01",
+      "expected_topic": "письма с электронными чеками",
+      "parsed_period": "01.10.2028",
+      "parsed_topic": "письма с электронными чеками",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 16,
+      "relevant_count": 12,
+      "unavoidable_at_10": 2,
+      "top_20": [
+        "L-680dbba379cd06ccc1a1",
+        "L-8d11fe7fbe46533436d6",
+        "L-3165fee07648b2f2f384",
+        "L-2ea52497ccbae25ebd1c",
+        "L-e0852cc1b60d9bf44ca8",
+        "L-3bf90f7090c1e70da701",
+        "L-0760b4687dc3dbfbe9e5",
+        "L-00ecfc2fd51ad9834d47",
+        "L-4f3df88a9ee9ba2c18e1",
+        "L-89851983ae3ab29c4fd7",
+        "L-5e095210e809b1e19a0b",
+        "L-7191ecf5c8777a4b76fb",
+        "L-11f34d0d31a30c9e6c8c",
+        "L-d402262128749b28af19",
+        "L-8be60f7ff5e77e046cfd",
+        "L-2b3ba3a7d1b12f297a5c",
+        "L-ccac8e956526f5eba7d2",
+        "L-6be6e8802d76d917c5e9",
+        "L-41532aa1ff776147ad3e",
+        "L-530ab9920c529825f4c4"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-5e095210e809b1e19a0b",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 0.546027086670146,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-4f3df88a9ee9ba2c18e1"
+          ]
+        },
+        {
+          "doc_id": "L-7191ecf5c8777a4b76fb",
+          "rank": 12,
+          "in_top_20": true,
+          "score": 0.5400799504735545,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-4f3df88a9ee9ba2c18e1"
+          ]
+        },
+        {
+          "doc_id": "L-11f34d0d31a30c9e6c8c",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 0.07096464156699074,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-4f3df88a9ee9ba2c18e1"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-fce276dacbc2c7ffdb1a",
+      "synthetic_user": "box-2d28af4e4602",
+      "query": "Найди письма с электронными чеками, полученные 7 октября 2028 года.",
+      "query_date": "2028-10-08",
+      "expected_day": "2028-10-07",
+      "expected_topic": "письма с электронными чеками",
+      "parsed_period": "07.10.2028",
+      "parsed_topic": "письма с электронными чеками",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 11,
+      "relevant_count": 8,
+      "unavoidable_at_10": 0,
+      "top_20": [
+        "L-b2688b930f4a21cf4c6a",
+        "L-3f77e2fe3a07cf723d5c",
+        "L-9f7f948a4c63e37c8d78",
+        "L-b02db43213f5de670f75",
+        "L-d22c90127eacf805586e",
+        "L-c1dd522d391e4b9fd11a",
+        "L-b1d62e54e55f21817de7",
+        "L-6664779501adbbef7089",
+        "L-8ca4f2c93fccb649d426",
+        "L-4ae77545a52cb9996e2a",
+        "L-c57fbaaa99b33715d5f4",
+        "L-c0a098aed3cd12e983bc",
+        "L-ccac8e956526f5eba7d2",
+        "L-6be6e8802d76d917c5e9",
+        "L-41532aa1ff776147ad3e",
+        "L-530ab9920c529825f4c4",
+        "L-aff64b1cc4cc499a96e9",
+        "L-72d350569dd508778173",
+        "L-7860680c076bc400b443",
+        "L-fc1e6a4e983a6e58519b"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-c57fbaaa99b33715d5f4",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 0.10633722306095258,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-b1d62e54e55f21817de7",
+            "L-6664779501adbbef7089",
+            "L-8ca4f2c93fccb649d426"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "synthetic_user": "box-2d28af4e4602",
+      "query": "Найди письма с электронными чеками, полученные 10 октября 2028 года.",
+      "query_date": "2028-10-11",
+      "expected_day": "2028-10-10",
+      "expected_topic": "письма с электронными чеками",
+      "parsed_period": "10.10.2028",
+      "parsed_topic": "письма с электронными чеками",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 23,
+      "relevant_count": 21,
+      "unavoidable_at_10": 11,
+      "top_20": [
+        "L-378f6333a0a89e85dca5",
+        "L-fce138193fabf290e304",
+        "L-82aae4334a3b9bf98074",
+        "L-01c9fa38b87d6d375d4d",
+        "L-7327ecc60da3f878f067",
+        "L-03975eaa22e26c42a8f5",
+        "L-d34c35376af5aa8c275b",
+        "L-27ca2147fca352b3e5af",
+        "L-8ffb8f2f38b06560720a",
+        "L-d4b60dc431f88cb26748",
+        "L-b293172fb374b85f1dac",
+        "L-df5c7772d8f104ffd60a",
+        "L-a58cf08d408f2a4a4729",
+        "L-35e81096cfb1aa2f8497",
+        "L-50a34058d7602050a862",
+        "L-497b17ac5202603e2510",
+        "L-26dc669366e829c0eb30",
+        "L-6f10073fad83e87a9e79",
+        "L-ab74102bd16653c96a87",
+        "L-833f3bab25d71833a5f0"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-b293172fb374b85f1dac",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 1.67970231008429,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-df5c7772d8f104ffd60a",
+          "rank": 12,
+          "in_top_20": true,
+          "score": 1.5099253830838708,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-a58cf08d408f2a4a4729",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 1.4790859613468528,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-35e81096cfb1aa2f8497",
+          "rank": 14,
+          "in_top_20": true,
+          "score": 1.341496280308658,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-50a34058d7602050a862",
+          "rank": 15,
+          "in_top_20": true,
+          "score": 0.797361058683798,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-497b17ac5202603e2510",
+          "rank": 16,
+          "in_top_20": true,
+          "score": 0.6151271110617671,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-26dc669366e829c0eb30",
+          "rank": 17,
+          "in_top_20": true,
+          "score": 0.5973079248084933,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-6f10073fad83e87a9e79",
+          "rank": 18,
+          "in_top_20": true,
+          "score": 0.5936918013551877,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-ab74102bd16653c96a87",
+          "rank": 19,
+          "in_top_20": true,
+          "score": 0.11059607184960153,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-833f3bab25d71833a5f0",
+          "rank": 20,
+          "in_top_20": true,
+          "score": 0.10774500612690642,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-ba72abadfe727c61c3c7",
+          "rank": 21,
+          "in_top_20": false,
+          "score": 0.10056314288765922,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        }
+      ]
+    },
+    {
+      "query_id": "H-41f5e484948f2ab2bfa5",
+      "synthetic_user": "box-84bd433469cb",
+      "query": "Найди уведомления о погрузке контейнеров, полученные 13 сентября 2028 года.",
+      "query_date": "2028-09-14",
+      "expected_day": "2028-09-13",
+      "expected_topic": "уведомления о погрузке контейнеров",
+      "parsed_period": "13.09.2028",
+      "parsed_topic": "уведомления о погрузке контейнеров",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 59,
+      "relevant_count": 11,
+      "unavoidable_at_10": 1,
+      "top_20": [
+        "L-0e9335069211bc4b17da",
+        "L-175a5a85fd2787cb7a1c",
+        "L-8261760b36b323093c5f",
+        "L-110b94555ee8fd166d0b",
+        "L-c8ef8e0e2c85d624ae9c",
+        "L-de81a549f275de01c611",
+        "L-9cc80b3d44a942875bba",
+        "L-a1f7036d261cd25f4f0a",
+        "L-8dd9cfdbda70f5d553c8",
+        "L-7a21a7cd6391dc6f4043",
+        "L-3f1a51a570af3b32a626",
+        "L-3a33b0bca0ecb591d5da",
+        "L-74f3dc91fce6d46520ba",
+        "L-094dde944deda9177d72",
+        "L-70908aca9ea7f3dfefd2",
+        "L-80188f7041b7a71fa885",
+        "L-8c7a862b52dea4e3ff5f",
+        "L-9e8a52c28baa6f99ca71",
+        "L-e880ebccf685056a0378",
+        "L-367e28a62e5ab0b80070"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-2312a0e8e825a1f3592a",
+          "rank": 27,
+          "in_top_20": false,
+          "score": 0.05767843475338044,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-0e9335069211bc4b17da",
+            "L-c8ef8e0e2c85d624ae9c",
+            "L-de81a549f275de01c611",
+            "L-9cc80b3d44a942875bba",
+            "L-a1f7036d261cd25f4f0a",
+            "L-7a21a7cd6391dc6f4043",
+            "L-3f1a51a570af3b32a626",
+            "L-3a33b0bca0ecb591d5da",
+            "L-74f3dc91fce6d46520ba",
+            "L-094dde944deda9177d72",
+            "L-70908aca9ea7f3dfefd2",
+            "L-80188f7041b7a71fa885",
+            "L-8c7a862b52dea4e3ff5f",
+            "L-9e8a52c28baa6f99ca71",
+            "L-e880ebccf685056a0378",
+            "L-367e28a62e5ab0b80070",
+            "L-378cfa8718be112284a0",
+            "L-5cacba3476536524a3b1",
+            "L-4f0e2b619e37a9dd98f6",
+            "L-b31ef7855051fddb80a6",
+            "L-c34a94d1fefc1d22209f",
+            "L-f652cb3868a7f3b20266"
+          ]
+        },
+        {
+          "doc_id": "L-0c7e79dc7efffda0f20f",
+          "rank": 39,
+          "in_top_20": false,
+          "score": 0.05499988612576404,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-0e9335069211bc4b17da",
+            "L-c8ef8e0e2c85d624ae9c",
+            "L-de81a549f275de01c611",
+            "L-9cc80b3d44a942875bba",
+            "L-a1f7036d261cd25f4f0a",
+            "L-7a21a7cd6391dc6f4043",
+            "L-3f1a51a570af3b32a626",
+            "L-3a33b0bca0ecb591d5da",
+            "L-74f3dc91fce6d46520ba",
+            "L-094dde944deda9177d72",
+            "L-70908aca9ea7f3dfefd2",
+            "L-80188f7041b7a71fa885",
+            "L-8c7a862b52dea4e3ff5f",
+            "L-9e8a52c28baa6f99ca71",
+            "L-e880ebccf685056a0378",
+            "L-367e28a62e5ab0b80070",
+            "L-378cfa8718be112284a0",
+            "L-5cacba3476536524a3b1",
+            "L-4f0e2b619e37a9dd98f6",
+            "L-b31ef7855051fddb80a6",
+            "L-c34a94d1fefc1d22209f",
+            "L-f652cb3868a7f3b20266",
+            "L-f81e268701b38c487a4d",
+            "L-36074f5686f0100d507e",
+            "L-d91c165e1580d133568c",
+            "L-acb13dba2ae7b93ee87a",
+            "L-07b6a9f646dbea4e8356",
+            "L-636af3dc82c70c3c2527",
+            "L-a14bfbea7df973679d26",
+            "L-2d76cdee18c604eb2a14",
+            "L-5baffa47d34cfbcff639",
+            "L-873289abec7603ad9929",
+            "L-afb6aa76c8d112435f30"
+          ]
+        },
+        {
+          "doc_id": "L-954cc30da372178227e9",
+          "rank": 40,
+          "in_top_20": false,
+          "score": 0.05463741105655909,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-0e9335069211bc4b17da",
+            "L-c8ef8e0e2c85d624ae9c",
+            "L-de81a549f275de01c611",
+            "L-9cc80b3d44a942875bba",
+            "L-a1f7036d261cd25f4f0a",
+            "L-7a21a7cd6391dc6f4043",
+            "L-3f1a51a570af3b32a626",
+            "L-3a33b0bca0ecb591d5da",
+            "L-74f3dc91fce6d46520ba",
+            "L-094dde944deda9177d72",
+            "L-70908aca9ea7f3dfefd2",
+            "L-80188f7041b7a71fa885",
+            "L-8c7a862b52dea4e3ff5f",
+            "L-9e8a52c28baa6f99ca71",
+            "L-e880ebccf685056a0378",
+            "L-367e28a62e5ab0b80070",
+            "L-378cfa8718be112284a0",
+            "L-5cacba3476536524a3b1",
+            "L-4f0e2b619e37a9dd98f6",
+            "L-b31ef7855051fddb80a6",
+            "L-c34a94d1fefc1d22209f",
+            "L-f652cb3868a7f3b20266",
+            "L-f81e268701b38c487a4d",
+            "L-36074f5686f0100d507e",
+            "L-d91c165e1580d133568c",
+            "L-acb13dba2ae7b93ee87a",
+            "L-07b6a9f646dbea4e8356",
+            "L-636af3dc82c70c3c2527",
+            "L-a14bfbea7df973679d26",
+            "L-2d76cdee18c604eb2a14",
+            "L-5baffa47d34cfbcff639",
+            "L-873289abec7603ad9929",
+            "L-afb6aa76c8d112435f30"
+          ]
+        },
+        {
+          "doc_id": "L-e06c6ba09e6d79f7e460",
+          "rank": 46,
+          "in_top_20": false,
+          "score": 0.05205397754771058,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-0e9335069211bc4b17da",
+            "L-c8ef8e0e2c85d624ae9c",
+            "L-de81a549f275de01c611",
+            "L-9cc80b3d44a942875bba",
+            "L-a1f7036d261cd25f4f0a",
+            "L-7a21a7cd6391dc6f4043",
+            "L-3f1a51a570af3b32a626",
+            "L-3a33b0bca0ecb591d5da",
+            "L-74f3dc91fce6d46520ba",
+            "L-094dde944deda9177d72",
+            "L-70908aca9ea7f3dfefd2",
+            "L-80188f7041b7a71fa885",
+            "L-8c7a862b52dea4e3ff5f",
+            "L-9e8a52c28baa6f99ca71",
+            "L-e880ebccf685056a0378",
+            "L-367e28a62e5ab0b80070",
+            "L-378cfa8718be112284a0",
+            "L-5cacba3476536524a3b1",
+            "L-4f0e2b619e37a9dd98f6",
+            "L-b31ef7855051fddb80a6",
+            "L-c34a94d1fefc1d22209f",
+            "L-f652cb3868a7f3b20266",
+            "L-f81e268701b38c487a4d",
+            "L-36074f5686f0100d507e",
+            "L-d91c165e1580d133568c",
+            "L-acb13dba2ae7b93ee87a",
+            "L-07b6a9f646dbea4e8356",
+            "L-636af3dc82c70c3c2527",
+            "L-a14bfbea7df973679d26",
+            "L-2d76cdee18c604eb2a14",
+            "L-5baffa47d34cfbcff639",
+            "L-873289abec7603ad9929",
+            "L-afb6aa76c8d112435f30",
+            "L-e7a9388298f5dde639a3",
+            "L-129890756678c5d478c0",
+            "L-22ebe879aa6275217ec2",
+            "L-dbc0ea1dc6908db86379",
+            "L-c5230f7cc777a525c60e"
+          ]
+        },
+        {
+          "doc_id": "L-d95cdd88b978e338d671",
+          "rank": 49,
+          "in_top_20": false,
+          "score": 0.04523709094344101,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-0e9335069211bc4b17da",
+            "L-c8ef8e0e2c85d624ae9c",
+            "L-de81a549f275de01c611",
+            "L-9cc80b3d44a942875bba",
+            "L-a1f7036d261cd25f4f0a",
+            "L-7a21a7cd6391dc6f4043",
+            "L-3f1a51a570af3b32a626",
+            "L-3a33b0bca0ecb591d5da",
+            "L-74f3dc91fce6d46520ba",
+            "L-094dde944deda9177d72",
+            "L-70908aca9ea7f3dfefd2",
+            "L-80188f7041b7a71fa885",
+            "L-8c7a862b52dea4e3ff5f",
+            "L-9e8a52c28baa6f99ca71",
+            "L-e880ebccf685056a0378",
+            "L-367e28a62e5ab0b80070",
+            "L-378cfa8718be112284a0",
+            "L-5cacba3476536524a3b1",
+            "L-4f0e2b619e37a9dd98f6",
+            "L-b31ef7855051fddb80a6",
+            "L-c34a94d1fefc1d22209f",
+            "L-f652cb3868a7f3b20266",
+            "L-f81e268701b38c487a4d",
+            "L-36074f5686f0100d507e",
+            "L-d91c165e1580d133568c",
+            "L-acb13dba2ae7b93ee87a",
+            "L-07b6a9f646dbea4e8356",
+            "L-636af3dc82c70c3c2527",
+            "L-a14bfbea7df973679d26",
+            "L-2d76cdee18c604eb2a14",
+            "L-5baffa47d34cfbcff639",
+            "L-873289abec7603ad9929",
+            "L-afb6aa76c8d112435f30",
+            "L-e7a9388298f5dde639a3",
+            "L-129890756678c5d478c0",
+            "L-22ebe879aa6275217ec2",
+            "L-dbc0ea1dc6908db86379",
+            "L-c5230f7cc777a525c60e",
+            "L-e81bfaf236d05a6f5c93",
+            "L-aeed302221dfb6092dd2"
+          ]
+        },
+        {
+          "doc_id": "L-ffd355cd4506b46dc106",
+          "rank": 56,
+          "in_top_20": false,
+          "score": 0.0,
+          "reason": "no_lexical_match",
+          "higher_nonrelevant_ids": [
+            "L-0e9335069211bc4b17da",
+            "L-c8ef8e0e2c85d624ae9c",
+            "L-de81a549f275de01c611",
+            "L-9cc80b3d44a942875bba",
+            "L-a1f7036d261cd25f4f0a",
+            "L-7a21a7cd6391dc6f4043",
+            "L-3f1a51a570af3b32a626",
+            "L-3a33b0bca0ecb591d5da",
+            "L-74f3dc91fce6d46520ba",
+            "L-094dde944deda9177d72",
+            "L-70908aca9ea7f3dfefd2",
+            "L-80188f7041b7a71fa885",
+            "L-8c7a862b52dea4e3ff5f",
+            "L-9e8a52c28baa6f99ca71",
+            "L-e880ebccf685056a0378",
+            "L-367e28a62e5ab0b80070",
+            "L-378cfa8718be112284a0",
+            "L-5cacba3476536524a3b1",
+            "L-4f0e2b619e37a9dd98f6",
+            "L-b31ef7855051fddb80a6",
+            "L-c34a94d1fefc1d22209f",
+            "L-f652cb3868a7f3b20266",
+            "L-f81e268701b38c487a4d",
+            "L-36074f5686f0100d507e",
+            "L-d91c165e1580d133568c",
+            "L-acb13dba2ae7b93ee87a",
+            "L-07b6a9f646dbea4e8356",
+            "L-636af3dc82c70c3c2527",
+            "L-a14bfbea7df973679d26",
+            "L-2d76cdee18c604eb2a14",
+            "L-5baffa47d34cfbcff639",
+            "L-873289abec7603ad9929",
+            "L-afb6aa76c8d112435f30",
+            "L-e7a9388298f5dde639a3",
+            "L-129890756678c5d478c0",
+            "L-22ebe879aa6275217ec2",
+            "L-dbc0ea1dc6908db86379",
+            "L-c5230f7cc777a525c60e",
+            "L-e81bfaf236d05a6f5c93",
+            "L-aeed302221dfb6092dd2",
+            "L-30510b7cf3756caa6b86",
+            "L-0720bc00dcf1157874a8",
+            "L-49c68704cc1fa5ad9577",
+            "L-b5a09dfe51da75593976",
+            "L-dddc1279fe80b9a9ed03",
+            "L-f65b559afb78ae9797d6"
+          ]
+        },
+        {
+          "doc_id": "L-ab79f58d495ce3bb7524",
+          "rank": 57,
+          "in_top_20": false,
+          "score": 0.0,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-0e9335069211bc4b17da",
+            "L-c8ef8e0e2c85d624ae9c",
+            "L-de81a549f275de01c611",
+            "L-9cc80b3d44a942875bba",
+            "L-a1f7036d261cd25f4f0a",
+            "L-7a21a7cd6391dc6f4043",
+            "L-3f1a51a570af3b32a626",
+            "L-3a33b0bca0ecb591d5da",
+            "L-74f3dc91fce6d46520ba",
+            "L-094dde944deda9177d72",
+            "L-70908aca9ea7f3dfefd2",
+            "L-80188f7041b7a71fa885",
+            "L-8c7a862b52dea4e3ff5f",
+            "L-9e8a52c28baa6f99ca71",
+            "L-e880ebccf685056a0378",
+            "L-367e28a62e5ab0b80070",
+            "L-378cfa8718be112284a0",
+            "L-5cacba3476536524a3b1",
+            "L-4f0e2b619e37a9dd98f6",
+            "L-b31ef7855051fddb80a6",
+            "L-c34a94d1fefc1d22209f",
+            "L-f652cb3868a7f3b20266",
+            "L-f81e268701b38c487a4d",
+            "L-36074f5686f0100d507e",
+            "L-d91c165e1580d133568c",
+            "L-acb13dba2ae7b93ee87a",
+            "L-07b6a9f646dbea4e8356",
+            "L-636af3dc82c70c3c2527",
+            "L-a14bfbea7df973679d26",
+            "L-2d76cdee18c604eb2a14",
+            "L-5baffa47d34cfbcff639",
+            "L-873289abec7603ad9929",
+            "L-afb6aa76c8d112435f30",
+            "L-e7a9388298f5dde639a3",
+            "L-129890756678c5d478c0",
+            "L-22ebe879aa6275217ec2",
+            "L-dbc0ea1dc6908db86379",
+            "L-c5230f7cc777a525c60e",
+            "L-e81bfaf236d05a6f5c93",
+            "L-aeed302221dfb6092dd2",
+            "L-30510b7cf3756caa6b86",
+            "L-0720bc00dcf1157874a8",
+            "L-49c68704cc1fa5ad9577",
+            "L-b5a09dfe51da75593976",
+            "L-dddc1279fe80b9a9ed03",
+            "L-f65b559afb78ae9797d6"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-ab890ffc34d25c1cd4e8",
+      "synthetic_user": "box-84bd433469cb",
+      "query": "Покажи уведомления о погрузке контейнеров, полученные вчера.",
+      "query_date": "2028-09-16",
+      "expected_day": "2028-09-15",
+      "expected_topic": "уведомления о погрузке контейнеров",
+      "parsed_period": "15.09.2028",
+      "parsed_topic": "уведомления о погрузке контейнеров",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 56,
+      "relevant_count": 3,
+      "unavoidable_at_10": 0,
+      "top_20": [
+        "L-c8b3bc6c72c14281bef1",
+        "L-603626ffaee2de3a7ccc",
+        "L-d3172f3e1734b68d5f99",
+        "L-df419857b1dfebb57d0d",
+        "L-73f81bfe3fc476a46552",
+        "L-699cdb37ecaa8d566d95",
+        "L-0a10151f7c5c4c12bffa",
+        "L-16acdedd395a9b788a58",
+        "L-4969f406db4733eb63df",
+        "L-c2aeb4d95a35082cd79f",
+        "L-db177dc097f64df008e1",
+        "L-5cfcf80f6b7dfb4ddbbd",
+        "L-a5b13e1aa076b3812ad6",
+        "L-42a0c03aa4512e27943a",
+        "L-2765a2f2e805c9dfd31b",
+        "L-29bc343529b7489fa407",
+        "L-e3363282bb2cee115f93",
+        "L-214b111f91d41d7b6cae",
+        "L-9a527290c71b2199ed5a",
+        "L-de0bf7f9dbf1e2df010f"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-a5b13e1aa076b3812ad6",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 0.06439907404768297,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-c8b3bc6c72c14281bef1",
+            "L-603626ffaee2de3a7ccc",
+            "L-d3172f3e1734b68d5f99",
+            "L-df419857b1dfebb57d0d",
+            "L-73f81bfe3fc476a46552",
+            "L-699cdb37ecaa8d566d95",
+            "L-0a10151f7c5c4c12bffa",
+            "L-16acdedd395a9b788a58",
+            "L-4969f406db4733eb63df",
+            "L-c2aeb4d95a35082cd79f",
+            "L-db177dc097f64df008e1",
+            "L-5cfcf80f6b7dfb4ddbbd"
+          ]
+        },
+        {
+          "doc_id": "L-0e910975ff5abefd996b",
+          "rank": 30,
+          "in_top_20": false,
+          "score": 0.05573945865464448,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-c8b3bc6c72c14281bef1",
+            "L-603626ffaee2de3a7ccc",
+            "L-d3172f3e1734b68d5f99",
+            "L-df419857b1dfebb57d0d",
+            "L-73f81bfe3fc476a46552",
+            "L-699cdb37ecaa8d566d95",
+            "L-0a10151f7c5c4c12bffa",
+            "L-16acdedd395a9b788a58",
+            "L-4969f406db4733eb63df",
+            "L-c2aeb4d95a35082cd79f",
+            "L-db177dc097f64df008e1",
+            "L-5cfcf80f6b7dfb4ddbbd",
+            "L-42a0c03aa4512e27943a",
+            "L-2765a2f2e805c9dfd31b",
+            "L-29bc343529b7489fa407",
+            "L-e3363282bb2cee115f93",
+            "L-214b111f91d41d7b6cae",
+            "L-9a527290c71b2199ed5a",
+            "L-de0bf7f9dbf1e2df010f",
+            "L-3b086870ce5ff894cc02",
+            "L-40b5ad81007f4e7b0878",
+            "L-e06ff17e99e45fe5313a",
+            "L-05c1043e749e5079a35a",
+            "L-4a30a21e57a030853610",
+            "L-1fc567142bdd0e09a31a",
+            "L-5069d490e4582ea79e7f",
+            "L-7018e2278d6813848668",
+            "L-cc4e7620a388a5c73fa5"
+          ]
+        },
+        {
+          "doc_id": "L-f88b040f21be0816a228",
+          "rank": 55,
+          "in_top_20": false,
+          "score": 0.0,
+          "reason": "no_lexical_match",
+          "higher_nonrelevant_ids": [
+            "L-c8b3bc6c72c14281bef1",
+            "L-603626ffaee2de3a7ccc",
+            "L-d3172f3e1734b68d5f99",
+            "L-df419857b1dfebb57d0d",
+            "L-73f81bfe3fc476a46552",
+            "L-699cdb37ecaa8d566d95",
+            "L-0a10151f7c5c4c12bffa",
+            "L-16acdedd395a9b788a58",
+            "L-4969f406db4733eb63df",
+            "L-c2aeb4d95a35082cd79f",
+            "L-db177dc097f64df008e1",
+            "L-5cfcf80f6b7dfb4ddbbd",
+            "L-42a0c03aa4512e27943a",
+            "L-2765a2f2e805c9dfd31b",
+            "L-29bc343529b7489fa407",
+            "L-e3363282bb2cee115f93",
+            "L-214b111f91d41d7b6cae",
+            "L-9a527290c71b2199ed5a",
+            "L-de0bf7f9dbf1e2df010f",
+            "L-3b086870ce5ff894cc02",
+            "L-40b5ad81007f4e7b0878",
+            "L-e06ff17e99e45fe5313a",
+            "L-05c1043e749e5079a35a",
+            "L-4a30a21e57a030853610",
+            "L-1fc567142bdd0e09a31a",
+            "L-5069d490e4582ea79e7f",
+            "L-7018e2278d6813848668",
+            "L-cc4e7620a388a5c73fa5",
+            "L-4aa5ad468ca76db82c76",
+            "L-282332bc196cb87bf3dd",
+            "L-74541d94a2a6ad28b84f",
+            "L-32a8dc56e90356dbabed",
+            "L-ff86cf1489242ab6ea37",
+            "L-556be7ad45807245c2d7",
+            "L-a7042f16083fbb092fd8",
+            "L-b9032b3947dd35d8d43d",
+            "L-f0383fd451d00ccdd5c6",
+            "L-0edbc5e9b8f277217c79",
+            "L-01e04dd8bcce038de10d",
+            "L-4d1e4bebfe6b5713ff80",
+            "L-fb1e932a42db3476f874",
+            "L-59a8c5cdf43ccb8585d4",
+            "L-776b18aaa77824ea6a24",
+            "L-714af3e4976480b4d9b8",
+            "L-d2b293ff8e00ffe8990e",
+            "L-fc14ae5d089cfec4426a",
+            "L-5920731f60197457f69b",
+            "L-0983fb16434c02b421b9",
+            "L-83cdca9625c5fd3b3d5e",
+            "L-3cc916737c07b6931fce",
+            "L-a559369da153889ccae8",
+            "L-241e4f796cd932dbecef"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-124bc9656e09acbcf2fc",
+      "synthetic_user": "box-84bd433469cb",
+      "query": "Покажи уведомления о выгрузке контейнеров, полученные вчера.",
+      "query_date": "2028-09-14",
+      "expected_day": "2028-09-13",
+      "expected_topic": "уведомления о выгрузке контейнеров",
+      "parsed_period": "13.09.2028",
+      "parsed_topic": "уведомления о выгрузке контейнеров",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 59,
+      "relevant_count": 5,
+      "unavoidable_at_10": 0,
+      "top_20": [
+        "L-0e9335069211bc4b17da",
+        "L-74f3dc91fce6d46520ba",
+        "L-8261760b36b323093c5f",
+        "L-110b94555ee8fd166d0b",
+        "L-c8ef8e0e2c85d624ae9c",
+        "L-de81a549f275de01c611",
+        "L-9cc80b3d44a942875bba",
+        "L-a1f7036d261cd25f4f0a",
+        "L-8dd9cfdbda70f5d553c8",
+        "L-7a21a7cd6391dc6f4043",
+        "L-3f1a51a570af3b32a626",
+        "L-3a33b0bca0ecb591d5da",
+        "L-094dde944deda9177d72",
+        "L-70908aca9ea7f3dfefd2",
+        "L-80188f7041b7a71fa885",
+        "L-8c7a862b52dea4e3ff5f",
+        "L-9e8a52c28baa6f99ca71",
+        "L-e880ebccf685056a0378",
+        "L-367e28a62e5ab0b80070",
+        "L-378cfa8718be112284a0"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-4f0e2b619e37a9dd98f6",
+          "rank": 22,
+          "in_top_20": false,
+          "score": 0.06317718111564546,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-0e9335069211bc4b17da",
+            "L-8261760b36b323093c5f",
+            "L-110b94555ee8fd166d0b",
+            "L-c8ef8e0e2c85d624ae9c",
+            "L-9cc80b3d44a942875bba",
+            "L-a1f7036d261cd25f4f0a",
+            "L-8dd9cfdbda70f5d553c8",
+            "L-7a21a7cd6391dc6f4043",
+            "L-3f1a51a570af3b32a626",
+            "L-3a33b0bca0ecb591d5da",
+            "L-094dde944deda9177d72",
+            "L-70908aca9ea7f3dfefd2",
+            "L-80188f7041b7a71fa885",
+            "L-8c7a862b52dea4e3ff5f",
+            "L-9e8a52c28baa6f99ca71",
+            "L-e880ebccf685056a0378",
+            "L-367e28a62e5ab0b80070",
+            "L-378cfa8718be112284a0",
+            "L-5cacba3476536524a3b1"
+          ]
+        },
+        {
+          "doc_id": "L-22ebe879aa6275217ec2",
+          "rank": 43,
+          "in_top_20": false,
+          "score": 0.05339501486153589,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-0e9335069211bc4b17da",
+            "L-8261760b36b323093c5f",
+            "L-110b94555ee8fd166d0b",
+            "L-c8ef8e0e2c85d624ae9c",
+            "L-9cc80b3d44a942875bba",
+            "L-a1f7036d261cd25f4f0a",
+            "L-8dd9cfdbda70f5d553c8",
+            "L-7a21a7cd6391dc6f4043",
+            "L-3f1a51a570af3b32a626",
+            "L-3a33b0bca0ecb591d5da",
+            "L-094dde944deda9177d72",
+            "L-70908aca9ea7f3dfefd2",
+            "L-80188f7041b7a71fa885",
+            "L-8c7a862b52dea4e3ff5f",
+            "L-9e8a52c28baa6f99ca71",
+            "L-e880ebccf685056a0378",
+            "L-367e28a62e5ab0b80070",
+            "L-378cfa8718be112284a0",
+            "L-5cacba3476536524a3b1",
+            "L-b31ef7855051fddb80a6",
+            "L-c34a94d1fefc1d22209f",
+            "L-f652cb3868a7f3b20266",
+            "L-2312a0e8e825a1f3592a",
+            "L-f81e268701b38c487a4d",
+            "L-36074f5686f0100d507e",
+            "L-d91c165e1580d133568c",
+            "L-acb13dba2ae7b93ee87a",
+            "L-07b6a9f646dbea4e8356",
+            "L-636af3dc82c70c3c2527",
+            "L-a14bfbea7df973679d26",
+            "L-2d76cdee18c604eb2a14",
+            "L-5baffa47d34cfbcff639",
+            "L-873289abec7603ad9929",
+            "L-afb6aa76c8d112435f30",
+            "L-0c7e79dc7efffda0f20f",
+            "L-954cc30da372178227e9",
+            "L-e7a9388298f5dde639a3",
+            "L-129890756678c5d478c0",
+            "L-175a5a85fd2787cb7a1c"
+          ]
+        },
+        {
+          "doc_id": "L-0720bc00dcf1157874a8",
+          "rank": 51,
+          "in_top_20": false,
+          "score": 0.04202658797664122,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-0e9335069211bc4b17da",
+            "L-8261760b36b323093c5f",
+            "L-110b94555ee8fd166d0b",
+            "L-c8ef8e0e2c85d624ae9c",
+            "L-9cc80b3d44a942875bba",
+            "L-a1f7036d261cd25f4f0a",
+            "L-8dd9cfdbda70f5d553c8",
+            "L-7a21a7cd6391dc6f4043",
+            "L-3f1a51a570af3b32a626",
+            "L-3a33b0bca0ecb591d5da",
+            "L-094dde944deda9177d72",
+            "L-70908aca9ea7f3dfefd2",
+            "L-80188f7041b7a71fa885",
+            "L-8c7a862b52dea4e3ff5f",
+            "L-9e8a52c28baa6f99ca71",
+            "L-e880ebccf685056a0378",
+            "L-367e28a62e5ab0b80070",
+            "L-378cfa8718be112284a0",
+            "L-5cacba3476536524a3b1",
+            "L-b31ef7855051fddb80a6",
+            "L-c34a94d1fefc1d22209f",
+            "L-f652cb3868a7f3b20266",
+            "L-2312a0e8e825a1f3592a",
+            "L-f81e268701b38c487a4d",
+            "L-36074f5686f0100d507e",
+            "L-d91c165e1580d133568c",
+            "L-acb13dba2ae7b93ee87a",
+            "L-07b6a9f646dbea4e8356",
+            "L-636af3dc82c70c3c2527",
+            "L-a14bfbea7df973679d26",
+            "L-2d76cdee18c604eb2a14",
+            "L-5baffa47d34cfbcff639",
+            "L-873289abec7603ad9929",
+            "L-afb6aa76c8d112435f30",
+            "L-0c7e79dc7efffda0f20f",
+            "L-954cc30da372178227e9",
+            "L-e7a9388298f5dde639a3",
+            "L-129890756678c5d478c0",
+            "L-175a5a85fd2787cb7a1c",
+            "L-dbc0ea1dc6908db86379",
+            "L-c5230f7cc777a525c60e",
+            "L-e06c6ba09e6d79f7e460",
+            "L-e81bfaf236d05a6f5c93",
+            "L-aeed302221dfb6092dd2",
+            "L-d95cdd88b978e338d671",
+            "L-30510b7cf3756caa6b86"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-bbc9bc678aba515467f5",
+      "synthetic_user": "box-84bd433469cb",
+      "query": "Найди уведомления о выгрузке контейнеров, полученные 17 сентября 2028 года.",
+      "query_date": "2028-09-18",
+      "expected_day": "2028-09-17",
+      "expected_topic": "уведомления о выгрузке контейнеров",
+      "parsed_period": "17.09.2028",
+      "parsed_topic": "уведомления о выгрузке контейнеров",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 39,
+      "relevant_count": 11,
+      "unavoidable_at_10": 1,
+      "top_20": [
+        "L-1ba621cfc422b706104f",
+        "L-2a204f0e8b5fcfeadb78",
+        "L-689b51f77222cc4f86f6",
+        "L-ab644c3f434cb2434435",
+        "L-0978fcaf46bfb05973c9",
+        "L-a33d16c53e11f60a0717",
+        "L-dca3d6d00d3b76fd8f68",
+        "L-8e6f536bdcb95f92acff",
+        "L-6a65d865da9c3bc372ee",
+        "L-91f998f4035191b00d44",
+        "L-dd6fbf5905add56794b3",
+        "L-dc89bd17ce2474bb064f",
+        "L-0f0dbdfa760950d6b12a",
+        "L-fd08d2ad631bf3bee0a7",
+        "L-f7455348b982405c1c7a",
+        "L-af1bb1fdf95c5c4bfc6f",
+        "L-0494e67cc1d453752089",
+        "L-315234701bba29aa7a69",
+        "L-a652b7466fc56b05ea9b",
+        "L-bf1e68ff4481cc3dd4bb"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-0f0dbdfa760950d6b12a",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 0.06415497386159204,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-689b51f77222cc4f86f6",
+            "L-a33d16c53e11f60a0717",
+            "L-dca3d6d00d3b76fd8f68",
+            "L-8e6f536bdcb95f92acff",
+            "L-6a65d865da9c3bc372ee",
+            "L-dd6fbf5905add56794b3",
+            "L-dc89bd17ce2474bb064f"
+          ]
+        },
+        {
+          "doc_id": "L-fd08d2ad631bf3bee0a7",
+          "rank": 14,
+          "in_top_20": true,
+          "score": 0.06415497386159204,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-689b51f77222cc4f86f6",
+            "L-a33d16c53e11f60a0717",
+            "L-dca3d6d00d3b76fd8f68",
+            "L-8e6f536bdcb95f92acff",
+            "L-6a65d865da9c3bc372ee",
+            "L-dd6fbf5905add56794b3",
+            "L-dc89bd17ce2474bb064f"
+          ]
+        },
+        {
+          "doc_id": "L-315234701bba29aa7a69",
+          "rank": 18,
+          "in_top_20": true,
+          "score": 0.06317718111564546,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-689b51f77222cc4f86f6",
+            "L-a33d16c53e11f60a0717",
+            "L-dca3d6d00d3b76fd8f68",
+            "L-8e6f536bdcb95f92acff",
+            "L-6a65d865da9c3bc372ee",
+            "L-dd6fbf5905add56794b3",
+            "L-dc89bd17ce2474bb064f",
+            "L-f7455348b982405c1c7a",
+            "L-af1bb1fdf95c5c4bfc6f",
+            "L-0494e67cc1d453752089"
+          ]
+        },
+        {
+          "doc_id": "L-f8d4674866e1bc3c0129",
+          "rank": 26,
+          "in_top_20": false,
+          "score": 0.05808253139459827,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-689b51f77222cc4f86f6",
+            "L-a33d16c53e11f60a0717",
+            "L-dca3d6d00d3b76fd8f68",
+            "L-8e6f536bdcb95f92acff",
+            "L-6a65d865da9c3bc372ee",
+            "L-dd6fbf5905add56794b3",
+            "L-dc89bd17ce2474bb064f",
+            "L-f7455348b982405c1c7a",
+            "L-af1bb1fdf95c5c4bfc6f",
+            "L-0494e67cc1d453752089",
+            "L-a652b7466fc56b05ea9b",
+            "L-bf1e68ff4481cc3dd4bb",
+            "L-62ffaa92aa5ace2db159",
+            "L-667f85df3ac3769d1c51",
+            "L-3e4540afb6dd8c784684",
+            "L-f468f49cff386dd5d3a5",
+            "L-c94dcc826a076a64bd79"
+          ]
+        },
+        {
+          "doc_id": "L-21e7195bf8479eec0286",
+          "rank": 27,
+          "in_top_20": false,
+          "score": 0.05688687846391839,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-689b51f77222cc4f86f6",
+            "L-a33d16c53e11f60a0717",
+            "L-dca3d6d00d3b76fd8f68",
+            "L-8e6f536bdcb95f92acff",
+            "L-6a65d865da9c3bc372ee",
+            "L-dd6fbf5905add56794b3",
+            "L-dc89bd17ce2474bb064f",
+            "L-f7455348b982405c1c7a",
+            "L-af1bb1fdf95c5c4bfc6f",
+            "L-0494e67cc1d453752089",
+            "L-a652b7466fc56b05ea9b",
+            "L-bf1e68ff4481cc3dd4bb",
+            "L-62ffaa92aa5ace2db159",
+            "L-667f85df3ac3769d1c51",
+            "L-3e4540afb6dd8c784684",
+            "L-f468f49cff386dd5d3a5",
+            "L-c94dcc826a076a64bd79"
+          ]
+        },
+        {
+          "doc_id": "L-9273da17dadded729271",
+          "rank": 31,
+          "in_top_20": false,
+          "score": 0.05573945865464448,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-689b51f77222cc4f86f6",
+            "L-a33d16c53e11f60a0717",
+            "L-dca3d6d00d3b76fd8f68",
+            "L-8e6f536bdcb95f92acff",
+            "L-6a65d865da9c3bc372ee",
+            "L-dd6fbf5905add56794b3",
+            "L-dc89bd17ce2474bb064f",
+            "L-f7455348b982405c1c7a",
+            "L-af1bb1fdf95c5c4bfc6f",
+            "L-0494e67cc1d453752089",
+            "L-a652b7466fc56b05ea9b",
+            "L-bf1e68ff4481cc3dd4bb",
+            "L-62ffaa92aa5ace2db159",
+            "L-667f85df3ac3769d1c51",
+            "L-3e4540afb6dd8c784684",
+            "L-f468f49cff386dd5d3a5",
+            "L-c94dcc826a076a64bd79",
+            "L-4c1e3eabb859ce470ff3",
+            "L-2eedbc3a72f1bcd911b1",
+            "L-8bad8922d3d5e6516b0d"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-4519ace06f566a9f1637",
+      "synthetic_user": "box-84bd433469cb",
+      "query": "Покажи уведомления о выгрузке контейнеров, полученные 18 сентября 2028 года.",
+      "query_date": "2028-09-19",
+      "expected_day": "2028-09-18",
+      "expected_topic": "уведомления о выгрузке контейнеров",
+      "parsed_period": "18.09.2028",
+      "parsed_topic": "уведомления о выгрузке контейнеров",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 34,
+      "relevant_count": 4,
+      "unavoidable_at_10": 0,
+      "top_20": [
+        "L-98fd9829ed145baa309c",
+        "L-42c39168fe1de2e7dc06",
+        "L-09bf08ef003d7715287d",
+        "L-58fdaa280d0d26b6e76f",
+        "L-6298cc5af46d55d81ec3",
+        "L-9e721150de9da54b46a1",
+        "L-05020c45cd164a682d8b",
+        "L-3593acd9a57de195c2b1",
+        "L-3635940bf945d2dff2e3",
+        "L-c94e9c8bb63f3e0a06dd",
+        "L-fdef2feb00384ab78a93",
+        "L-b8ae4164920e735fb3aa",
+        "L-c2a5f55276af7e9b3dad",
+        "L-f5fe00c7942dbea20e87",
+        "L-dd01836cbac59d9be5ff",
+        "L-7c1a3896929e1c61c035",
+        "L-b37dd8b2755cbc2f1c5c",
+        "L-e6400c51363d03c52c26",
+        "L-b6d7df258e5c71a60d67",
+        "L-6a3473017b8a225fb5e1"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-fe188eee1ddd3a5d2f94",
+          "rank": 26,
+          "in_top_20": false,
+          "score": 0.05536720277325575,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-42c39168fe1de2e7dc06",
+            "L-09bf08ef003d7715287d",
+            "L-6298cc5af46d55d81ec3",
+            "L-9e721150de9da54b46a1",
+            "L-05020c45cd164a682d8b",
+            "L-3593acd9a57de195c2b1",
+            "L-3635940bf945d2dff2e3",
+            "L-c94e9c8bb63f3e0a06dd",
+            "L-fdef2feb00384ab78a93",
+            "L-b8ae4164920e735fb3aa",
+            "L-c2a5f55276af7e9b3dad",
+            "L-f5fe00c7942dbea20e87",
+            "L-dd01836cbac59d9be5ff",
+            "L-7c1a3896929e1c61c035",
+            "L-b37dd8b2755cbc2f1c5c",
+            "L-e6400c51363d03c52c26",
+            "L-b6d7df258e5c71a60d67",
+            "L-6a3473017b8a225fb5e1",
+            "L-43687ead7118f38ca6bd",
+            "L-f1d77643d19a59e7d828",
+            "L-4ede55f6877b633b3996",
+            "L-9df7d161164c1b561c24",
+            "L-f656aaa3ab7cae63de65"
+          ]
+        },
+        {
+          "doc_id": "L-f8c64820792ebfeb44bc",
+          "rank": 34,
+          "in_top_20": false,
+          "score": 0.0,
+          "reason": "no_lexical_match",
+          "higher_nonrelevant_ids": [
+            "L-42c39168fe1de2e7dc06",
+            "L-09bf08ef003d7715287d",
+            "L-6298cc5af46d55d81ec3",
+            "L-9e721150de9da54b46a1",
+            "L-05020c45cd164a682d8b",
+            "L-3593acd9a57de195c2b1",
+            "L-3635940bf945d2dff2e3",
+            "L-c94e9c8bb63f3e0a06dd",
+            "L-fdef2feb00384ab78a93",
+            "L-b8ae4164920e735fb3aa",
+            "L-c2a5f55276af7e9b3dad",
+            "L-f5fe00c7942dbea20e87",
+            "L-dd01836cbac59d9be5ff",
+            "L-7c1a3896929e1c61c035",
+            "L-b37dd8b2755cbc2f1c5c",
+            "L-e6400c51363d03c52c26",
+            "L-b6d7df258e5c71a60d67",
+            "L-6a3473017b8a225fb5e1",
+            "L-43687ead7118f38ca6bd",
+            "L-f1d77643d19a59e7d828",
+            "L-4ede55f6877b633b3996",
+            "L-9df7d161164c1b561c24",
+            "L-f656aaa3ab7cae63de65",
+            "L-4240d1cc95ef8a703ee0",
+            "L-1b4fba651bf1e52d5db9",
+            "L-aec3a54baae9606900fb",
+            "L-0633a0ce1d55f6949d34",
+            "L-d45dc0122ea3e8a8a5f6",
+            "L-6929a51c650abb42806a",
+            "L-85ac9e3889eb87de89f7"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-90999e1248f84980b386",
+      "synthetic_user": "box-84bd433469cb",
+      "query": "Найди письма о прибытии автомашин, полученные 13 сентября 2028 года.",
+      "query_date": "2028-09-14",
+      "expected_day": "2028-09-13",
+      "expected_topic": "письма о прибытии автомашин",
+      "parsed_period": "13.09.2028",
+      "parsed_topic": "письма о прибытии автомашин",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 59,
+      "relevant_count": 9,
+      "unavoidable_at_10": 0,
+      "top_20": [
+        "L-0e9335069211bc4b17da",
+        "L-7a21a7cd6391dc6f4043",
+        "L-70908aca9ea7f3dfefd2",
+        "L-9e8a52c28baa6f99ca71",
+        "L-dddc1279fe80b9a9ed03",
+        "L-e880ebccf685056a0378",
+        "L-f65b559afb78ae9797d6",
+        "L-30510b7cf3756caa6b86",
+        "L-9cc80b3d44a942875bba",
+        "L-b31ef7855051fddb80a6",
+        "L-c34a94d1fefc1d22209f",
+        "L-110b94555ee8fd166d0b",
+        "L-3ee44a633908d91e3703",
+        "L-0720bc00dcf1157874a8",
+        "L-a1f7036d261cd25f4f0a",
+        "L-36074f5686f0100d507e",
+        "L-ab79f58d495ce3bb7524",
+        "L-d91c165e1580d133568c",
+        "L-acb13dba2ae7b93ee87a",
+        "L-07b6a9f646dbea4e8356"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-acb13dba2ae7b93ee87a",
+          "rank": 19,
+          "in_top_20": true,
+          "score": 0.6250390151944217,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-0e9335069211bc4b17da",
+            "L-b31ef7855051fddb80a6",
+            "L-c34a94d1fefc1d22209f",
+            "L-110b94555ee8fd166d0b",
+            "L-3ee44a633908d91e3703",
+            "L-0720bc00dcf1157874a8",
+            "L-a1f7036d261cd25f4f0a",
+            "L-36074f5686f0100d507e",
+            "L-ab79f58d495ce3bb7524",
+            "L-d91c165e1580d133568c"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-130688ab3eeb3b8dc034",
+      "synthetic_user": "box-84bd433469cb",
+      "query": "Покажи письма о прибытии автомашин, полученные вчера.",
+      "query_date": "2028-09-20",
+      "expected_day": "2028-09-19",
+      "expected_topic": "письма о прибытии автомашин",
+      "parsed_period": "19.09.2028",
+      "parsed_topic": "письма о прибытии автомашин",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 33,
+      "relevant_count": 10,
+      "unavoidable_at_10": 0,
+      "top_20": [
+        "L-6bfafd8fceea4de77160",
+        "L-6acbff281fba5eac63bf",
+        "L-3162bafb8d706dbe3cd8",
+        "L-1dfad13d08a9d03d1789",
+        "L-120fca5a3bc3e6a70f5a",
+        "L-15f5c46e74dbb4f5f4e5",
+        "L-80c295501fac15cc00d0",
+        "L-c0bbd1c5b233fb2b70d8",
+        "L-ccd03b3a7a9bb7d20cdf",
+        "L-50becfeb40977fd7433e",
+        "L-94479c8b7e60275da623",
+        "L-13ff72eec56f59310311",
+        "L-e8df600127f509b35c9e",
+        "L-c113ffefe7c1fe7dadbe",
+        "L-5fceac15e8fc44c2174c",
+        "L-9b5ddf45201fbe4e5862",
+        "L-30773455b1246dc17d62",
+        "L-4915cb9bd94bc7be31e1",
+        "L-37f732ee1601bde78a97",
+        "L-3e26b30e3ae898a153a6"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-94479c8b7e60275da623",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 3.5651698502119618,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-50becfeb40977fd7433e"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-e78b25a116be82858185",
+      "synthetic_user": "box-a971835ab404",
+      "query": "Найди уведомления об отклонённых платежах, полученные 21 января 2028 года.",
+      "query_date": "2028-01-22",
+      "expected_day": "2028-01-21",
+      "expected_topic": "уведомления об отклоненных платежах",
+      "parsed_period": "21.01.2028",
+      "parsed_topic": "уведомления об отклоненных платежах",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 82,
+      "relevant_count": 17,
+      "unavoidable_at_10": 7,
+      "top_20": [
+        "L-e1ecb54e252382b14e34",
+        "L-ee36b7ba3c11dc2bb130",
+        "L-b65f51de664f74cadc02",
+        "L-5ff77ddff57a055283e9",
+        "L-a0e5c83b310fdd95e5c5",
+        "L-865fd11e1273ebe80615",
+        "L-0acf4fee7b3850b874ed",
+        "L-0273124a9e7a24d04566",
+        "L-a1d91ce533cf28d5fac4",
+        "L-b93729997d85bb8817e5",
+        "L-9350b8fe134f6b51e221",
+        "L-a08b91892b057580d57c",
+        "L-4ee9286002abece3043d",
+        "L-66bca34222b6ec07d3a8",
+        "L-a160082e0df2edda2612",
+        "L-4c36d51ec271d45689f6",
+        "L-220a351ebca066b37840",
+        "L-4e2038b9df0a247d11a0",
+        "L-66265685bbb24095840a",
+        "L-2dc88aff04d5ae4c6338"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-9350b8fe134f6b51e221",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 2.0724215926126552,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-5ff77ddff57a055283e9"
+          ]
+        },
+        {
+          "doc_id": "L-a08b91892b057580d57c",
+          "rank": 12,
+          "in_top_20": true,
+          "score": 2.062386479162689,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-5ff77ddff57a055283e9"
+          ]
+        },
+        {
+          "doc_id": "L-4ee9286002abece3043d",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 2.013634217811756,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-5ff77ddff57a055283e9"
+          ]
+        },
+        {
+          "doc_id": "L-66bca34222b6ec07d3a8",
+          "rank": 14,
+          "in_top_20": true,
+          "score": 2.004159050397597,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-5ff77ddff57a055283e9"
+          ]
+        },
+        {
+          "doc_id": "L-a160082e0df2edda2612",
+          "rank": 15,
+          "in_top_20": true,
+          "score": 2.004159050397597,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-5ff77ddff57a055283e9"
+          ]
+        },
+        {
+          "doc_id": "L-4c36d51ec271d45689f6",
+          "rank": 16,
+          "in_top_20": true,
+          "score": 1.9491292178077617,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-5ff77ddff57a055283e9"
+          ]
+        },
+        {
+          "doc_id": "L-220a351ebca066b37840",
+          "rank": 17,
+          "in_top_20": true,
+          "score": 1.576599736463057,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-5ff77ddff57a055283e9"
+          ]
+        },
+        {
+          "doc_id": "L-4e2038b9df0a247d11a0",
+          "rank": 18,
+          "in_top_20": true,
+          "score": 1.5312543713172797,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-5ff77ddff57a055283e9"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-d523a339e5767794ded5",
+      "synthetic_user": "box-a971835ab404",
+      "query": "Покажи уведомления об отклонённых платежах, полученные 26 января 2028 года.",
+      "query_date": "2028-01-27",
+      "expected_day": "2028-01-26",
+      "expected_topic": "уведомления об отклоненных платежах",
+      "parsed_period": "26.01.2028",
+      "parsed_topic": "уведомления об отклоненных платежах",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 85,
+      "relevant_count": 21,
+      "unavoidable_at_10": 11,
+      "top_20": [
+        "L-d5cf0becfc92f8bf59df",
+        "L-b502ee075a508d87ca7f",
+        "L-4b05c7421ac8dd95cdfe",
+        "L-805ffc3c686714a00771",
+        "L-e64913f0eb47dda679a8",
+        "L-d22c15fcd5eb40166f62",
+        "L-e942dceb41c903614bdd",
+        "L-6e1c390f6275841ccf5d",
+        "L-0c136dee3fef12e6c718",
+        "L-8bb2acff69c97a83d5f0",
+        "L-01f160c20a46c031e379",
+        "L-563eba6f47ba10651b4e",
+        "L-006041c6fa636ce076b0",
+        "L-2e60971fe991caa69843",
+        "L-587a374c7c24f87ad433",
+        "L-aaf002f7d2617001db78",
+        "L-3ca71382a04ed35f2b14",
+        "L-ddc29ea38b474e1e97fb",
+        "L-87b6bf7079757eebedce",
+        "L-9961209df47a19afc37c"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-01f160c20a46c031e379",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 2.04260500895279,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-563eba6f47ba10651b4e",
+          "rank": 12,
+          "in_top_20": true,
+          "score": 2.04260500895279,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-006041c6fa636ce076b0",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 2.013634217811756,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-2e60971fe991caa69843",
+          "rank": 14,
+          "in_top_20": true,
+          "score": 2.013634217811756,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-587a374c7c24f87ad433",
+          "rank": 15,
+          "in_top_20": true,
+          "score": 2.004159050397597,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-aaf002f7d2617001db78",
+          "rank": 16,
+          "in_top_20": true,
+          "score": 1.9947726362640876,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-3ca71382a04ed35f2b14",
+          "rank": 17,
+          "in_top_20": true,
+          "score": 1.9854737342050142,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-ddc29ea38b474e1e97fb",
+          "rank": 18,
+          "in_top_20": true,
+          "score": 1.9762611260509746,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-87b6bf7079757eebedce",
+          "rank": 19,
+          "in_top_20": true,
+          "score": 1.716375040693594,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-9961209df47a19afc37c",
+          "rank": 20,
+          "in_top_20": true,
+          "score": 1.565013466340572,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-030fb09ec0008c4d3c2c",
+          "rank": 21,
+          "in_top_20": false,
+          "score": 1.5535962465116853,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        }
+      ]
+    },
+    {
+      "query_id": "H-1ff5058ab44a64f0e249",
+      "synthetic_user": "box-a971835ab404",
+      "query": "Покажи уведомления об отклонённых платежах, полученные 28 января 2028 года.",
+      "query_date": "2028-01-29",
+      "expected_day": "2028-01-28",
+      "expected_topic": "уведомления об отклоненных платежах",
+      "parsed_period": "28.01.2028",
+      "parsed_topic": "уведомления об отклоненных платежах",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 79,
+      "relevant_count": 18,
+      "unavoidable_at_10": 8,
+      "top_20": [
+        "L-26c6a324cf6a04d528a7",
+        "L-c8dad064883a1e57edfd",
+        "L-68efa15059aff4a73ff3",
+        "L-ff70f9e69f07e6fbae88",
+        "L-7f1493e353d4fc5ad1a9",
+        "L-587ca0bcb7636ea34cf9",
+        "L-fefed5861f8a12df37f6",
+        "L-2d9b2eca40e27f2cb8f2",
+        "L-12875dd9c2d2076af5df",
+        "L-cf5574ba33ec75f94a68",
+        "L-43091e09c3ec1e4f3f5e",
+        "L-634751187a3e3feb7f30",
+        "L-b1e280170a22ee44a216",
+        "L-a05841da33a7b9486cb5",
+        "L-4bf0f178df8fa4525285",
+        "L-a2f6769a25d1ea1211b6",
+        "L-32bd1e8c9d2819fe2779",
+        "L-2ee67754af640ef52973",
+        "L-22daf21ba69021ab5008",
+        "L-dac833dbf23727820144"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-43091e09c3ec1e4f3f5e",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 2.0524480817708874,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-26c6a324cf6a04d528a7"
+          ]
+        },
+        {
+          "doc_id": "L-634751187a3e3feb7f30",
+          "rank": 12,
+          "in_top_20": true,
+          "score": 2.0524480817708874,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-26c6a324cf6a04d528a7"
+          ]
+        },
+        {
+          "doc_id": "L-b1e280170a22ee44a216",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 2.0524480817708874,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-26c6a324cf6a04d528a7"
+          ]
+        },
+        {
+          "doc_id": "L-a05841da33a7b9486cb5",
+          "rank": 14,
+          "in_top_20": true,
+          "score": 2.032855895789504,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-26c6a324cf6a04d528a7"
+          ]
+        },
+        {
+          "doc_id": "L-4bf0f178df8fa4525285",
+          "rank": 15,
+          "in_top_20": true,
+          "score": 2.013634217811756,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-26c6a324cf6a04d528a7"
+          ]
+        },
+        {
+          "doc_id": "L-a2f6769a25d1ea1211b6",
+          "rank": 16,
+          "in_top_20": true,
+          "score": 1.9762611260509746,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-26c6a324cf6a04d528a7"
+          ]
+        },
+        {
+          "doc_id": "L-32bd1e8c9d2819fe2779",
+          "rank": 17,
+          "in_top_20": true,
+          "score": 1.940250046001454,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-26c6a324cf6a04d528a7"
+          ]
+        },
+        {
+          "doc_id": "L-2ee67754af640ef52973",
+          "rank": 18,
+          "in_top_20": true,
+          "score": 1.6372033035516167,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-26c6a324cf6a04d528a7"
+          ]
+        },
+        {
+          "doc_id": "L-22daf21ba69021ab5008",
+          "rank": 19,
+          "in_top_20": true,
+          "score": 1.6124112473453753,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-26c6a324cf6a04d528a7"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-78c01f45929428ddc3ff",
+      "synthetic_user": "box-a971835ab404",
+      "query": "Найди уведомления об отклонённых платежах, полученные 29 января 2028 года.",
+      "query_date": "2028-01-30",
+      "expected_day": "2028-01-29",
+      "expected_topic": "уведомления об отклоненных платежах",
+      "parsed_period": "29.01.2028",
+      "parsed_topic": "уведомления об отклоненных платежах",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 49,
+      "relevant_count": 16,
+      "unavoidable_at_10": 6,
+      "top_20": [
+        "L-1fd09c7f247a49dc7780",
+        "L-7f52803eb9064edbe25d",
+        "L-a62bf45c7126c8be4498",
+        "L-6dcfc28025fc15a7db9f",
+        "L-cf99fcf98cd11ff2c04e",
+        "L-204355b5d0b545bad027",
+        "L-c60a3b1b67abb4e40e14",
+        "L-fd6b1609d7be5609b499",
+        "L-642bfa76d9e5c8aa93a2",
+        "L-a7e9ea13fa623fc4633b",
+        "L-a11d9a8fdcd45b08012f",
+        "L-b30c6f126348da1e9c6d",
+        "L-52b3e0d292525afaec40",
+        "L-e71316a070367d5cf773",
+        "L-cb7f60fd48e606a6f05d",
+        "L-2845e874402d61de0ca8",
+        "L-e1bf98b5e56adbd34a07",
+        "L-2327bc7ccc5358d9a122",
+        "L-a514969c7a0a3b3d543f",
+        "L-879c2d3c692a9c85e944"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-a11d9a8fdcd45b08012f",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 2.0724215926126552,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-1fd09c7f247a49dc7780",
+            "L-7f52803eb9064edbe25d"
+          ]
+        },
+        {
+          "doc_id": "L-b30c6f126348da1e9c6d",
+          "rank": 12,
+          "in_top_20": true,
+          "score": 2.0724215926126552,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-1fd09c7f247a49dc7780",
+            "L-7f52803eb9064edbe25d"
+          ]
+        },
+        {
+          "doc_id": "L-52b3e0d292525afaec40",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 2.0524480817708874,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-1fd09c7f247a49dc7780",
+            "L-7f52803eb9064edbe25d"
+          ]
+        },
+        {
+          "doc_id": "L-e71316a070367d5cf773",
+          "rank": 14,
+          "in_top_20": true,
+          "score": 2.013634217811756,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-1fd09c7f247a49dc7780",
+            "L-7f52803eb9064edbe25d"
+          ]
+        },
+        {
+          "doc_id": "L-cb7f60fd48e606a6f05d",
+          "rank": 15,
+          "in_top_20": true,
+          "score": 1.9580900307872064,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-1fd09c7f247a49dc7780",
+            "L-7f52803eb9064edbe25d"
+          ]
+        },
+        {
+          "doc_id": "L-2845e874402d61de0ca8",
+          "rank": 16,
+          "in_top_20": true,
+          "score": 1.565013466340572,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-1fd09c7f247a49dc7780",
+            "L-7f52803eb9064edbe25d"
+          ]
+        },
+        {
+          "doc_id": "L-e1bf98b5e56adbd34a07",
+          "rank": 17,
+          "in_top_20": true,
+          "score": 1.4781134315695013,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-1fd09c7f247a49dc7780",
+            "L-7f52803eb9064edbe25d"
+          ]
+        },
+        {
+          "doc_id": "L-2327bc7ccc5358d9a122",
+          "rank": 18,
+          "in_top_20": true,
+          "score": 1.4479631992234259,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-1fd09c7f247a49dc7780",
+            "L-7f52803eb9064edbe25d"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-6f1839b2094abab2d9d7",
+      "synthetic_user": "box-a971835ab404",
+      "query": "Найди уведомления об отклонённых платежах, полученные 30 января 2028 года.",
+      "query_date": "2028-01-31",
+      "expected_day": "2028-01-30",
+      "expected_topic": "уведомления об отклоненных платежах",
+      "parsed_period": "30.01.2028",
+      "parsed_topic": "уведомления об отклоненных платежах",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 84,
+      "relevant_count": 14,
+      "unavoidable_at_10": 4,
+      "top_20": [
+        "L-67671079802540a51a36",
+        "L-803912fb25a4a948b20f",
+        "L-fd8121980faf05f6d8f3",
+        "L-3fb64eedb871ed3a395f",
+        "L-284578421fcc5f329917",
+        "L-bf72181d39602880c5af",
+        "L-467e4e048067ab585ada",
+        "L-3355cce2b41bc9359b30",
+        "L-f0227a694823b270d902",
+        "L-35e0b38aa6e4c4d35423",
+        "L-0a1f3c27533663d02037",
+        "L-8685be35b3000a14d871",
+        "L-086e8c89ded836f9be92",
+        "L-4d9cf24c65cda22521b8",
+        "L-8e4719c0ee9b6f400ec0",
+        "L-1fc11a5bf68e87be0d75",
+        "L-e842756a72cf7e7cc2c4",
+        "L-00a89e14c9265b2b8a16",
+        "L-7e3ee11d1bc169e3d88a",
+        "L-bbbd8f176e76de6488f6"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-0a1f3c27533663d02037",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 1.9762611260509746,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-67671079802540a51a36",
+            "L-803912fb25a4a948b20f",
+            "L-fd8121980faf05f6d8f3"
+          ]
+        },
+        {
+          "doc_id": "L-8685be35b3000a14d871",
+          "rank": 12,
+          "in_top_20": true,
+          "score": 1.9580900307872064,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-67671079802540a51a36",
+            "L-803912fb25a4a948b20f",
+            "L-fd8121980faf05f6d8f3"
+          ]
+        },
+        {
+          "doc_id": "L-086e8c89ded836f9be92",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 1.7303208250724331,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-67671079802540a51a36",
+            "L-803912fb25a4a948b20f",
+            "L-fd8121980faf05f6d8f3"
+          ]
+        },
+        {
+          "doc_id": "L-4d9cf24c65cda22521b8",
+          "rank": 14,
+          "in_top_20": true,
+          "score": 1.6124112473453753,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-67671079802540a51a36",
+            "L-803912fb25a4a948b20f",
+            "L-fd8121980faf05f6d8f3"
+          ]
+        },
+        {
+          "doc_id": "L-8e4719c0ee9b6f400ec0",
+          "rank": 15,
+          "in_top_20": true,
+          "score": 1.6124112473453753,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-67671079802540a51a36",
+            "L-803912fb25a4a948b20f",
+            "L-fd8121980faf05f6d8f3"
+          ]
+        },
+        {
+          "doc_id": "L-1fc11a5bf68e87be0d75",
+          "rank": 16,
+          "in_top_20": true,
+          "score": 1.5883588394748824,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-67671079802540a51a36",
+            "L-803912fb25a4a948b20f",
+            "L-fd8121980faf05f6d8f3"
+          ]
+        },
+        {
+          "doc_id": "L-e842756a72cf7e7cc2c4",
+          "rank": 17,
+          "in_top_20": true,
+          "score": 1.542344403961692,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-67671079802540a51a36",
+            "L-803912fb25a4a948b20f",
+            "L-fd8121980faf05f6d8f3"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-91635f29cd1535edaa65",
+      "synthetic_user": "box-a971835ab404",
+      "query": "Покажи уведомления об отклонённых платежах, полученные 31 января 2028 года.",
+      "query_date": "2028-02-01",
+      "expected_day": "2028-01-31",
+      "expected_topic": "уведомления об отклоненных платежах",
+      "parsed_period": "31.01.2028",
+      "parsed_topic": "уведомления об отклоненных платежах",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 68,
+      "relevant_count": 18,
+      "unavoidable_at_10": 8,
+      "top_20": [
+        "L-d5020a1964e1ac2091f3",
+        "L-25050de7de6beefaa801",
+        "L-5b7b04db8acb2e4de7ee",
+        "L-71ce3b46e0b138a4fb89",
+        "L-f88c13a5b657faed803b",
+        "L-6614cefa3ff28903d6f8",
+        "L-68bcfcce07c6d3116aa7",
+        "L-075da2a86d6df26dc450",
+        "L-f85d04ef6ccdeb0f1b24",
+        "L-27799ba201dd540c530f",
+        "L-9e8bf74a7de18bfa35dd",
+        "L-02faeacd5c3535870c2d",
+        "L-e565ba4d49534b40933a",
+        "L-9ad888ee99b45dbc098f",
+        "L-293be63f44f5e045b0bc",
+        "L-bafeb13d163bf40ed9ef",
+        "L-050dbcaa5f6c7dab6a25",
+        "L-d2fff0f1dc3e0b057aed",
+        "L-28d89ebc6c602c470ebe",
+        "L-a027cb609d5b0c7d0f2e"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-9e8bf74a7de18bfa35dd",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 2.013634217811756,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-02faeacd5c3535870c2d",
+          "rank": 12,
+          "in_top_20": true,
+          "score": 1.9762611260509746,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-e565ba4d49534b40933a",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 1.9762611260509746,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-9ad888ee99b45dbc098f",
+          "rank": 14,
+          "in_top_20": true,
+          "score": 1.9491292178077617,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-293be63f44f5e045b0bc",
+          "rank": 15,
+          "in_top_20": true,
+          "score": 1.940250046001454,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-bafeb13d163bf40ed9ef",
+          "rank": 16,
+          "in_top_20": true,
+          "score": 1.7589034929323781,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-050dbcaa5f6c7dab6a25",
+          "rank": 17,
+          "in_top_20": true,
+          "score": 1.716375040693594,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-d2fff0f1dc3e0b057aed",
+          "rank": 18,
+          "in_top_20": true,
+          "score": 1.542344403961692,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        }
+      ]
+    },
+    {
+      "query_id": "H-858ce7fee338506cefbe",
+      "synthetic_user": "box-a971835ab404",
+      "query": "Найди уведомления об отклонённых платежах, полученные 1 февраля 2028 года.",
+      "query_date": "2028-02-02",
+      "expected_day": "2028-02-01",
+      "expected_topic": "уведомления об отклоненных платежах",
+      "parsed_period": "01.02.2028",
+      "parsed_topic": "уведомления об отклоненных платежах",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 70,
+      "relevant_count": 12,
+      "unavoidable_at_10": 2,
+      "top_20": [
+        "L-be503df04d0dc85f0738",
+        "L-67e102866275c2fff4c3",
+        "L-428e223f5e49540ad28a",
+        "L-a2ad52089cb34d7a6fd7",
+        "L-f971f005da6a6c4e72ba",
+        "L-e39c6678736de99e8e46",
+        "L-51246c1ab3f1d218079c",
+        "L-27481e5c3adfec524d07",
+        "L-0395182baf691b682e20",
+        "L-e17faa5d749cf8afa6bb",
+        "L-12701ff34c88f3577a21",
+        "L-0e003598eab415f57395",
+        "L-9c5272d772d39c2299cb",
+        "L-f377e13ba8aebdddfca0",
+        "L-0935723e62a090c33f5f",
+        "L-ffc588d5044c76d82ba2",
+        "L-073d2d371f6b09055cde",
+        "L-d94101ce5457a222fe8a",
+        "L-8c57efa18f6a8ef0f675",
+        "L-b60d3b30a31c7c2055a4"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-12701ff34c88f3577a21",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 2.1135580033899646,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-be503df04d0dc85f0738",
+            "L-67e102866275c2fff4c3",
+            "L-428e223f5e49540ad28a",
+            "L-a2ad52089cb34d7a6fd7",
+            "L-f971f005da6a6c4e72ba"
+          ]
+        },
+        {
+          "doc_id": "L-0e003598eab415f57395",
+          "rank": 12,
+          "in_top_20": true,
+          "score": 2.082554840820281,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-be503df04d0dc85f0738",
+            "L-67e102866275c2fff4c3",
+            "L-428e223f5e49540ad28a",
+            "L-a2ad52089cb34d7a6fd7",
+            "L-f971f005da6a6c4e72ba"
+          ]
+        },
+        {
+          "doc_id": "L-9c5272d772d39c2299cb",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 2.04260500895279,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-be503df04d0dc85f0738",
+            "L-67e102866275c2fff4c3",
+            "L-428e223f5e49540ad28a",
+            "L-a2ad52089cb34d7a6fd7",
+            "L-f971f005da6a6c4e72ba"
+          ]
+        },
+        {
+          "doc_id": "L-f377e13ba8aebdddfca0",
+          "rank": 14,
+          "in_top_20": true,
+          "score": 2.032855895789504,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-be503df04d0dc85f0738",
+            "L-67e102866275c2fff4c3",
+            "L-428e223f5e49540ad28a",
+            "L-a2ad52089cb34d7a6fd7",
+            "L-f971f005da6a6c4e72ba"
+          ]
+        },
+        {
+          "doc_id": "L-0935723e62a090c33f5f",
+          "rank": 15,
+          "in_top_20": true,
+          "score": 2.004159050397597,
+          "reason": "outranked_by_nonrelevant",
+          "higher_nonrelevant_ids": [
+            "L-be503df04d0dc85f0738",
+            "L-67e102866275c2fff4c3",
+            "L-428e223f5e49540ad28a",
+            "L-a2ad52089cb34d7a6fd7",
+            "L-f971f005da6a6c4e72ba"
+          ]
+        },
+        {
+          "doc_id": "L-ffc588d5044c76d82ba2",
+          "rank": 16,
+          "in_top_20": true,
+          "score": 1.689147162748096,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-be503df04d0dc85f0738",
+            "L-67e102866275c2fff4c3",
+            "L-428e223f5e49540ad28a",
+            "L-a2ad52089cb34d7a6fd7",
+            "L-f971f005da6a6c4e72ba"
+          ]
+        },
+        {
+          "doc_id": "L-073d2d371f6b09055cde",
+          "rank": 17,
+          "in_top_20": true,
+          "score": 1.576599736463057,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": [
+            "L-be503df04d0dc85f0738",
+            "L-67e102866275c2fff4c3",
+            "L-428e223f5e49540ad28a",
+            "L-a2ad52089cb34d7a6fd7",
+            "L-f971f005da6a6c4e72ba"
+          ]
+        }
+      ]
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "synthetic_user": "box-dfac33a7123c",
+      "query": "Найди уведомления о сбоях модуля электронных рецептов, полученные вчера.",
+      "query_date": "2028-09-24",
+      "expected_day": "2028-09-23",
+      "expected_topic": "уведомления о сбоях модуля электронных рецептов",
+      "parsed_period": "23.09.2028",
+      "parsed_topic": "уведомления о сбоях модуля электронных рецептов",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 42,
+      "relevant_count": 42,
+      "unavoidable_at_10": 32,
+      "top_20": [
+        "L-ca8ff8416014a0cd2ce5",
+        "L-e781cb757682e86644a6",
+        "L-848d9ef1e384e97b2c68",
+        "L-6a8a342565cf3445f4eb",
+        "L-222285086a58bfb67ea6",
+        "L-afc6933f8738993de76d",
+        "L-964f1ab4ed0ff4edce8c",
+        "L-5347805d1112c778af89",
+        "L-b882bbd6d4bf1a1c15c3",
+        "L-ee2cc6cf36fa614be1ba",
+        "L-05bb3ae4994c7198cc5e",
+        "L-ecd8c822ef5449322f72",
+        "L-49b9c70e3c021453c1c7",
+        "L-d0452d0f2f5abc84ed9f",
+        "L-e1699e7d5a167984e534",
+        "L-353fbfefa55e01aa1857",
+        "L-21786ec5f42c635a9973",
+        "L-b6f8ae1b5e125a28a9c9",
+        "L-f294a5fcb4eb41ba192a",
+        "L-ca55733cab14a1a7f6f6"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-05bb3ae4994c7198cc5e",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 0.19860981673926986,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-ecd8c822ef5449322f72",
+          "rank": 12,
+          "in_top_20": true,
+          "score": 0.19843330290242556,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-49b9c70e3c021453c1c7",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 0.1976518972225117,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-d0452d0f2f5abc84ed9f",
+          "rank": 14,
+          "in_top_20": true,
+          "score": 0.19747480977853943,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-e1699e7d5a167984e534",
+          "rank": 15,
+          "in_top_20": true,
+          "score": 0.19670318915997098,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-353fbfefa55e01aa1857",
+          "rank": 16,
+          "in_top_20": true,
+          "score": 0.1966143634132328,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-21786ec5f42c635a9973",
+          "rank": 17,
+          "in_top_20": true,
+          "score": 0.19558535408196195,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-b6f8ae1b5e125a28a9c9",
+          "rank": 18,
+          "in_top_20": true,
+          "score": 0.19558535408196195,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-f294a5fcb4eb41ba192a",
+          "rank": 19,
+          "in_top_20": true,
+          "score": 0.19483288053396328,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-ca55733cab14a1a7f6f6",
+          "rank": 20,
+          "in_top_20": true,
+          "score": 0.19474350480060684,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-1307a2d2a2f94538de10",
+          "rank": 21,
+          "in_top_20": false,
+          "score": 0.19296333322198764,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-692524b6ab09b044c2a4",
+          "rank": 22,
+          "in_top_20": false,
+          "score": 0.19191294251740315,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-6e161b1b2d60f3a9d8e3",
+          "rank": 23,
+          "in_top_20": false,
+          "score": 0.19101630067456263,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-3936f7ec6ea74e86078b",
+          "rank": 24,
+          "in_top_20": false,
+          "score": 0.19030934695937357,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-b52ea32466cb3172a14c",
+          "rank": 25,
+          "in_top_20": false,
+          "score": 0.18942977074901146,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-fd0e101e5809df4c8d7e",
+          "rank": 26,
+          "in_top_20": false,
+          "score": 0.18942977074901146,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-79f832f0aaf3dc71270d",
+          "rank": 27,
+          "in_top_20": false,
+          "score": 0.18683923587097517,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-c51aab47e5e7f7604507",
+          "rank": 28,
+          "in_top_20": false,
+          "score": 0.18683923587097517,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-2fd1329ed9c11e3b76f5",
+          "rank": 29,
+          "in_top_20": false,
+          "score": 0.1851512828413458,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-03039757345c56abebd2",
+          "rank": 30,
+          "in_top_20": false,
+          "score": 0.1849671088814669,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-cb897a30ad4ea7663534",
+          "rank": 31,
+          "in_top_20": false,
+          "score": 0.18431871035724376,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-b6980fd7d4d1b95dc7fd",
+          "rank": 32,
+          "in_top_20": false,
+          "score": 0.1834936040839258,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-d7eac07f6ea3796bfa1d",
+          "rank": 33,
+          "in_top_20": false,
+          "score": 0.18330855043069316,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-bd389526ccc34f3d7c43",
+          "rank": 34,
+          "in_top_20": false,
+          "score": 0.18267586395169716,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-3e1a3452fcf530cc2eba",
+          "rank": 35,
+          "in_top_20": false,
+          "score": 0.18186539167204824,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-25b5557624aafc197285",
+          "rank": 36,
+          "in_top_20": false,
+          "score": 0.18026586618663565,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-a18a3584be4192a88b95",
+          "rank": 37,
+          "in_top_20": false,
+          "score": 0.001321774341621133,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-ce953f38bd9d3ba8d26b",
+          "rank": 38,
+          "in_top_20": false,
+          "score": 0.0013127659150045064,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-3263aa519f90aa28ea9c",
+          "rank": 39,
+          "in_top_20": false,
+          "score": 0.0013083075923670136,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-216d8f512936a4c86a29",
+          "rank": 40,
+          "in_top_20": false,
+          "score": 0.0009601885255415111,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-1fe8feb4f20e5682f3a8",
+          "rank": 41,
+          "in_top_20": false,
+          "score": 0.0009414168598618773,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-c3de7ee03f1228dd08b8",
+          "rank": 42,
+          "in_top_20": false,
+          "score": 0.0009414168598618773,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        }
+      ]
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "synthetic_user": "box-dfac33a7123c",
+      "query": "Найди уведомления о сбоях модуля электронных рецептов, полученные 25 сентября 2028 года.",
+      "query_date": "2028-09-26",
+      "expected_day": "2028-09-25",
+      "expected_topic": "уведомления о сбоях модуля электронных рецептов",
+      "parsed_period": "25.09.2028",
+      "parsed_topic": "уведомления о сбоях модуля электронных рецептов",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 65,
+      "relevant_count": 65,
+      "unavoidable_at_10": 55,
+      "top_20": [
+        "L-7d3d66c4f33fdcb48d3d",
+        "L-ef4bdd0ef70c509789ca",
+        "L-5dcd32a76aa1bc3fe6c4",
+        "L-3959a6a6c452344dd4e9",
+        "L-84702af7ec9185195c74",
+        "L-51cca4897c4e359f2e4a",
+        "L-5e59f84e3996a42cd314",
+        "L-a9a74e0121c345e68749",
+        "L-ca58c6d6a8a2c39a4c28",
+        "L-89e4db50c923328ccb94",
+        "L-d8f46569d43eb3583d71",
+        "L-42ded22fd7a54cf5e542",
+        "L-90dd2496a54f6d0e9dcb",
+        "L-63dcd2e4aa87a8a67d04",
+        "L-697f66067b3f8f548ff6",
+        "L-cb19e391c01cc56a052c",
+        "L-ebbb8f061ccadb168c02",
+        "L-f3b3fc49d455969b71b8",
+        "L-696920331f733eec3425",
+        "L-75ec1eec5527bdfe6611"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-d8f46569d43eb3583d71",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 0.19940115211083645,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-42ded22fd7a54cf5e542",
+          "rank": 12,
+          "in_top_20": true,
+          "score": 0.1976518972225117,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-90dd2496a54f6d0e9dcb",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 0.19747480977853943,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-63dcd2e4aa87a8a67d04",
+          "rank": 14,
+          "in_top_20": true,
+          "score": 0.19670318915997098,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-697f66067b3f8f548ff6",
+          "rank": 15,
+          "in_top_20": true,
+          "score": 0.1965255376664946,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-cb19e391c01cc56a052c",
+          "rank": 16,
+          "in_top_20": true,
+          "score": 0.1965255376664946,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-ebbb8f061ccadb168c02",
+          "rank": 17,
+          "in_top_20": true,
+          "score": 0.19558535408196195,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-f3b3fc49d455969b71b8",
+          "rank": 18,
+          "in_top_20": true,
+          "score": 0.19558535408196195,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-696920331f733eec3425",
+          "rank": 19,
+          "in_top_20": true,
+          "score": 0.19391102278981648,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-75ec1eec5527bdfe6611",
+          "rank": 20,
+          "in_top_20": true,
+          "score": 0.19281804719166146,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-7a463d9683f11d2cf688",
+          "rank": 21,
+          "in_top_20": false,
+          "score": 0.19281804719166146,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-f4d966dd2aa7ebc86569",
+          "rank": 22,
+          "in_top_20": false,
+          "score": 0.19281804719166146,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-ff27063460d6363c18a5",
+          "rank": 23,
+          "in_top_20": false,
+          "score": 0.19281804719166146,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-751becd90fe6d1d46e92",
+          "rank": 24,
+          "in_top_20": false,
+          "score": 0.1911971432919454,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-7f30dfd89a18af3cae7f",
+          "rank": 25,
+          "in_top_20": false,
+          "score": 0.1911971432919454,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-e0723c207f87d76d24bb",
+          "rank": 26,
+          "in_top_20": false,
+          "score": 0.1911971432919454,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-3f9db36a1514480a2a83",
+          "rank": 27,
+          "in_top_20": false,
+          "score": 0.19030934695937357,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-63a59dad40c70e470215",
+          "rank": 28,
+          "in_top_20": false,
+          "score": 0.19021867521589683,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-08638dc0b08ac3fd6aa4",
+          "rank": 29,
+          "in_top_20": false,
+          "score": 0.18942977074901146,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-4f6b8cd77acc4019a99f",
+          "rank": 30,
+          "in_top_20": false,
+          "score": 0.18942977074901146,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-631efed2780eda6e533b",
+          "rank": 31,
+          "in_top_20": false,
+          "score": 0.18924793491154646,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-9a0236344e850d34a038",
+          "rank": 32,
+          "in_top_20": false,
+          "score": 0.18855830092279308,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-e420473990d4dab45fdf",
+          "rank": 33,
+          "in_top_20": false,
+          "score": 0.18855830092279308,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-70a24b0fd718032ac84b",
+          "rank": 34,
+          "in_top_20": false,
+          "score": 0.18846714102801818,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-b41d68de47e44a705483",
+          "rank": 35,
+          "in_top_20": false,
+          "score": 0.18837598113324328,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-6476f80b94bccd247fce",
+          "rank": 36,
+          "in_top_20": false,
+          "score": 0.18769482583229916,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-a2bc116e425657c6bfc7",
+          "rank": 37,
+          "in_top_20": false,
+          "score": 0.18683923587097517,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-b8408efd8a7916cb3184",
+          "rank": 38,
+          "in_top_20": false,
+          "score": 0.18683923587097517,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-b9afc7e23832a9acdc9a",
+          "rank": 39,
+          "in_top_20": false,
+          "score": 0.18683923587097517,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-04f8a5b52ff3534711eb",
+          "rank": 40,
+          "in_top_20": false,
+          "score": 0.18665597289956037,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-3e6a0ea4e072fc7b4802",
+          "rank": 41,
+          "in_top_20": false,
+          "score": 0.18665597289956037,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-add0a8d488426bd1c0ba",
+          "rank": 42,
+          "in_top_20": false,
+          "score": 0.18665597289956037,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-e532240fe090bf5d5803",
+          "rank": 43,
+          "in_top_20": false,
+          "score": 0.18665597289956037,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-4b9d726f06c05810c0c5",
+          "rank": 44,
+          "in_top_20": false,
+          "score": 0.18589956221114923,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-f756f86a61fe95d685a2",
+          "rank": 45,
+          "in_top_20": false,
+          "score": 0.18580770099464392,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-10fb6d136bc585555811",
+          "rank": 46,
+          "in_top_20": false,
+          "score": 0.1849671088814669,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-291566c0032c2dcf93b2",
+          "rank": 47,
+          "in_top_20": false,
+          "score": 0.18431871035724376,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-5a21a4835b047cac7570",
+          "rank": 48,
+          "in_top_20": false,
+          "score": 0.1834936040839258,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-195b813103adc138568b",
+          "rank": 49,
+          "in_top_20": false,
+          "score": 0.18330855043069316,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-491c88d0d90bb462e0ce",
+          "rank": 50,
+          "in_top_20": false,
+          "score": 0.18267586395169716,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-de39035625db901700b3",
+          "rank": 51,
+          "in_top_20": false,
+          "score": 0.18249038191442124,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-2bd27a69de9947a53072",
+          "rank": 52,
+          "in_top_20": false,
+          "score": 0.18087577428689952,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-f6591d963060e3c9aa5b",
+          "rank": 53,
+          "in_top_20": false,
+          "score": 0.18087577428689952,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-3ecf8d3afcffbdc21adf",
+          "rank": 54,
+          "in_top_20": false,
+          "score": 0.17947662495979133,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-667fc9253d404d9a992b",
+          "rank": 55,
+          "in_top_20": false,
+          "score": 0.17869427546953295,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-b4fdc6dc2633cbe4cbd1",
+          "rank": 56,
+          "in_top_20": false,
+          "score": 0.17869427546953295,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-1c915bc8f57825b33f95",
+          "rank": 57,
+          "in_top_20": false,
+          "score": 0.176961616959504,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-a2fd51444a1515e69a9f",
+          "rank": 58,
+          "in_top_20": false,
+          "score": 0.1763876856405487,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-f41da94848458bda9626",
+          "rank": 59,
+          "in_top_20": false,
+          "score": 0.0013862299148918356,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-4d1815cc7dd5b9c9fddb",
+          "rank": 60,
+          "in_top_20": false,
+          "score": 0.001321774341621133,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-7cf933f66b9393c74e4b",
+          "rank": 61,
+          "in_top_20": false,
+          "score": 0.0012994811804415659,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-0a02b71e7b2b17fc958a",
+          "rank": 62,
+          "in_top_20": false,
+          "score": 0.001286462626016564,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-89733577deb8240ca7f9",
+          "rank": 63,
+          "in_top_20": false,
+          "score": 0.0009698579128624866,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-99b6075f766a1a53b343",
+          "rank": 64,
+          "in_top_20": false,
+          "score": 0.0009649989977508195,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-f0bdd85b3b5741fe17b0",
+          "rank": 65,
+          "in_top_20": false,
+          "score": 0.0009554257753716203,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        }
+      ]
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "synthetic_user": "box-dfac33a7123c",
+      "query": "Покажи уведомления о сбоях модуля электронных рецептов, полученные вчера.",
+      "query_date": "2028-09-27",
+      "expected_day": "2028-09-26",
+      "expected_topic": "уведомления о сбоях модуля электронных рецептов",
+      "parsed_period": "26.09.2028",
+      "parsed_topic": "уведомления о сбоях модуля электронных рецептов",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 55,
+      "relevant_count": 55,
+      "unavoidable_at_10": 45,
+      "top_20": [
+        "L-a7e5a17c0b36cc0eb6fb",
+        "L-cf2fdf0546512cde83f2",
+        "L-6ce7c89955d23eebf9b4",
+        "L-b31f632ea1e80dcc772b",
+        "L-218adcd58098a6a9901b",
+        "L-22c759eece181c366423",
+        "L-6563f5151756dcb95247",
+        "L-f3a83a6e73983d6362e4",
+        "L-95552a00a4e84858cacf",
+        "L-8ce7e5bffcdb75705dc0",
+        "L-7f0f5c39d2c777d9c23f",
+        "L-f1cb319172e29a608140",
+        "L-550d807801f6bd319dee",
+        "L-d00d04ef2dd531629c6b",
+        "L-c41158848dd6774c5c85",
+        "L-c3331167f967e078efeb",
+        "L-a70ba2678db63bd20688",
+        "L-d2765f27cfb13776aee3",
+        "L-ffea25e1467faf3f7b22",
+        "L-58e9ea27d16f2892198a"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-7f0f5c39d2c777d9c23f",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 2.4365508145948356,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-f1cb319172e29a608140",
+          "rank": 12,
+          "in_top_20": true,
+          "score": 0.2667656126593408,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-550d807801f6bd319dee",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 0.20336890544694616,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-d00d04ef2dd531629c6b",
+          "rank": 14,
+          "in_top_20": true,
+          "score": 0.20037849512834496,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-c41158848dd6774c5c85",
+          "rank": 15,
+          "in_top_20": true,
+          "score": 0.19756335350052556,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-c3331167f967e078efeb",
+          "rank": 16,
+          "in_top_20": true,
+          "score": 0.1965255376664946,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-a70ba2678db63bd20688",
+          "rank": 17,
+          "in_top_20": true,
+          "score": 0.1946541290672504,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-d2765f27cfb13776aee3",
+          "rank": 18,
+          "in_top_20": true,
+          "score": 0.1946541290672504,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-ffea25e1467faf3f7b22",
+          "rank": 19,
+          "in_top_20": true,
+          "score": 0.1946541290672504,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-58e9ea27d16f2892198a",
+          "rank": 20,
+          "in_top_20": true,
+          "score": 0.1938213789605821,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-10e7845efad751b455ed",
+          "rank": 21,
+          "in_top_20": false,
+          "score": 0.1929079546060266,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-7f5f521d4f5898ba1581",
+          "rank": 22,
+          "in_top_20": false,
+          "score": 0.19281804719166146,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-71daeb1dfb0b87f4bd0f",
+          "rank": 23,
+          "in_top_20": false,
+          "score": 0.19209327562357026,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-9cd4a5e6cb74b2a21fa8",
+          "rank": 24,
+          "in_top_20": false,
+          "score": 0.19209327562357026,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-2aab98948cd7e15b69aa",
+          "rank": 25,
+          "in_top_20": false,
+          "score": 0.19191294251740315,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-3f3f3b649898a44db4e9",
+          "rank": 26,
+          "in_top_20": false,
+          "score": 0.19191294251740315,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-1eee97303603b881b1aa",
+          "rank": 27,
+          "in_top_20": false,
+          "score": 0.19101630067456263,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-2e42da4675b38ba590eb",
+          "rank": 28,
+          "in_top_20": false,
+          "score": 0.1901280034724201,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-41d01b2c692cc62b5d14",
+          "rank": 29,
+          "in_top_20": false,
+          "score": 0.1901280034724201,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-94cc2e9e2fdb9f294076",
+          "rank": 30,
+          "in_top_20": false,
+          "score": 0.18942977074901146,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-9d2e6605bec9ef326e6d",
+          "rank": 31,
+          "in_top_20": false,
+          "score": 0.18924793491154646,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-d4037196d85e3cfff946",
+          "rank": 32,
+          "in_top_20": false,
+          "score": 0.18924793491154646,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-4758a1d36dcb787b1610",
+          "rank": 33,
+          "in_top_20": false,
+          "score": 0.18855830092279308,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-516bddf98741e07fee4c",
+          "rank": 34,
+          "in_top_20": false,
+          "score": 0.18855830092279308,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-da8b7ff9b348b90f19df",
+          "rank": 35,
+          "in_top_20": false,
+          "score": 0.18769482583229916,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-6fa3e7856a3723693d0b",
+          "rank": 36,
+          "in_top_20": false,
+          "score": 0.18665597289956037,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-452f399a694e5cc5bd69",
+          "rank": 37,
+          "in_top_20": false,
+          "score": 0.18599142342765454,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-b34301c2aea3b9f10179",
+          "rank": 38,
+          "in_top_20": false,
+          "score": 0.18599142342765454,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-92b6c588da27aed379ff",
+          "rank": 39,
+          "in_top_20": false,
+          "score": 0.18580770099464392,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-de665209d0f9b2b53195",
+          "rank": 40,
+          "in_top_20": false,
+          "score": 0.18580770099464392,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-f6bc9af975863ee218cd",
+          "rank": 41,
+          "in_top_20": false,
+          "score": 0.18580770099464392,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-68e7ce057035b87ff54a",
+          "rank": 42,
+          "in_top_20": false,
+          "score": 0.18413409269383677,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-652480948bb0d8e2af62",
+          "rank": 43,
+          "in_top_20": false,
+          "score": 0.18355136234058406,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-1767cbe29b3883fc6f48",
+          "rank": 44,
+          "in_top_20": false,
+          "score": 0.18267586395169716,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-cf73816a5c620ea7e4f2",
+          "rank": 45,
+          "in_top_20": false,
+          "score": 0.18249038191442124,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-84df519d5655e0446149",
+          "rank": 46,
+          "in_top_20": false,
+          "score": 0.18186539167204824,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-462066f4635501458718",
+          "rank": 47,
+          "in_top_20": false,
+          "score": 0.18167948875027845,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-ca3329bde548317d9ce0",
+          "rank": 48,
+          "in_top_20": false,
+          "score": 0.18106209069819015,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-5d2b02257c176ba733bb",
+          "rank": 49,
+          "in_top_20": false,
+          "score": 0.18007914357784766,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-b5b214ba985bf0eaee44",
+          "rank": 50,
+          "in_top_20": false,
+          "score": 0.001340167260390959,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-0ad4dc58099931f87a6f",
+          "rank": 51,
+          "in_top_20": false,
+          "score": 0.0013309072572640235,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-7ee72db5517eda350612",
+          "rank": 52,
+          "in_top_20": false,
+          "score": 0.0013309072572640235,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-cc7d89edad608cd232de",
+          "rank": 53,
+          "in_top_20": false,
+          "score": 0.0013127659150045064,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-64892ad081f56714c710",
+          "rank": 54,
+          "in_top_20": false,
+          "score": 0.0013038794493150036,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-0d856f826f650ae6479d",
+          "rank": 55,
+          "in_top_20": false,
+          "score": 0.001295112484446752,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        }
+      ]
+    },
+    {
+      "query_id": "H-d5db790a049dde6f4e92",
+      "synthetic_user": "box-dfac33a7123c",
+      "query": "Покажи уведомления о сбоях модуля электронных рецептов, полученные 27 сентября 2028 года.",
+      "query_date": "2028-09-28",
+      "expected_day": "2028-09-27",
+      "expected_topic": "уведомления о сбоях модуля электронных рецептов",
+      "parsed_period": "27.09.2028",
+      "parsed_topic": "уведомления о сбоях модуля электронных рецептов",
+      "date_ok": true,
+      "topic_ok": true,
+      "day_candidates": 13,
+      "relevant_count": 13,
+      "unavoidable_at_10": 3,
+      "top_20": [
+        "L-249c14a4cbdc75366de4",
+        "L-98c34ffb05bbdb1415b5",
+        "L-0799878549c17bae8392",
+        "L-f79d6540b4013b8c5f2d",
+        "L-ee91d92142ba4a12fbf0",
+        "L-fde4b26e82b0c0e780a4",
+        "L-f360bf04f5c4ed874adf",
+        "L-2e9cd35839439807012b",
+        "L-05a30580abba4bb3b836",
+        "L-9c4c69a25015fc162793",
+        "L-320863526dfe856d92d7",
+        "L-2b9d3dc621659818bfff",
+        "L-a1605f6fe06ea8034a80",
+        "L-a7e5a17c0b36cc0eb6fb",
+        "L-dec8adff9f7d49a6255e",
+        "L-5adb434cf9f216310bdf",
+        "L-84790438ec20826fba64",
+        "L-d754400a995d88fbb643",
+        "L-3de9e90fa7f1a071275d",
+        "L-1db94deeb88afa2d22df"
+      ],
+      "misses": [
+        {
+          "doc_id": "L-320863526dfe856d92d7",
+          "rank": 11,
+          "in_top_20": true,
+          "score": 0.18112044773434616,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-2b9d3dc621659818bfff",
+          "rank": 12,
+          "in_top_20": true,
+          "score": 0.0012907730640687705,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        },
+        {
+          "doc_id": "L-a1605f6fe06ea8034a80",
+          "rank": 13,
+          "in_top_20": true,
+          "score": 0.0010816313443248024,
+          "reason": "limit_at_10",
+          "higher_nonrelevant_ids": []
+        }
+      ]
+    }
+  ]
+}

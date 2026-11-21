@@ -1,0 +1,3104 @@
+{
+  "holdout_sha256": "f797b19712d73daa1e5d3e8358153e7a53aad019c87f83f453f17120273a4dcc",
+  "variants": {
+    "dated:bm25": {
+      "search_timing": {
+        "k": 20,
+        "warmup_queries": 10,
+        "latency_ms": {
+          "p50": 0.189,
+          "p95": 1.536,
+          "p99": 1.85
+        }
+      },
+      "holdout": {
+        "queries": 30,
+        "scored_queries": 30,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.762129,
+            "ndcg": 0.802192,
+            "mrr": 0.827778
+          },
+          "@20": {
+            "recall": 0.837297,
+            "ndcg": 0.811219,
+            "mrr": 0.830342
+          }
+        }
+      },
+      "paraphrase": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 1.0,
+            "ndcg": 0.88232,
+            "mrr": 0.816667
+          },
+          "@20": {
+            "recall": 1.0,
+            "ndcg": 0.88232,
+            "mrr": 0.816667
+          }
+        }
+      },
+      "no_date": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.625534,
+            "ndcg": 0.612978,
+            "mrr": 0.666667
+          },
+          "@20": {
+            "recall": 0.698611,
+            "ndcg": 0.629234,
+            "mrr": 0.674359
+          }
+        }
+      },
+      "near_event": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.660853,
+            "ndcg": 0.911278,
+            "mrr": 1.0
+          },
+          "@20": {
+            "recall": 0.813281,
+            "ndcg": 0.922104,
+            "mrr": 1.0
+          }
+        }
+      },
+      "public": {
+        "queries": 99,
+        "scored_queries": 99,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.893223,
+            "ndcg": 0.923932,
+            "mrr": 0.921717
+          },
+          "@20": {
+            "recall": 0.953298,
+            "ndcg": 0.93746,
+            "mrr": 0.922494
+          }
+        }
+      },
+      "exact_received_date": {
+        "queries": 119,
+        "scored_queries": 119,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.882669,
+            "ndcg": 0.919372,
+            "mrr": 0.919468
+          },
+          "@20": {
+            "recall": 0.945457,
+            "ndcg": 0.931536,
+            "mrr": 0.920114
+          }
+        }
+      }
+    },
+    "dated:bm25-subject": {
+      "search_timing": {
+        "k": 20,
+        "warmup_queries": 10,
+        "latency_ms": {
+          "p50": 0.186,
+          "p95": 1.466,
+          "p99": 1.755
+        }
+      },
+      "holdout": {
+        "queries": 30,
+        "scored_queries": 30,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.818824,
+            "ndcg": 0.837589,
+            "mrr": 0.856667
+          },
+          "@20": {
+            "recall": 0.898409,
+            "ndcg": 0.84998,
+            "mrr": 0.859231
+          }
+        }
+      },
+      "paraphrase": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 1.0,
+            "ndcg": 0.88232,
+            "mrr": 0.816667
+          },
+          "@20": {
+            "recall": 1.0,
+            "ndcg": 0.88232,
+            "mrr": 0.816667
+          }
+        }
+      },
+      "no_date": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.79562,
+            "ndcg": 0.719168,
+            "mrr": 0.753333
+          },
+          "@20": {
+            "recall": 0.881944,
+            "ndcg": 0.745515,
+            "mrr": 0.761026
+          }
+        }
+      },
+      "near_event": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.660853,
+            "ndcg": 0.911278,
+            "mrr": 1.0
+          },
+          "@20": {
+            "recall": 0.813281,
+            "ndcg": 0.922104,
+            "mrr": 1.0
+          }
+        }
+      },
+      "public": {
+        "queries": 99,
+        "scored_queries": 99,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.890751,
+            "ndcg": 0.936245,
+            "mrr": 0.968013
+          },
+          "@20": {
+            "recall": 0.954905,
+            "ndcg": 0.947165,
+            "mrr": 0.968519
+          }
+        }
+      },
+      "exact_received_date": {
+        "queries": 119,
+        "scored_queries": 119,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.880613,
+            "ndcg": 0.929616,
+            "mrr": 0.957983
+          },
+          "@20": {
+            "recall": 0.946794,
+            "ndcg": 0.93961,
+            "mrr": 0.958403
+          }
+        }
+      }
+    },
+    "dated:dense": {
+      "search_timing": {
+        "k": 20,
+        "warmup_queries": 10,
+        "latency_ms": {
+          "p50": 37.819,
+          "p95": 41.399,
+          "p99": 43.448
+        }
+      },
+      "holdout": {
+        "queries": 30,
+        "scored_queries": 30,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.7362,
+            "ndcg": 0.82616,
+            "mrr": 0.869444
+          },
+          "@20": {
+            "recall": 0.8231,
+            "ndcg": 0.829648,
+            "mrr": 0.869444
+          }
+        }
+      },
+      "paraphrase": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 1.0,
+            "ndcg": 0.95,
+            "mrr": 0.933333
+          },
+          "@20": {
+            "recall": 1.0,
+            "ndcg": 0.95,
+            "mrr": 0.933333
+          }
+        }
+      },
+      "no_date": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.555609,
+            "ndcg": 0.562373,
+            "mrr": 0.675
+          },
+          "@20": {
+            "recall": 0.645299,
+            "ndcg": 0.572745,
+            "mrr": 0.675
+          }
+        }
+      },
+      "near_event": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.652992,
+            "ndcg": 0.966108,
+            "mrr": 1.0
+          },
+          "@20": {
+            "recall": 0.824001,
+            "ndcg": 0.966198,
+            "mrr": 1.0
+          }
+        }
+      },
+      "public": {
+        "queries": 99,
+        "scored_queries": 99,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.878346,
+            "ndcg": 0.924486,
+            "mrr": 0.943378
+          },
+          "@20": {
+            "recall": 0.924712,
+            "ndcg": 0.925065,
+            "mrr": 0.943378
+          }
+        }
+      },
+      "exact_received_date": {
+        "queries": 119,
+        "scored_queries": 119,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.869632,
+            "ndcg": 0.930128,
+            "mrr": 0.947292
+          },
+          "@20": {
+            "recall": 0.922576,
+            "ndcg": 0.930617,
+            "mrr": 0.947292
+          }
+        }
+      }
+    },
+    "dated-period:hybrid-subject": {
+      "search_timing": {
+        "k": 20,
+        "warmup_queries": 10,
+        "latency_ms": {
+          "p50": 38.495,
+          "p95": 41.314,
+          "p99": 42.933
+        }
+      },
+      "holdout": {
+        "queries": 30,
+        "scored_queries": 30,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.782624,
+            "ndcg": 0.878184,
+            "mrr": 0.894444
+          },
+          "@20": {
+            "recall": 0.853406,
+            "ndcg": 0.868122,
+            "mrr": 0.894444
+          }
+        }
+      },
+      "paraphrase": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 1.0,
+            "ndcg": 0.910922,
+            "mrr": 0.883333
+          },
+          "@20": {
+            "recall": 1.0,
+            "ndcg": 0.910922,
+            "mrr": 0.883333
+          }
+        }
+      },
+      "no_date": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.685791,
+            "ndcg": 0.749341,
+            "mrr": 0.8
+          },
+          "@20": {
+            "recall": 0.750588,
+            "ndcg": 0.742395,
+            "mrr": 0.8
+          }
+        }
+      },
+      "near_event": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.662083,
+            "ndcg": 0.974288,
+            "mrr": 1.0
+          },
+          "@20": {
+            "recall": 0.809631,
+            "ndcg": 0.951048,
+            "mrr": 1.0
+          }
+        }
+      },
+      "public": {
+        "queries": 99,
+        "scored_queries": 99,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.89064,
+            "ndcg": 0.94993,
+            "mrr": 0.973345
+          },
+          "@20": {
+            "recall": 0.940206,
+            "ndcg": 0.953344,
+            "mrr": 0.973345
+          }
+        }
+      },
+      "exact_received_date": {
+        "queries": 119,
+        "scored_queries": 119,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.880623,
+            "ndcg": 0.948699,
+            "mrr": 0.968021
+          },
+          "@20": {
+            "recall": 0.934258,
+            "ndcg": 0.949586,
+            "mrr": 0.968021
+          }
+        }
+      }
+    },
+    "dated:hybrid": {
+      "search_timing": {
+        "k": 20,
+        "warmup_queries": 10,
+        "latency_ms": {
+          "p50": 39.202,
+          "p95": 41.254,
+          "p99": 41.696
+        }
+      },
+      "holdout": {
+        "queries": 30,
+        "scored_queries": 30,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.739078,
+            "ndcg": 0.837015,
+            "mrr": 0.894444
+          },
+          "@20": {
+            "recall": 0.824583,
+            "ndcg": 0.84213,
+            "mrr": 0.894444
+          }
+        }
+      },
+      "paraphrase": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 1.0,
+            "ndcg": 0.93232,
+            "mrr": 0.883333
+          },
+          "@20": {
+            "recall": 1.0,
+            "ndcg": 0.93232,
+            "mrr": 0.883333
+          }
+        }
+      },
+      "no_date": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.589209,
+            "ndcg": 0.653692,
+            "mrr": 0.8
+          },
+          "@20": {
+            "recall": 0.703312,
+            "ndcg": 0.683005,
+            "mrr": 0.8
+          }
+        }
+      },
+      "near_event": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.628025,
+            "ndcg": 0.925032,
+            "mrr": 1.0
+          },
+          "@20": {
+            "recall": 0.770437,
+            "ndcg": 0.911064,
+            "mrr": 1.0
+          }
+        }
+      },
+      "public": {
+        "queries": 99,
+        "scored_queries": 99,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.889186,
+            "ndcg": 0.936457,
+            "mrr": 0.968013
+          },
+          "@20": {
+            "recall": 0.936323,
+            "ndcg": 0.93928,
+            "mrr": 0.968608
+          }
+        }
+      },
+      "exact_received_date": {
+        "queries": 119,
+        "scored_queries": 119,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.876552,
+            "ndcg": 0.935149,
+            "mrr": 0.963585
+          },
+          "@20": {
+            "recall": 0.927734,
+            "ndcg": 0.936324,
+            "mrr": 0.96408
+          }
+        }
+      }
+    },
+    "dated-period:hybrid": {
+      "search_timing": {
+        "k": 20,
+        "warmup_queries": 10,
+        "latency_ms": {
+          "p50": 40.365,
+          "p95": 44.685,
+          "p99": 45.479
+        }
+      },
+      "holdout": {
+        "queries": 30,
+        "scored_queries": 30,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.753209,
+            "ndcg": 0.848422,
+            "mrr": 0.894444
+          },
+          "@20": {
+            "recall": 0.837648,
+            "ndcg": 0.848498,
+            "mrr": 0.894444
+          }
+        }
+      },
+      "paraphrase": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 1.0,
+            "ndcg": 0.910922,
+            "mrr": 0.883333
+          },
+          "@20": {
+            "recall": 1.0,
+            "ndcg": 0.910922,
+            "mrr": 0.883333
+          }
+        }
+      },
+      "no_date": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.589209,
+            "ndcg": 0.653692,
+            "mrr": 0.8
+          },
+          "@20": {
+            "recall": 0.703312,
+            "ndcg": 0.683005,
+            "mrr": 0.8
+          }
+        }
+      },
+      "near_event": {
+        "queries": 10,
+        "scored_queries": 10,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.670416,
+            "ndcg": 0.98065,
+            "mrr": 1.0
+          },
+          "@20": {
+            "recall": 0.809631,
+            "ndcg": 0.951567,
+            "mrr": 1.0
+          }
+        }
+      },
+      "public": {
+        "queries": 99,
+        "scored_queries": 99,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.887253,
+            "ndcg": 0.945133,
+            "mrr": 0.970034
+          },
+          "@20": {
+            "recall": 0.941124,
+            "ndcg": 0.951924,
+            "mrr": 0.970034
+          }
+        }
+      },
+      "exact_received_date": {
+        "queries": 119,
+        "scored_queries": 119,
+        "max_returned": 20,
+        "metrics": {
+          "@10": {
+            "recall": 0.878506,
+            "ndcg": 0.945243,
+            "mrr": 0.965266
+          },
+          "@20": {
+            "recall": 0.935022,
+            "ndcg": 0.948448,
+            "mrr": 0.965266
+          }
+        }
+      }
+    }
+  },
+  "period_invariants": {
+    "no_date_unchanged": 10,
+    "outside_period_fill_unchanged": 119
+  },
+  "period_hits_with_no_old_branch": [
+    {
+      "query_id": "manual-01",
+      "doc_id": "L-de6bfc1790b5381d351e",
+      "old_rank": 3,
+      "new_rank": 4,
+      "new_score": 0.031024531024531024
+    },
+    {
+      "query_id": "manual-01",
+      "doc_id": "L-d996aac730a9922d0531",
+      "old_rank": 4,
+      "new_rank": 2,
+      "new_score": 0.03125
+    },
+    {
+      "query_id": "manual-01",
+      "doc_id": "L-d122fecfbd73b4b31d26",
+      "old_rank": 5,
+      "new_rank": 9,
+      "new_score": 0.029850746268656716
+    },
+    {
+      "query_id": "manual-01",
+      "doc_id": "L-cdd058ad7707e0932835",
+      "old_rank": 6,
+      "new_rank": 7,
+      "new_score": 0.03057889822595705
+    },
+    {
+      "query_id": "manual-01",
+      "doc_id": "L-6d582d62fb2bf24a98d6",
+      "old_rank": 7,
+      "new_rank": 6,
+      "new_score": 0.030621785881252923
+    },
+    {
+      "query_id": "manual-01",
+      "doc_id": "L-57eb1c8ee7c042869c58",
+      "old_rank": 8,
+      "new_rank": 3,
+      "new_score": 0.031099324975891997
+    },
+    {
+      "query_id": "manual-01",
+      "doc_id": "L-13a5754d1f5b1c0ee17d",
+      "old_rank": 9,
+      "new_rank": 8,
+      "new_score": 0.030536130536130537
+    },
+    {
+      "query_id": "manual-06",
+      "doc_id": "L-c00311a3afe957bb2945",
+      "old_rank": 2,
+      "new_rank": 4,
+      "new_score": 0.0315136476426799
+    },
+    {
+      "query_id": "manual-06",
+      "doc_id": "L-6e26064b2cc307bb5d18",
+      "old_rank": 3,
+      "new_rank": 5,
+      "new_score": 0.031009615384615385
+    },
+    {
+      "query_id": "manual-06",
+      "doc_id": "L-3fc1088dda062ba98dbb",
+      "old_rank": 4,
+      "new_rank": 3,
+      "new_score": 0.031746031746031744
+    },
+    {
+      "query_id": "manual-06",
+      "doc_id": "L-14ff2e5892d173180cf9",
+      "old_rank": 5,
+      "new_rank": 2,
+      "new_score": 0.032018442622950824
+    },
+    {
+      "query_id": "manual-07",
+      "doc_id": "L-e2fa1583bb304afe08f2",
+      "old_rank": 2,
+      "new_rank": 5,
+      "new_score": 0.031009615384615385
+    },
+    {
+      "query_id": "manual-07",
+      "doc_id": "L-b413172f84e0f008dacb",
+      "old_rank": 3,
+      "new_rank": 2,
+      "new_score": 0.031754032258064516
+    },
+    {
+      "query_id": "manual-07",
+      "doc_id": "L-a4eca967207ac925a317",
+      "old_rank": 4,
+      "new_rank": 4,
+      "new_score": 0.03125763125763126
+    },
+    {
+      "query_id": "manual-07",
+      "doc_id": "L-7f2a7ceebc8346f5e972",
+      "old_rank": 5,
+      "new_rank": 6,
+      "new_score": 0.030798389007344232
+    },
+    {
+      "query_id": "manual-07",
+      "doc_id": "L-431479f83f8479cea761",
+      "old_rank": 6,
+      "new_rank": 3,
+      "new_score": 0.03128054740957967
+    },
+    {
+      "query_id": "manual-07",
+      "doc_id": "L-30cea26558cbad6f2afe",
+      "old_rank": 7,
+      "new_rank": 7,
+      "new_score": 0.03007688828584351
+    },
+    {
+      "query_id": "manual-21",
+      "doc_id": "L-f36e969a0b13297cc4a8",
+      "old_rank": 53,
+      "new_rank": 55,
+      "new_score": 0.009259259259259259
+    },
+    {
+      "query_id": "manual-21",
+      "doc_id": "L-bdb464364fdefb2762fa",
+      "old_rank": 54,
+      "new_rank": 59,
+      "new_score": 0.008695652173913044
+    },
+    {
+      "query_id": "manual-21",
+      "doc_id": "L-9b6b2b02cbf58fb436dc",
+      "old_rank": 56,
+      "new_rank": 56,
+      "new_score": 0.009174311926605505
+    },
+    {
+      "query_id": "manual-21",
+      "doc_id": "L-90c9b46ebb03aeabc59f",
+      "old_rank": 57,
+      "new_rank": 54,
+      "new_score": 0.009345794392523364
+    },
+    {
+      "query_id": "manual-21",
+      "doc_id": "L-88ca5bc97c61b0537f29",
+      "old_rank": 58,
+      "new_rank": 53,
+      "new_score": 0.009433962264150943
+    },
+    {
+      "query_id": "manual-21",
+      "doc_id": "L-64f120a20c7fe5ba6013",
+      "old_rank": 60,
+      "new_rank": 52,
+      "new_score": 0.009615384615384616
+    },
+    {
+      "query_id": "manual-21",
+      "doc_id": "L-3c6c1174502dbafd4d4b",
+      "old_rank": 61,
+      "new_rank": 58,
+      "new_score": 0.008928571428571428
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-f9c620c3ed8b385b0b98",
+      "old_rank": 25,
+      "new_rank": 39,
+      "new_score": 0.010869565217391304
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-f2e2d8f27e2997cbab74",
+      "old_rank": 26,
+      "new_rank": 40,
+      "new_score": 0.010526315789473684
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-f0e3d74f15953e7e3992",
+      "old_rank": 27,
+      "new_rank": 38,
+      "new_score": 0.01098901098901099
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-e6d74ec5977169935a22",
+      "old_rank": 28,
+      "new_rank": 37,
+      "new_score": 0.011111111111111112
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-cbeb2f629dc227578745",
+      "old_rank": 29,
+      "new_rank": 36,
+      "new_score": 0.011363636363636364
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-bc9258b927a19d98a8d7",
+      "old_rank": 30,
+      "new_rank": 41,
+      "new_score": 0.010309278350515464
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-a6f9b3a5562055216398",
+      "old_rank": 33,
+      "new_rank": 33,
+      "new_score": 0.011764705882352941
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-9c5634e2de1fc3401e98",
+      "old_rank": 34,
+      "new_rank": 43,
+      "new_score": 0.01
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-98f8785a8f4a5cc195da",
+      "old_rank": 35,
+      "new_rank": 46,
+      "new_score": 0.009433962264150943
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-85b8c8e46d3c6a3a451f",
+      "old_rank": 37,
+      "new_rank": 29,
+      "new_score": 0.021874252928520202
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-84880851d9073992d958",
+      "old_rank": 38,
+      "new_rank": 27,
+      "new_score": 0.023542445644647556
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-82f1c489653a83aa3f0b",
+      "old_rank": 39,
+      "new_rank": 23,
+      "new_score": 0.02428613482484545
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-678d1bb75da53962acf7",
+      "old_rank": 41,
+      "new_rank": 21,
+      "new_score": 0.024695121951219513
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-64ef943d99cfb240a051",
+      "old_rank": 42,
+      "new_rank": 20,
+      "new_score": 0.025003906860446942
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-3b798280f5eee34fe26d",
+      "old_rank": 44,
+      "new_rank": 25,
+      "new_score": 0.023959827833572454
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-3318535b39ef371a612c",
+      "old_rank": 45,
+      "new_rank": 24,
+      "new_score": 0.024250440917107582
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-2ad111baca73c1fa04ad",
+      "old_rank": 46,
+      "new_rank": 34,
+      "new_score": 0.011627906976744186
+    },
+    {
+      "query_id": "manual-23",
+      "doc_id": "L-1ad48105848a36dcb8dd",
+      "old_rank": 47,
+      "new_rank": 35,
+      "new_score": 0.011494252873563218
+    },
+    {
+      "query_id": "manual-25",
+      "doc_id": "L-d1ee70b4b5b8e9676711",
+      "old_rank": 13,
+      "new_rank": 15,
+      "new_score": 0.027272727272727275
+    },
+    {
+      "query_id": "manual-25",
+      "doc_id": "L-cc883d3c0c13b937ab9f",
+      "old_rank": 14,
+      "new_rank": 24,
+      "new_score": 0.024562989752863168
+    },
+    {
+      "query_id": "manual-25",
+      "doc_id": "L-9a410f485f751a093543",
+      "old_rank": 15,
+      "new_rank": 20,
+      "new_score": 0.0264301860545992
+    },
+    {
+      "query_id": "manual-25",
+      "doc_id": "L-8fea202d6d36d950ed13",
+      "old_rank": 16,
+      "new_rank": 14,
+      "new_score": 0.027402402402402402
+    },
+    {
+      "query_id": "manual-25",
+      "doc_id": "L-844543abbea8a1919aa8",
+      "old_rank": 17,
+      "new_rank": 23,
+      "new_score": 0.02475171886936593
+    },
+    {
+      "query_id": "manual-25",
+      "doc_id": "L-4d9b73ffdefcfb6e1935",
+      "old_rank": 18,
+      "new_rank": 22,
+      "new_score": 0.02538152610441767
+    },
+    {
+      "query_id": "manual-25",
+      "doc_id": "L-4c395561430eb78828f1",
+      "old_rank": 19,
+      "new_rank": 16,
+      "new_score": 0.02712049508554787
+    },
+    {
+      "query_id": "manual-25",
+      "doc_id": "L-40dad82dcdb568d51953",
+      "old_rank": 20,
+      "new_rank": 21,
+      "new_score": 0.025478740668614087
+    },
+    {
+      "query_id": "manual-25",
+      "doc_id": "L-3ac425aff906c25683c7",
+      "old_rank": 22,
+      "new_rank": 19,
+      "new_score": 0.026540946394272742
+    },
+    {
+      "query_id": "manual-25",
+      "doc_id": "L-33a566bfc88b2b54029e",
+      "old_rank": 23,
+      "new_rank": 17,
+      "new_score": 0.027051561365286855
+    },
+    {
+      "query_id": "manual-25",
+      "doc_id": "L-252d0bd78e830781ffbf",
+      "old_rank": 24,
+      "new_rank": 18,
+      "new_score": 0.02667140825035562
+    },
+    {
+      "query_id": "manual-25",
+      "doc_id": "L-245dbc1b17ee088b6051",
+      "old_rank": 25,
+      "new_rank": 13,
+      "new_score": 0.028404512489927477
+    },
+    {
+      "query_id": "manual-27",
+      "doc_id": "L-dfa8c7c292a7c7ae3ec2",
+      "old_rank": 6,
+      "new_rank": 28,
+      "new_score": 0.023268398268398268
+    },
+    {
+      "query_id": "manual-27",
+      "doc_id": "L-c5267701451d378ab4f5",
+      "old_rank": 10,
+      "new_rank": 8,
+      "new_score": 0.028985507246376812
+    },
+    {
+      "query_id": "manual-27",
+      "doc_id": "L-b9f23995dadf9f0e6f8c",
+      "old_rank": 12,
+      "new_rank": 5,
+      "new_score": 0.030776515151515152
+    },
+    {
+      "query_id": "manual-27",
+      "doc_id": "L-a5bcdb4061ef9f595b6e",
+      "old_rank": 17,
+      "new_rank": 23,
+      "new_score": 0.02475171886936593
+    },
+    {
+      "query_id": "manual-27",
+      "doc_id": "L-a0658153397b9fffe08b",
+      "old_rank": 19,
+      "new_rank": 6,
+      "new_score": 0.030536130536130537
+    },
+    {
+      "query_id": "manual-27",
+      "doc_id": "L-4428c99972ce5649847f",
+      "old_rank": 32,
+      "new_rank": 4,
+      "new_score": 0.031009615384615385
+    },
+    {
+      "query_id": "manual-27",
+      "doc_id": "L-1811e9d1e5fb898e847e",
+      "old_rank": 35,
+      "new_rank": 10,
+      "new_score": 0.027364110201042444
+    },
+    {
+      "query_id": "manual-27",
+      "doc_id": "L-0a56dc1861162ef5cd95",
+      "old_rank": 37,
+      "new_rank": 17,
+      "new_score": 0.025779967159277502
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-fc03adb824c60a478cea",
+      "old_rank": 2,
+      "new_rank": 21,
+      "new_score": 0.024562989752863168
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-da098895c96f88f9f2fb",
+      "old_rank": 4,
+      "new_rank": 3,
+      "new_score": 0.03200204813108039
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-cde36275763c1123aa53",
+      "old_rank": 6,
+      "new_rank": 6,
+      "new_score": 0.029910714285714284
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-cc919b13b6ba7592dd4a",
+      "old_rank": 7,
+      "new_rank": 2,
+      "new_score": 0.03200204813108039
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-c1e6a63b825776b89af4",
+      "old_rank": 9,
+      "new_rank": 17,
+      "new_score": 0.025098039215686277
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-b8725fb2df6eb9cdf931",
+      "old_rank": 11,
+      "new_rank": 5,
+      "new_score": 0.03007688828584351
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-b7f1c55191c411230730",
+      "old_rank": 13,
+      "new_rank": 10,
+      "new_score": 0.028612012987012988
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-aea5d898454ac66f21fb",
+      "old_rank": 14,
+      "new_rank": 8,
+      "new_score": 0.028814262023217248
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-84e59ed69663dc0b04d2",
+      "old_rank": 18,
+      "new_rank": 26,
+      "new_score": 0.023159303882195448
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-6dd788f931e63bd57bf4",
+      "old_rank": 20,
+      "new_rank": 15,
+      "new_score": 0.027212143650499815
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-67c7df1f5409251aef21",
+      "old_rank": 22,
+      "new_rank": 16,
+      "new_score": 0.025679012345679014
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-64ec3dbad9cea420c318",
+      "old_rank": 23,
+      "new_rank": 25,
+      "new_score": 0.02368937482478273
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-62ebb3f3a064554060e6",
+      "old_rank": 24,
+      "new_rank": 4,
+      "new_score": 0.030536130536130537
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-5efd98f81978a8ee5101",
+      "old_rank": 26,
+      "new_rank": 27,
+      "new_score": 0.02292152292152292
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-5c16828894a03cde89eb",
+      "old_rank": 27,
+      "new_rank": 12,
+      "new_score": 0.02786377708978328
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-55b7aecc141fdf2d76dc",
+      "old_rank": 28,
+      "new_rank": 7,
+      "new_score": 0.029877369007803793
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-4978dfd2bc515f6fd308",
+      "old_rank": 29,
+      "new_rank": 14,
+      "new_score": 0.027479766610201392
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-3f47bb0fa82e801b2d54",
+      "old_rank": 31,
+      "new_rank": 18,
+      "new_score": 0.025
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-2def3d32fdc597a1c5cc",
+      "old_rank": 33,
+      "new_rank": 11,
+      "new_score": 0.02817460317460317
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-03cefb93b8a2d0dcbcb3",
+      "old_rank": 38,
+      "new_rank": 13,
+      "new_score": 0.027783137179239824
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-0209e522ddf41fc73663",
+      "old_rank": 39,
+      "new_rank": 9,
+      "new_score": 0.028790389395194696
+    },
+    {
+      "query_id": "manual-28",
+      "doc_id": "L-008b36082c254e0c4a7c",
+      "old_rank": 40,
+      "new_rank": 19,
+      "new_score": 0.024877149877149878
+    },
+    {
+      "query_id": "H-c520a90e0f715e6cd77d",
+      "doc_id": "L-e0852cc1b60d9bf44ca8",
+      "old_rank": 4,
+      "new_rank": 3,
+      "new_score": 0.031009615384615385
+    },
+    {
+      "query_id": "H-c520a90e0f715e6cd77d",
+      "doc_id": "L-8d11fe7fbe46533436d6",
+      "old_rank": 6,
+      "new_rank": 5,
+      "new_score": 0.030621785881252923
+    },
+    {
+      "query_id": "H-c520a90e0f715e6cd77d",
+      "doc_id": "L-89851983ae3ab29c4fd7",
+      "old_rank": 8,
+      "new_rank": 12,
+      "new_score": 0.02857142857142857
+    },
+    {
+      "query_id": "H-c520a90e0f715e6cd77d",
+      "doc_id": "L-7191ecf5c8777a4b76fb",
+      "old_rank": 9,
+      "new_rank": 10,
+      "new_score": 0.028594771241830064
+    },
+    {
+      "query_id": "H-c520a90e0f715e6cd77d",
+      "doc_id": "L-3bf90f7090c1e70da701",
+      "old_rank": 11,
+      "new_rank": 7,
+      "new_score": 0.03007688828584351
+    },
+    {
+      "query_id": "H-c520a90e0f715e6cd77d",
+      "doc_id": "L-3165fee07648b2f2f384",
+      "old_rank": 12,
+      "new_rank": 2,
+      "new_score": 0.03125763125763126
+    },
+    {
+      "query_id": "H-c520a90e0f715e6cd77d",
+      "doc_id": "L-2ea52497ccbae25ebd1c",
+      "old_rank": 13,
+      "new_rank": 9,
+      "new_score": 0.029513888888888888
+    },
+    {
+      "query_id": "H-c520a90e0f715e6cd77d",
+      "doc_id": "L-11f34d0d31a30c9e6c8c",
+      "old_rank": 15,
+      "new_rank": 13,
+      "new_score": 0.0273972602739726
+    },
+    {
+      "query_id": "H-c520a90e0f715e6cd77d",
+      "doc_id": "L-00ecfc2fd51ad9834d47",
+      "old_rank": 16,
+      "new_rank": 8,
+      "new_score": 0.029857397504456328
+    },
+    {
+      "query_id": "H-fce276dacbc2c7ffdb1a",
+      "doc_id": "L-d22c90127eacf805586e",
+      "old_rank": 4,
+      "new_rank": 6,
+      "new_score": 0.030309988518943745
+    },
+    {
+      "query_id": "H-fce276dacbc2c7ffdb1a",
+      "doc_id": "L-c57fbaaa99b33715d5f4",
+      "old_rank": 5,
+      "new_rank": 11,
+      "new_score": 0.028169014084507043
+    },
+    {
+      "query_id": "H-fce276dacbc2c7ffdb1a",
+      "doc_id": "L-b02db43213f5de670f75",
+      "old_rank": 7,
+      "new_rank": 5,
+      "new_score": 0.030330882352941176
+    },
+    {
+      "query_id": "H-fce276dacbc2c7ffdb1a",
+      "doc_id": "L-9f7f948a4c63e37c8d78",
+      "old_rank": 8,
+      "new_rank": 4,
+      "new_score": 0.031024531024531024
+    },
+    {
+      "query_id": "H-fce276dacbc2c7ffdb1a",
+      "doc_id": "L-4ae77545a52cb9996e2a",
+      "old_rank": 11,
+      "new_rank": 7,
+      "new_score": 0.030158730158730156
+    },
+    {
+      "query_id": "H-86c5f97dafded9493988",
+      "doc_id": "L-f72b0693b2aadac98db6",
+      "old_rank": 1,
+      "new_rank": 4,
+      "new_score": 0.03149801587301587
+    },
+    {
+      "query_id": "H-86c5f97dafded9493988",
+      "doc_id": "L-e730e70b36228bb7ab02",
+      "old_rank": 2,
+      "new_rank": 3,
+      "new_score": 0.0315136476426799
+    },
+    {
+      "query_id": "H-86c5f97dafded9493988",
+      "doc_id": "L-abbda8e0b818e0bf2f6f",
+      "old_rank": 3,
+      "new_rank": 1,
+      "new_score": 0.032266458495966696
+    },
+    {
+      "query_id": "H-86c5f97dafded9493988",
+      "doc_id": "L-8a9fbd6a3354ead96b04",
+      "old_rank": 6,
+      "new_rank": 6,
+      "new_score": 0.030309988518943745
+    },
+    {
+      "query_id": "H-86c5f97dafded9493988",
+      "doc_id": "L-0fd951172c464d67301c",
+      "old_rank": 8,
+      "new_rank": 2,
+      "new_score": 0.032018442622950824
+    },
+    {
+      "query_id": "H-d60cf706badd91a4e721",
+      "doc_id": "L-c48418e8b2f5d94f2db9",
+      "old_rank": 2,
+      "new_rank": 4,
+      "new_score": 0.03125
+    },
+    {
+      "query_id": "H-d60cf706badd91a4e721",
+      "doc_id": "L-bbad38332007245887e2",
+      "old_rank": 3,
+      "new_rank": 2,
+      "new_score": 0.0315136476426799
+    },
+    {
+      "query_id": "H-d60cf706badd91a4e721",
+      "doc_id": "L-8afb04643886e746ccbf",
+      "old_rank": 7,
+      "new_rank": 7,
+      "new_score": 0.030090497737556562
+    },
+    {
+      "query_id": "H-d60cf706badd91a4e721",
+      "doc_id": "L-7bcc21e95b4186359ebd",
+      "old_rank": 8,
+      "new_rank": 3,
+      "new_score": 0.03128054740957967
+    },
+    {
+      "query_id": "H-d60cf706badd91a4e721",
+      "doc_id": "L-626d1bb04a932b83af55",
+      "old_rank": 9,
+      "new_rank": 9,
+      "new_score": 0.02919863597612958
+    },
+    {
+      "query_id": "H-d60cf706badd91a4e721",
+      "doc_id": "L-065e9c13f39ed6fa37c0",
+      "old_rank": 10,
+      "new_rank": 6,
+      "new_score": 0.030158730158730156
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-df5c7772d8f104ffd60a",
+      "old_rank": 5,
+      "new_rank": 16,
+      "new_score": 0.027222222222222224
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-d4b60dc431f88cb26748",
+      "old_rank": 6,
+      "new_rank": 8,
+      "new_score": 0.029211087420042643
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-d34c35376af5aa8c275b",
+      "old_rank": 7,
+      "new_rank": 7,
+      "new_score": 0.029211087420042643
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-ba72abadfe727c61c3c7",
+      "old_rank": 8,
+      "new_rank": 21,
+      "new_score": 0.024393871783430016
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-b293172fb374b85f1dac",
+      "old_rank": 9,
+      "new_rank": 12,
+      "new_score": 0.027783137179239824
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-ab74102bd16653c96a87",
+      "old_rank": 10,
+      "new_rank": 11,
+      "new_score": 0.027809742999616416
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-a58cf08d408f2a4a4729",
+      "old_rank": 11,
+      "new_rank": 6,
+      "new_score": 0.029827662395050816
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-8ffb8f2f38b06560720a",
+      "old_rank": 12,
+      "new_rank": 14,
+      "new_score": 0.027313266443701224
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-833f3bab25d71833a5f0",
+      "old_rank": 13,
+      "new_rank": 18,
+      "new_score": 0.02658450704225352
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-7327ecc60da3f878f067",
+      "old_rank": 14,
+      "new_rank": 9,
+      "new_score": 0.0288981288981289
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-6f10073fad83e87a9e79",
+      "old_rank": 15,
+      "new_rank": 20,
+      "new_score": 0.025478740668614087
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-50a34058d7602050a862",
+      "old_rank": 17,
+      "new_rank": 15,
+      "new_score": 0.027222222222222224
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-497b17ac5202603e2510",
+      "old_rank": 18,
+      "new_rank": 19,
+      "new_score": 0.025503573749187783
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-35e81096cfb1aa2f8497",
+      "old_rank": 19,
+      "new_rank": 17,
+      "new_score": 0.02667140825035562
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-27ca2147fca352b3e5af",
+      "old_rank": 21,
+      "new_rank": 13,
+      "new_score": 0.027692895339954164
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-26dc669366e829c0eb30",
+      "old_rank": 22,
+      "new_rank": 10,
+      "new_score": 0.028612012987012988
+    },
+    {
+      "query_id": "H-c09c0c6f82df8a016912",
+      "doc_id": "L-03975eaa22e26c42a8f5",
+      "old_rank": 23,
+      "new_rank": 4,
+      "new_score": 0.030536130536130537
+    },
+    {
+      "query_id": "H-41f5e484948f2ab2bfa5",
+      "doc_id": "L-ffd355cd4506b46dc106",
+      "old_rank": 17,
+      "new_rank": 58,
+      "new_score": 0.008849557522123894
+    },
+    {
+      "query_id": "H-41f5e484948f2ab2bfa5",
+      "doc_id": "L-e06c6ba09e6d79f7e460",
+      "old_rank": 24,
+      "new_rank": 55,
+      "new_score": 0.017837323608688758
+    },
+    {
+      "query_id": "H-41f5e484948f2ab2bfa5",
+      "doc_id": "L-d95cdd88b978e338d671",
+      "old_rank": 27,
+      "new_rank": 50,
+      "new_score": 0.01878969654199012
+    },
+    {
+      "query_id": "H-41f5e484948f2ab2bfa5",
+      "doc_id": "L-ab79f58d495ce3bb7524",
+      "old_rank": 34,
+      "new_rank": 59,
+      "new_score": 0.008695652173913044
+    },
+    {
+      "query_id": "H-41f5e484948f2ab2bfa5",
+      "doc_id": "L-954cc30da372178227e9",
+      "old_rank": 37,
+      "new_rank": 40,
+      "new_score": 0.020638297872340425
+    },
+    {
+      "query_id": "H-41f5e484948f2ab2bfa5",
+      "doc_id": "L-2312a0e8e825a1f3592a",
+      "old_rank": 53,
+      "new_rank": 38,
+      "new_score": 0.021018062397372743
+    },
+    {
+      "query_id": "H-41f5e484948f2ab2bfa5",
+      "doc_id": "L-0c7e79dc7efffda0f20f",
+      "old_rank": 56,
+      "new_rank": 37,
+      "new_score": 0.02133696515718988
+    },
+    {
+      "query_id": "H-ab890ffc34d25c1cd4e8",
+      "doc_id": "L-f88b040f21be0816a228",
+      "old_rank": 17,
+      "new_rank": 55,
+      "new_score": 0.008695652173913044
+    },
+    {
+      "query_id": "H-ab890ffc34d25c1cd4e8",
+      "doc_id": "L-a5b13e1aa076b3812ad6",
+      "old_rank": 26,
+      "new_rank": 26,
+      "new_score": 0.023222439660795825
+    },
+    {
+      "query_id": "H-ab890ffc34d25c1cd4e8",
+      "doc_id": "L-0e910975ff5abefd996b",
+      "old_rank": 53,
+      "new_rank": 43,
+      "new_score": 0.02072649572649573
+    },
+    {
+      "query_id": "H-124bc9656e09acbcf2fc",
+      "doc_id": "L-4f0e2b619e37a9dd98f6",
+      "old_rank": 45,
+      "new_rank": 25,
+      "new_score": 0.02424331472230385
+    },
+    {
+      "query_id": "H-124bc9656e09acbcf2fc",
+      "doc_id": "L-0720bc00dcf1157874a8",
+      "old_rank": 59,
+      "new_rank": 48,
+      "new_score": 0.01911001911001911
+    },
+    {
+      "query_id": "H-bbc9bc678aba515467f5",
+      "doc_id": "L-fd08d2ad631bf3bee0a7",
+      "old_rank": 13,
+      "new_rank": 25,
+      "new_score": 0.024877149877149878
+    },
+    {
+      "query_id": "H-bbc9bc678aba515467f5",
+      "doc_id": "L-f8d4674866e1bc3c0129",
+      "old_rank": 14,
+      "new_rank": 30,
+      "new_score": 0.0227390180878553
+    },
+    {
+      "query_id": "H-bbc9bc678aba515467f5",
+      "doc_id": "L-9273da17dadded729271",
+      "old_rank": 23,
+      "new_rank": 29,
+      "new_score": 0.022753716871363933
+    },
+    {
+      "query_id": "H-bbc9bc678aba515467f5",
+      "doc_id": "L-315234701bba29aa7a69",
+      "old_rank": 32,
+      "new_rank": 27,
+      "new_score": 0.02357320099255583
+    },
+    {
+      "query_id": "H-bbc9bc678aba515467f5",
+      "doc_id": "L-21e7195bf8479eec0286",
+      "old_rank": 35,
+      "new_rank": 31,
+      "new_score": 0.022730207929742993
+    },
+    {
+      "query_id": "H-bbc9bc678aba515467f5",
+      "doc_id": "L-0f0dbdfa760950d6b12a",
+      "old_rank": 37,
+      "new_rank": 9,
+      "new_score": 0.02819138376017471
+    },
+    {
+      "query_id": "H-4519ace06f566a9f1637",
+      "doc_id": "L-fe188eee1ddd3a5d2f94",
+      "old_rank": 5,
+      "new_rank": 33,
+      "new_score": 0.022266204849084613
+    },
+    {
+      "query_id": "H-4519ace06f566a9f1637",
+      "doc_id": "L-f8c64820792ebfeb44bc",
+      "old_rank": 7,
+      "new_rank": 34,
+      "new_score": 0.010869565217391304
+    },
+    {
+      "query_id": "H-4519ace06f566a9f1637",
+      "doc_id": "L-58fdaa280d0d26b6e76f",
+      "old_rank": 26,
+      "new_rank": 5,
+      "new_score": 0.029910714285714284
+    },
+    {
+      "query_id": "H-269dfc4a89f6ce5171df",
+      "doc_id": "L-508c5a5dcae928f549e5",
+      "old_rank": 2,
+      "new_rank": 2,
+      "new_score": 0.03225806451612903
+    },
+    {
+      "query_id": "H-269dfc4a89f6ce5171df",
+      "doc_id": "L-2f3e44e2f0bbf2642f9c",
+      "old_rank": 3,
+      "new_rank": 1,
+      "new_score": 0.03278688524590164
+    },
+    {
+      "query_id": "H-ad1b042c390177db6338",
+      "doc_id": "L-e6ec4a42cb9c16f7ca3d",
+      "old_rank": 1,
+      "new_rank": 1,
+      "new_score": 0.03278688524590164
+    },
+    {
+      "query_id": "H-d523a339e5767794ded5",
+      "doc_id": "L-ddc29ea38b474e1e97fb",
+      "old_rank": 25,
+      "new_rank": 18,
+      "new_score": 0.025015634771732333
+    },
+    {
+      "query_id": "H-d523a339e5767794ded5",
+      "doc_id": "L-9961209df47a19afc37c",
+      "old_rank": 47,
+      "new_rank": 37,
+      "new_score": 0.019444444444444445
+    },
+    {
+      "query_id": "H-d523a339e5767794ded5",
+      "doc_id": "L-587a374c7c24f87ad433",
+      "old_rank": 58,
+      "new_rank": 17,
+      "new_score": 0.0259915611814346
+    },
+    {
+      "query_id": "H-d523a339e5767794ded5",
+      "doc_id": "L-030fb09ec0008c4d3c2c",
+      "old_rank": 84,
+      "new_rank": 39,
+      "new_score": 0.01924223073648361
+    },
+    {
+      "query_id": "H-1ff5058ab44a64f0e249",
+      "doc_id": "L-cf5574ba33ec75f94a68",
+      "old_rank": 26,
+      "new_rank": 14,
+      "new_score": 0.02761904761904762
+    },
+    {
+      "query_id": "H-1ff5058ab44a64f0e249",
+      "doc_id": "L-32bd1e8c9d2819fe2779",
+      "old_rank": 67,
+      "new_rank": 18,
+      "new_score": 0.025807525807525808
+    },
+    {
+      "query_id": "H-1ff5058ab44a64f0e249",
+      "doc_id": "L-2ee67754af640ef52973",
+      "old_rank": 69,
+      "new_rank": 17,
+      "new_score": 0.025978407557354925
+    },
+    {
+      "query_id": "H-1ff5058ab44a64f0e249",
+      "doc_id": "L-22daf21ba69021ab5008",
+      "old_rank": 72,
+      "new_rank": 32,
+      "new_score": 0.020120914415265444
+    },
+    {
+      "query_id": "H-78c01f45929428ddc3ff",
+      "doc_id": "L-e71316a070367d5cf773",
+      "old_rank": 16,
+      "new_rank": 11,
+      "new_score": 0.027799227799227798
+    },
+    {
+      "query_id": "H-78c01f45929428ddc3ff",
+      "doc_id": "L-e1bf98b5e56adbd34a07",
+      "old_rank": 17,
+      "new_rank": 27,
+      "new_score": 0.022161324913618493
+    },
+    {
+      "query_id": "H-78c01f45929428ddc3ff",
+      "doc_id": "L-a11d9a8fdcd45b08012f",
+      "old_rank": 25,
+      "new_rank": 12,
+      "new_score": 0.027242401779095628
+    },
+    {
+      "query_id": "H-78c01f45929428ddc3ff",
+      "doc_id": "L-2845e874402d61de0ca8",
+      "old_rank": 38,
+      "new_rank": 23,
+      "new_score": 0.023058884835852007
+    },
+    {
+      "query_id": "H-78c01f45929428ddc3ff",
+      "doc_id": "L-2327bc7ccc5358d9a122",
+      "old_rank": 42,
+      "new_rank": 24,
+      "new_score": 0.02292152292152292
+    },
+    {
+      "query_id": "H-6f1839b2094abab2d9d7",
+      "doc_id": "L-f0227a694823b270d902",
+      "old_rank": 16,
+      "new_rank": 5,
+      "new_score": 0.029877369007803793
+    },
+    {
+      "query_id": "H-6f1839b2094abab2d9d7",
+      "doc_id": "L-e842756a72cf7e7cc2c4",
+      "old_rank": 21,
+      "new_rank": 32,
+      "new_score": 0.02050580997949419
+    },
+    {
+      "query_id": "H-6f1839b2094abab2d9d7",
+      "doc_id": "L-8e4719c0ee9b6f400ec0",
+      "old_rank": 44,
+      "new_rank": 28,
+      "new_score": 0.020966921119592877
+    },
+    {
+      "query_id": "H-6f1839b2094abab2d9d7",
+      "doc_id": "L-8685be35b3000a14d871",
+      "old_rank": 46,
+      "new_rank": 9,
+      "new_score": 0.028814262023217248
+    },
+    {
+      "query_id": "H-6f1839b2094abab2d9d7",
+      "doc_id": "L-4d9cf24c65cda22521b8",
+      "old_rank": 57,
+      "new_rank": 14,
+      "new_score": 0.02541827541827542
+    },
+    {
+      "query_id": "H-6f1839b2094abab2d9d7",
+      "doc_id": "L-35e0b38aa6e4c4d35423",
+      "old_rank": 65,
+      "new_rank": 12,
+      "new_score": 0.027984344422700584
+    },
+    {
+      "query_id": "H-6f1839b2094abab2d9d7",
+      "doc_id": "L-3355cce2b41bc9359b30",
+      "old_rank": 67,
+      "new_rank": 6,
+      "new_score": 0.029857397504456328
+    },
+    {
+      "query_id": "H-6f1839b2094abab2d9d7",
+      "doc_id": "L-1fc11a5bf68e87be0d75",
+      "old_rank": 74,
+      "new_rank": 18,
+      "new_score": 0.023361976369495163
+    },
+    {
+      "query_id": "H-6f1839b2094abab2d9d7",
+      "doc_id": "L-0a1f3c27533663d02037",
+      "old_rank": 80,
+      "new_rank": 7,
+      "new_score": 0.029709507042253523
+    },
+    {
+      "query_id": "H-6f1839b2094abab2d9d7",
+      "doc_id": "L-086e8c89ded836f9be92",
+      "old_rank": 81,
+      "new_rank": 15,
+      "new_score": 0.024224945926459983
+    },
+    {
+      "query_id": "H-91635f29cd1535edaa65",
+      "doc_id": "L-f85d04ef6ccdeb0f1b24",
+      "old_rank": 9,
+      "new_rank": 15,
+      "new_score": 0.026397515527950312
+    },
+    {
+      "query_id": "H-91635f29cd1535edaa65",
+      "doc_id": "L-e565ba4d49534b40933a",
+      "old_rank": 13,
+      "new_rank": 9,
+      "new_score": 0.02819138376017471
+    },
+    {
+      "query_id": "H-91635f29cd1535edaa65",
+      "doc_id": "L-d2fff0f1dc3e0b057aed",
+      "old_rank": 17,
+      "new_rank": 23,
+      "new_score": 0.02252925068459049
+    },
+    {
+      "query_id": "H-91635f29cd1535edaa65",
+      "doc_id": "L-bafeb13d163bf40ed9ef",
+      "old_rank": 23,
+      "new_rank": 13,
+      "new_score": 0.02667140825035562
+    },
+    {
+      "query_id": "H-91635f29cd1535edaa65",
+      "doc_id": "L-9e8bf74a7de18bfa35dd",
+      "old_rank": 29,
+      "new_rank": 10,
+      "new_score": 0.028169014084507043
+    },
+    {
+      "query_id": "H-91635f29cd1535edaa65",
+      "doc_id": "L-9ad888ee99b45dbc098f",
+      "old_rank": 33,
+      "new_rank": 12,
+      "new_score": 0.027402402402402402
+    },
+    {
+      "query_id": "H-91635f29cd1535edaa65",
+      "doc_id": "L-293be63f44f5e045b0bc",
+      "old_rank": 56,
+      "new_rank": 11,
+      "new_score": 0.02761904761904762
+    },
+    {
+      "query_id": "H-91635f29cd1535edaa65",
+      "doc_id": "L-27799ba201dd540c530f",
+      "old_rank": 59,
+      "new_rank": 8,
+      "new_score": 0.029437229437229435
+    },
+    {
+      "query_id": "H-91635f29cd1535edaa65",
+      "doc_id": "L-050dbcaa5f6c7dab6a25",
+      "old_rank": 67,
+      "new_rank": 16,
+      "new_score": 0.025645240835114255
+    },
+    {
+      "query_id": "H-91635f29cd1535edaa65",
+      "doc_id": "L-02faeacd5c3535870c2d",
+      "old_rank": 68,
+      "new_rank": 20,
+      "new_score": 0.022897897897897895
+    },
+    {
+      "query_id": "H-858ce7fee338506cefbe",
+      "doc_id": "L-ffc588d5044c76d82ba2",
+      "old_rank": 13,
+      "new_rank": 12,
+      "new_score": 0.02649122807017544
+    },
+    {
+      "query_id": "H-858ce7fee338506cefbe",
+      "doc_id": "L-9c5272d772d39c2299cb",
+      "old_rank": 34,
+      "new_rank": 13,
+      "new_score": 0.026356857985087564
+    },
+    {
+      "query_id": "H-858ce7fee338506cefbe",
+      "doc_id": "L-12701ff34c88f3577a21",
+      "old_rank": 63,
+      "new_rank": 18,
+      "new_score": 0.023518469306404464
+    },
+    {
+      "query_id": "H-858ce7fee338506cefbe",
+      "doc_id": "L-0e003598eab415f57395",
+      "old_rank": 68,
+      "new_rank": 10,
+      "new_score": 0.028814262023217248
+    },
+    {
+      "query_id": "H-858ce7fee338506cefbe",
+      "doc_id": "L-073d2d371f6b09055cde",
+      "old_rank": 70,
+      "new_rank": 17,
+      "new_score": 0.024350649350649352
+    },
+    {
+      "query_id": "H-37331e6948fece5ff495",
+      "doc_id": "L-d7b7e3e00cb894ce7af9",
+      "old_rank": 2,
+      "new_rank": 2,
+      "new_score": 0.03200204813108039
+    },
+    {
+      "query_id": "H-37331e6948fece5ff495",
+      "doc_id": "L-6a2990575dc05720b13f",
+      "old_rank": 5,
+      "new_rank": 1,
+      "new_score": 0.03252247488101534
+    },
+    {
+      "query_id": "H-d80b250c130d0d169ce5",
+      "doc_id": "L-0d7d248e18a4bc788b3a",
+      "old_rank": 1,
+      "new_rank": 1,
+      "new_score": 0.03278688524590164
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-fd0e101e5809df4c8d7e",
+      "old_rank": 8,
+      "new_rank": 31,
+      "new_score": 0.023122159850307404
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-f294a5fcb4eb41ba192a",
+      "old_rank": 9,
+      "new_rank": 14,
+      "new_score": 0.026171741361614778
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-ecd8c822ef5449322f72",
+      "old_rank": 10,
+      "new_rank": 22,
+      "new_score": 0.025124843945068663
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-e1699e7d5a167984e534",
+      "old_rank": 11,
+      "new_rank": 12,
+      "new_score": 0.02666666666666667
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-d7eac07f6ea3796bfa1d",
+      "old_rank": 12,
+      "new_rank": 19,
+      "new_score": 0.025458570524984188
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-d0452d0f2f5abc84ed9f",
+      "old_rank": 13,
+      "new_rank": 13,
+      "new_score": 0.026334026334026334
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-ce953f38bd9d3ba8d26b",
+      "old_rank": 14,
+      "new_rank": 40,
+      "new_score": 0.02020408163265306
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-cb897a30ad4ea7663534",
+      "old_rank": 15,
+      "new_rank": 36,
+      "new_score": 0.02197802197802198
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-ca55733cab14a1a7f6f6",
+      "old_rank": 16,
+      "new_rank": 25,
+      "new_score": 0.02454819277108434
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-c51aab47e5e7f7604507",
+      "old_rank": 17,
+      "new_rank": 28,
+      "new_score": 0.024350649350649352
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-c3de7ee03f1228dd08b8",
+      "old_rank": 18,
+      "new_rank": 41,
+      "new_score": 0.019904931669637554
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-bd389526ccc34f3d7c43",
+      "old_rank": 19,
+      "new_rank": 33,
+      "new_score": 0.022833419823559936
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-b882bbd6d4bf1a1c15c3",
+      "old_rank": 20,
+      "new_rank": 27,
+      "new_score": 0.024393743722198307
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-b6f8ae1b5e125a28a9c9",
+      "old_rank": 21,
+      "new_rank": 29,
+      "new_score": 0.024184149184149184
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-b6980fd7d4d1b95dc7fd",
+      "old_rank": 22,
+      "new_rank": 21,
+      "new_score": 0.025155279503105588
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-b52ea32466cb3172a14c",
+      "old_rank": 23,
+      "new_rank": 11,
+      "new_score": 0.0266900790166813
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-afc6933f8738993de76d",
+      "old_rank": 24,
+      "new_rank": 9,
+      "new_score": 0.026916221033868093
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-a18a3584be4192a88b95",
+      "old_rank": 25,
+      "new_rank": 37,
+      "new_score": 0.020835594139989148
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-79f832f0aaf3dc71270d",
+      "old_rank": 26,
+      "new_rank": 16,
+      "new_score": 0.025987006496751626
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-6e161b1b2d60f3a9d8e3",
+      "old_rank": 27,
+      "new_rank": 30,
+      "new_score": 0.023952954675846242
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-692524b6ab09b044c2a4",
+      "old_rank": 28,
+      "new_rank": 24,
+      "new_score": 0.024695121951219513
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-5347805d1112c778af89",
+      "old_rank": 29,
+      "new_rank": 6,
+      "new_score": 0.028404512489927477
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-49b9c70e3c021453c1c7",
+      "old_rank": 30,
+      "new_rank": 5,
+      "new_score": 0.028850145288501453
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-3e1a3452fcf530cc2eba",
+      "old_rank": 31,
+      "new_rank": 26,
+      "new_score": 0.02441520467836257
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-3936f7ec6ea74e86078b",
+      "old_rank": 32,
+      "new_rank": 23,
+      "new_score": 0.02506265664160401
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-353fbfefa55e01aa1857",
+      "old_rank": 33,
+      "new_rank": 18,
+      "new_score": 0.02581612258494337
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-3263aa519f90aa28ea9c",
+      "old_rank": 34,
+      "new_rank": 38,
+      "new_score": 0.020739307973350527
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-2fd1329ed9c11e3b76f5",
+      "old_rank": 35,
+      "new_rank": 35,
+      "new_score": 0.02210552027357108
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-25b5557624aafc197285",
+      "old_rank": 36,
+      "new_rank": 15,
+      "new_score": 0.026041666666666664
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-21786ec5f42c635a9973",
+      "old_rank": 37,
+      "new_rank": 20,
+      "new_score": 0.025332691999358666
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-216d8f512936a4c86a29",
+      "old_rank": 38,
+      "new_rank": 39,
+      "new_score": 0.02020408163265306
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-1fe8feb4f20e5682f3a8",
+      "old_rank": 39,
+      "new_rank": 42,
+      "new_score": 0.019704911667637354
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-1307a2d2a2f94538de10",
+      "old_rank": 40,
+      "new_rank": 32,
+      "new_score": 0.02309836718438869
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-05bb3ae4994c7198cc5e",
+      "old_rank": 41,
+      "new_rank": 7,
+      "new_score": 0.028169014084507043
+    },
+    {
+      "query_id": "H-746cb14175b115e23160",
+      "doc_id": "L-03039757345c56abebd2",
+      "old_rank": 42,
+      "new_rank": 34,
+      "new_score": 0.022222222222222223
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-ff27063460d6363c18a5",
+      "old_rank": 10,
+      "new_rank": 31,
+      "new_score": 0.02268649064342476
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-f756f86a61fe95d685a2",
+      "old_rank": 11,
+      "new_rank": 43,
+      "new_score": 0.020512820512820516
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-f6591d963060e3c9aa5b",
+      "old_rank": 12,
+      "new_rank": 49,
+      "new_score": 0.018750547621133797
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-f4d966dd2aa7ebc86569",
+      "old_rank": 13,
+      "new_rank": 40,
+      "new_score": 0.02145438121047877
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-f41da94848458bda9626",
+      "old_rank": 14,
+      "new_rank": 61,
+      "new_score": 0.016533442645350824
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-f3b3fc49d455969b71b8",
+      "old_rank": 15,
+      "new_rank": 19,
+      "new_score": 0.025015634771732333
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-f0bdd85b3b5741fe17b0",
+      "old_rank": 16,
+      "new_rank": 65,
+      "new_score": 0.016064516129032258
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-ebbb8f061ccadb168c02",
+      "old_rank": 17,
+      "new_rank": 21,
+      "new_score": 0.024614919963757174
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-e532240fe090bf5d5803",
+      "old_rank": 18,
+      "new_rank": 38,
+      "new_score": 0.02147344374643061
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-e420473990d4dab45fdf",
+      "old_rank": 19,
+      "new_rank": 22,
+      "new_score": 0.024451318309029312
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-e0723c207f87d76d24bb",
+      "old_rank": 20,
+      "new_rank": 41,
+      "new_score": 0.02097370136926755
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-de39035625db901700b3",
+      "old_rank": 21,
+      "new_rank": 52,
+      "new_score": 0.018532818532818532
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-d8f46569d43eb3583d71",
+      "old_rank": 22,
+      "new_rank": 14,
+      "new_score": 0.0264301860545992
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-cb19e391c01cc56a052c",
+      "old_rank": 23,
+      "new_rank": 34,
+      "new_score": 0.022248803827751195
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-b9afc7e23832a9acdc9a",
+      "old_rank": 24,
+      "new_rank": 39,
+      "new_score": 0.021464646464646464
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-b8408efd8a7916cb3184",
+      "old_rank": 25,
+      "new_rank": 27,
+      "new_score": 0.023361976369495163
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-b4fdc6dc2633cbe4cbd1",
+      "old_rank": 26,
+      "new_rank": 58,
+      "new_score": 0.017241379310344827
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-b41d68de47e44a705483",
+      "old_rank": 27,
+      "new_rank": 42,
+      "new_score": 0.020627325890483786
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-add0a8d488426bd1c0ba",
+      "old_rank": 28,
+      "new_rank": 51,
+      "new_score": 0.018575851393188854
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-a9a74e0121c345e68749",
+      "old_rank": 29,
+      "new_rank": 16,
+      "new_score": 0.026200135226504394
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-a2fd51444a1515e69a9f",
+      "old_rank": 30,
+      "new_rank": 36,
+      "new_score": 0.021988089784699953
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-a2bc116e425657c6bfc7",
+      "old_rank": 31,
+      "new_rank": 37,
+      "new_score": 0.021545233406695237
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-9a0236344e850d34a038",
+      "old_rank": 32,
+      "new_rank": 17,
+      "new_score": 0.025794938351719664
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-99b6075f766a1a53b343",
+      "old_rank": 33,
+      "new_rank": 64,
+      "new_score": 0.016064516129032258
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-90dd2496a54f6d0e9dcb",
+      "old_rank": 34,
+      "new_rank": 28,
+      "new_score": 0.022872942063591806
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-89e4db50c923328ccb94",
+      "old_rank": 35,
+      "new_rank": 11,
+      "new_score": 0.027106227106227107
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-89733577deb8240ca7f9",
+      "old_rank": 36,
+      "new_rank": 62,
+      "new_score": 0.016463414634146342
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-84702af7ec9185195c74",
+      "old_rank": 37,
+      "new_rank": 6,
+      "new_score": 0.02804284323271665
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-7cf933f66b9393c74e4b",
+      "old_rank": 38,
+      "new_rank": 63,
+      "new_score": 0.016461184121392768
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-7a463d9683f11d2cf688",
+      "old_rank": 39,
+      "new_rank": 33,
+      "new_score": 0.02234567901234568
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-75ec1eec5527bdfe6611",
+      "old_rank": 40,
+      "new_rank": 29,
+      "new_score": 0.022704081632653063
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-751becd90fe6d1d46e92",
+      "old_rank": 41,
+      "new_rank": 26,
+      "new_score": 0.023809523809523808
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-70a24b0fd718032ac84b",
+      "old_rank": 42,
+      "new_rank": 30,
+      "new_score": 0.02268649064342476
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-697f66067b3f8f548ff6",
+      "old_rank": 43,
+      "new_rank": 7,
+      "new_score": 0.02761904761904762
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-696920331f733eec3425",
+      "old_rank": 44,
+      "new_rank": 13,
+      "new_score": 0.026547116736990152
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-667fc9253d404d9a992b",
+      "old_rank": 45,
+      "new_rank": 56,
+      "new_score": 0.017704661182922053
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-63dcd2e4aa87a8a67d04",
+      "old_rank": 46,
+      "new_rank": 8,
+      "new_score": 0.027598020555767037
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-63a59dad40c70e470215",
+      "old_rank": 47,
+      "new_rank": 25,
+      "new_score": 0.023863636363636365
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-631efed2780eda6e533b",
+      "old_rank": 48,
+      "new_rank": 35,
+      "new_score": 0.0221001221001221
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-5e59f84e3996a42cd314",
+      "old_rank": 49,
+      "new_rank": 4,
+      "new_score": 0.029631255487269532
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-51cca4897c4e359f2e4a",
+      "old_rank": 50,
+      "new_rank": 18,
+      "new_score": 0.025568181818181816
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-4f6b8cd77acc4019a99f",
+      "old_rank": 51,
+      "new_rank": 23,
+      "new_score": 0.024444444444444446
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-4d1815cc7dd5b9c9fddb",
+      "old_rank": 52,
+      "new_rank": 54,
+      "new_score": 0.017948717948717947
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-4b9d726f06c05810c0c5",
+      "old_rank": 53,
+      "new_rank": 46,
+      "new_score": 0.019324122479462285
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-491c88d0d90bb462e0ce",
+      "old_rank": 54,
+      "new_rank": 45,
+      "new_score": 0.019617224880382776
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-3f9db36a1514480a2a83",
+      "old_rank": 55,
+      "new_rank": 32,
+      "new_score": 0.022363818090954522
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-3ecf8d3afcffbdc21adf",
+      "old_rank": 56,
+      "new_rank": 57,
+      "new_score": 0.017467581998474445
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-3e6a0ea4e072fc7b4802",
+      "old_rank": 57,
+      "new_rank": 48,
+      "new_score": 0.018750547621133797
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-3959a6a6c452344dd4e9",
+      "old_rank": 58,
+      "new_rank": 5,
+      "new_score": 0.028612012987012988
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-2bd27a69de9947a53072",
+      "old_rank": 59,
+      "new_rank": 55,
+      "new_score": 0.017857142857142856
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-291566c0032c2dcf93b2",
+      "old_rank": 60,
+      "new_rank": 47,
+      "new_score": 0.019149715961150816
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-1c915bc8f57825b33f95",
+      "old_rank": 61,
+      "new_rank": 59,
+      "new_score": 0.016950369891546364
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-195b813103adc138568b",
+      "old_rank": 62,
+      "new_rank": 50,
+      "new_score": 0.018608274190756446
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-10fb6d136bc585555811",
+      "old_rank": 63,
+      "new_rank": 44,
+      "new_score": 0.019743240614666407
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-0a02b71e7b2b17fc958a",
+      "old_rank": 64,
+      "new_rank": 60,
+      "new_score": 0.016743729858483956
+    },
+    {
+      "query_id": "H-e15a571ba6733c1c7996",
+      "doc_id": "L-04f8a5b52ff3534711eb",
+      "old_rank": 65,
+      "new_rank": 53,
+      "new_score": 0.01847457627118644
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-ffea25e1467faf3f7b22",
+      "old_rank": 15,
+      "new_rank": 21,
+      "new_score": 0.024706420619185605
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-f6bc9af975863ee218cd",
+      "old_rank": 16,
+      "new_rank": 41,
+      "new_score": 0.021264626462646263
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-f1cb319172e29a608140",
+      "old_rank": 17,
+      "new_rank": 14,
+      "new_score": 0.025793650793650792
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-de665209d0f9b2b53195",
+      "old_rank": 18,
+      "new_rank": 45,
+      "new_score": 0.020526315789473684
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-da8b7ff9b348b90f19df",
+      "old_rank": 19,
+      "new_rank": 36,
+      "new_score": 0.021637426900584796
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-d4037196d85e3cfff946",
+      "old_rank": 20,
+      "new_rank": 29,
+      "new_score": 0.023369565217391305
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-d2765f27cfb13776aee3",
+      "old_rank": 21,
+      "new_rank": 33,
+      "new_score": 0.022435897435897436
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-d00d04ef2dd531629c6b",
+      "old_rank": 22,
+      "new_rank": 12,
+      "new_score": 0.026334026334026334
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-cf73816a5c620ea7e4f2",
+      "old_rank": 23,
+      "new_rank": 48,
+      "new_score": 0.01869812145041503
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-cc7d89edad608cd232de",
+      "old_rank": 24,
+      "new_rank": 49,
+      "new_score": 0.018558295386201563
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-ca3329bde548317d9ce0",
+      "old_rank": 25,
+      "new_rank": 37,
+      "new_score": 0.021604938271604937
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-c41158848dd6774c5c85",
+      "old_rank": 26,
+      "new_rank": 30,
+      "new_score": 0.022679127725856698
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-c3331167f967e078efeb",
+      "old_rank": 27,
+      "new_rank": 7,
+      "new_score": 0.02786377708978328
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-b5b214ba985bf0eaee44",
+      "old_rank": 28,
+      "new_rank": 47,
+      "new_score": 0.019400187441424556
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-b34301c2aea3b9f10179",
+      "old_rank": 29,
+      "new_rank": 22,
+      "new_score": 0.024696835255841466
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-a70ba2678db63bd20688",
+      "old_rank": 30,
+      "new_rank": 16,
+      "new_score": 0.025645240835114255
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-9d2e6605bec9ef326e6d",
+      "old_rank": 31,
+      "new_rank": 25,
+      "new_score": 0.023976023976023976
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-9cd4a5e6cb74b2a21fa8",
+      "old_rank": 32,
+      "new_rank": 17,
+      "new_score": 0.02541827541827542
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-92b6c588da27aed379ff",
+      "old_rank": 33,
+      "new_rank": 38,
+      "new_score": 0.021595262974573322
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-84df519d5655e0446149",
+      "old_rank": 34,
+      "new_rank": 28,
+      "new_score": 0.023518469306404464
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-7f5f521d4f5898ba1581",
+      "old_rank": 35,
+      "new_rank": 26,
+      "new_score": 0.023959827833572454
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-7ee72db5517eda350612",
+      "old_rank": 36,
+      "new_rank": 52,
+      "new_score": 0.018187830687830687
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-71daeb1dfb0b87f4bd0f",
+      "old_rank": 37,
+      "new_rank": 34,
+      "new_score": 0.021949182870094237
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-6fa3e7856a3723693d0b",
+      "old_rank": 38,
+      "new_rank": 43,
+      "new_score": 0.020833333333333332
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-68e7ce057035b87ff54a",
+      "old_rank": 39,
+      "new_rank": 46,
+      "new_score": 0.019904931669637554
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-652480948bb0d8e2af62",
+      "old_rank": 40,
+      "new_rank": 44,
+      "new_score": 0.020697748853088657
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-64892ad081f56714c710",
+      "old_rank": 41,
+      "new_rank": 51,
+      "new_score": 0.018205892088712344
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-5d2b02257c176ba733bb",
+      "old_rank": 42,
+      "new_rank": 53,
+      "new_score": 0.018183320935614512
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-58e9ea27d16f2892198a",
+      "old_rank": 43,
+      "new_rank": 32,
+      "new_score": 0.0225
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-550d807801f6bd319dee",
+      "old_rank": 44,
+      "new_rank": 18,
+      "new_score": 0.025326537113730486
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-516bddf98741e07fee4c",
+      "old_rank": 45,
+      "new_rank": 40,
+      "new_score": 0.021390986044383435
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-4758a1d36dcb787b1610",
+      "old_rank": 46,
+      "new_rank": 24,
+      "new_score": 0.024451318309029312
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-462066f4635501458718",
+      "old_rank": 47,
+      "new_rank": 50,
+      "new_score": 0.01827436582109479
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-41d01b2c692cc62b5d14",
+      "old_rank": 48,
+      "new_rank": 23,
+      "new_score": 0.02456928838951311
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-3f3f3b649898a44db4e9",
+      "old_rank": 49,
+      "new_rank": 39,
+      "new_score": 0.021431828545371637
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-2e42da4675b38ba590eb",
+      "old_rank": 50,
+      "new_rank": 31,
+      "new_score": 0.02259959141981614
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-2aab98948cd7e15b69aa",
+      "old_rank": 51,
+      "new_rank": 15,
+      "new_score": 0.02565359477124183
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-1eee97303603b881b1aa",
+      "old_rank": 52,
+      "new_rank": 42,
+      "new_score": 0.021018062397372743
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-1767cbe29b3883fc6f48",
+      "old_rank": 53,
+      "new_rank": 35,
+      "new_score": 0.02181050656660413
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-0d856f826f650ae6479d",
+      "old_rank": 54,
+      "new_rank": 55,
+      "new_score": 0.017467581998474445
+    },
+    {
+      "query_id": "H-4413e1d14feece8a14bc",
+      "doc_id": "L-0ad4dc58099931f87a6f",
+      "old_rank": 55,
+      "new_rank": 54,
+      "new_score": 0.0178585665311329
+    },
+    {
+      "query_id": "H-d5db790a049dde6f4e92",
+      "doc_id": "L-fde4b26e82b0c0e780a4",
+      "old_rank": 2,
+      "new_rank": 10,
+      "new_score": 0.029236022193768675
+    },
+    {
+      "query_id": "H-d5db790a049dde6f4e92",
+      "doc_id": "L-f79d6540b4013b8c5f2d",
+      "old_rank": 3,
+      "new_rank": 2,
+      "new_score": 0.032018442622950824
+    },
+    {
+      "query_id": "H-d5db790a049dde6f4e92",
+      "doc_id": "L-f360bf04f5c4ed874adf",
+      "old_rank": 4,
+      "new_rank": 8,
+      "new_score": 0.029418126757516764
+    },
+    {
+      "query_id": "H-d5db790a049dde6f4e92",
+      "doc_id": "L-ee91d92142ba4a12fbf0",
+      "old_rank": 5,
+      "new_rank": 7,
+      "new_score": 0.030309988518943745
+    },
+    {
+      "query_id": "H-d5db790a049dde6f4e92",
+      "doc_id": "L-a1605f6fe06ea8034a80",
+      "old_rank": 6,
+      "new_rank": 13,
+      "new_score": 0.02758751902587519
+    },
+    {
+      "query_id": "H-d5db790a049dde6f4e92",
+      "doc_id": "L-9c4c69a25015fc162793",
+      "old_rank": 7,
+      "new_rank": 5,
+      "new_score": 0.0304147465437788
+    },
+    {
+      "query_id": "H-d5db790a049dde6f4e92",
+      "doc_id": "L-98c34ffb05bbdb1415b5",
+      "old_rank": 8,
+      "new_rank": 4,
+      "new_score": 0.030834914611005692
+    },
+    {
+      "query_id": "H-d5db790a049dde6f4e92",
+      "doc_id": "L-320863526dfe856d92d7",
+      "old_rank": 9,
+      "new_rank": 9,
+      "new_score": 0.029236022193768675
+    },
+    {
+      "query_id": "H-d5db790a049dde6f4e92",
+      "doc_id": "L-2e9cd35839439807012b",
+      "old_rank": 10,
+      "new_rank": 6,
+      "new_score": 0.030330882352941176
+    },
+    {
+      "query_id": "H-d5db790a049dde6f4e92",
+      "doc_id": "L-2b9d3dc621659818bfff",
+      "old_rank": 11,
+      "new_rank": 12,
+      "new_score": 0.02758751902587519
+    },
+    {
+      "query_id": "H-d5db790a049dde6f4e92",
+      "doc_id": "L-0799878549c17bae8392",
+      "old_rank": 12,
+      "new_rank": 3,
+      "new_score": 0.03125763125763126
+    },
+    {
+      "query_id": "H-d5db790a049dde6f4e92",
+      "doc_id": "L-05a30580abba4bb3b836",
+      "old_rank": 13,
+      "new_rank": 11,
+      "new_score": 0.02877846790890269
+    },
+    {
+      "query_id": "H-012df59077167bfec30e",
+      "doc_id": "L-103e4847640573580e6c",
+      "old_rank": 1,
+      "new_rank": 1,
+      "new_score": 0.03278688524590164
+    },
+    {
+      "query_id": "H-f9e862f98790acdb9c63",
+      "doc_id": "L-7bb062361937255bdac2",
+      "old_rank": 2,
+      "new_rank": 4,
+      "new_score": 0.03125
+    },
+    {
+      "query_id": "H-f9e862f98790acdb9c63",
+      "doc_id": "L-72290f2e3d44bfae67d2",
+      "old_rank": 3,
+      "new_rank": 3,
+      "new_score": 0.03200204813108039
+    },
+    {
+      "query_id": "H-f9e862f98790acdb9c63",
+      "doc_id": "L-3d2993d53d968af0cd8e",
+      "old_rank": 4,
+      "new_rank": 2,
+      "new_score": 0.032266458495966696
+    },
+    {
+      "query_id": "H-4900a2e5cc9c09fddd53",
+      "doc_id": "L-9d12b32764dfee7ce9d0",
+      "old_rank": 2,
+      "new_rank": 1,
+      "new_score": 0.03252247488101534
+    },
+    {
+      "query_id": "H-014061ae61905c415f3f",
+      "doc_id": "L-ec5c3f17324225de3fd9",
+      "old_rank": 3,
+      "new_rank": 3,
+      "new_score": 0.031754032258064516
+    },
+    {
+      "query_id": "H-014061ae61905c415f3f",
+      "doc_id": "L-c867b6954d02eddcfff8",
+      "old_rank": 4,
+      "new_rank": 5,
+      "new_score": 0.03076923076923077
+    },
+    {
+      "query_id": "H-014061ae61905c415f3f",
+      "doc_id": "L-99eaa15f48f87a3aa511",
+      "old_rank": 5,
+      "new_rank": 4,
+      "new_score": 0.03149801587301587
+    },
+    {
+      "query_id": "H-014061ae61905c415f3f",
+      "doc_id": "L-3182d20c96d0ecc14c21",
+      "old_rank": 6,
+      "new_rank": 2,
+      "new_score": 0.03200204813108039
+    },
+    {
+      "query_id": "H-014061ae61905c415f3f",
+      "doc_id": "L-1b13abffa00261abcf17",
+      "old_rank": 7,
+      "new_rank": 6,
+      "new_score": 0.030303030303030304
+    }
+  ]
+}
