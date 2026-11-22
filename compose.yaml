@@ -9,6 +9,7 @@ services:
       ML_URL: ${ML_URL:-http://ml:8001}
       ML_TIMEOUT: ${ML_TIMEOUT:-0.5}
       DEMO_FALLBACK: ${DEMO_FALLBACK:-0}
+      MAIL_SEARCH_FRONTEND_V2: ${MAIL_SEARCH_FRONTEND_V2:-0}
     volumes:
       - ${MAIL_DATA:-./mipt_mail_search_participants}:/data:ro
     ports:

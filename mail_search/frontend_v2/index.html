@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Поиск по почте · v2</title>
+  <script src="/v2/search.js?rev=live-recall" defer></script>
+  <style>
+    :root { font: 16px/1.5 system-ui, sans-serif; color: #18242a; background: #f0f3f2; }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body { max-width: 1120px; margin: auto; padding: clamp(1rem, 4vw, 3rem); }
+    h1, h2 { line-height: 1.2; margin: 0; }
+    h1 { font-size: clamp(1.6rem, 4vw, 2.35rem); }
+    h2 { font-size: 1.15rem; }
+    header, .settings, .search, .actions { display: flex; gap: .65rem; flex-wrap: wrap; align-items: center; }
+    header { justify-content: space-between; margin-bottom: 1.5rem; }
+    a, .link { color: #175748; }
+    .settings { margin-bottom: .8rem; align-items: end; }
+    .settings label { display: grid; gap: .25rem; font-size: .85rem; }
+    input, select, button { font: inherit; color: inherit; }
+    input, select, .primary { padding: .58rem .75rem; border-radius: .55rem; border: 1px solid #a5b7b0; background: #fff; }
+    .search-field { position: relative; flex: 1 1 12rem; min-width: 0; }
+    .search-field input { width: 100%; }
+    #rows, #timeline-rows { max-height: min(54vh, 34rem); overflow-y: auto; }
+    #recall-entry, #recall-controls, #timeline-nav { padding: .7rem 1rem; border-top: 1px solid #d1dcd9; }
+    #recall-entry { background: #e5f3ee; }
+    #recall-toggle { width: 100%; text-decoration: none; font-weight: 650; }
+    #recall-controls { display: grid; gap: .75rem; }
+    .recall-buttons, .date-fields { display: flex; flex-wrap: wrap; gap: .65rem; align-items: center; }
+    #recall-slot {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition: grid-template-rows 155ms ease-out, opacity 100ms ease-out;
+    }
+    #recall-slot[data-visible] {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      transition: grid-template-rows 245ms cubic-bezier(.22, 1, .36, 1), opacity 160ms ease-out;
+    }
+    .recall-clip { min-height: 0; overflow: hidden; }
+    #recall-controls {
+      margin-top: .55rem;
+      background: #fff;
+      border: 1px solid #d1dcd9;
+      border-radius: .7rem;
+    }
+    #recall-form label { color: #1a564b; font-weight: 650; }
+    #recall-form .recall-buttons input { flex: 1 1 14rem; min-width: 0; }
+    #recall-status:empty, #recall-recovery:empty { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      #recall-slot, #recall-slot[data-visible] { transition: none; }
+    }
+    #recall-controls form, #recall-form { display: grid; gap: .45rem; }
+    #recall-controls input { max-width: 100%; }
+    #recall-controls p { margin: 0; }
+    #recall-candidates { border: 1px solid #d1dcd9; border-radius: .55rem; overflow: hidden; }
+    #recall-candidates .row:first-child { border-top: 0; }
+    #period-preview { background: #e5f3ee; padding: .65rem .8rem; border-radius: .55rem; overflow-wrap: anywhere; }
+    .timeline-day { margin: 0; padding: .65rem 1rem; font-size: .9rem; background: #f0f3f2; }
+    #timeline-back, #timeline-period, #timeline-status, #timeline-recovery { margin: .5rem 1rem; }
+    .primary { color: white; background: #1a564b; border-color: #1a564b; }
+    button { cursor: pointer; }
+    :focus-visible { outline: 2px solid #257c66; outline-offset: 2px; }
+    main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .9rem; align-items: start; }
+    .panel { background: white; border: 1px solid #d1dcd9; border-radius: .8rem; overflow: hidden; }
+    .panel h2, #reader { padding: 1rem; }
+    #reader h2 { padding: 0; }
+    #condition { margin: 0; padding: .6rem 1rem; background: #e5f3ee; color: #174d40; overflow-wrap: anywhere; }
+    .row { display: grid; gap: .15rem; width: 100%; padding: .8rem 1rem; text-align: left; border: 0; border-top: 1px solid #d1dcd9; background: white; overflow-wrap: anywhere; }
+    .row:hover, .row[aria-current="true"] { background: #e5f3ee; }
+    .row:focus-visible { outline-offset: -3px; }
+    .meta, #status, #source-note { color: #445951; }
+    .relative { color: #175748; font-weight: 600; }
+    .actions { padding: 0 1rem; }
+    .actions:not(:empty) { padding-block: .65rem; border-top: 1px solid #d1dcd9; }
+    .link { border: 0; background: transparent; text-decoration: underline; padding: .25rem 0; text-align: left; }
+    #status { min-height: 1.5rem; }
+    #reader pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
+    #back { display: none; margin-bottom: .7rem; }
+    @media (max-width: 700px) {
+      main { grid-template-columns: 1fr; }
+      #reader:not(.reading), main:has(.reading) #list, main:has(.reading) #timeline { display: none; }
+      #back { display: inline-block; }
+    }
+  </style>
+</head>
+<body>
+  <header><h1>Поиск по почте</h1></header>
+  <div class="settings">
+    <label>Источник<select id="source"><option value="live">Почтовый API</option><option value="demo">Демоданные</option></select></label>
+    <label>Ящик<select id="mailbox" required form="search"></select></label>
+    <label>Дата отсчёта<input id="as-of" type="date" required form="search"></label>
+  </div>
+  <form id="search" class="search" role="search">
+    <div class="search-field" id="search-field">
+      <input id="query" type="search" maxlength="1000" aria-label="Поисковый запрос" placeholder="Опишите письмо, которое ищете">
+    </div>
+    <button class="primary" id="submit" disabled>Найти</button>
+  </form>
+  <div id="recall-slot" inert>
+    <div class="recall-clip">
+      <section id="recall-controls" aria-label="Вспомнить по событию">
+        <div id="recall-form">
+          <label for="recall-input">Помните, что было примерно в это время?</label>
+          <div class="recall-buttons">
+            <input id="recall-input" maxlength="1000" autocomplete="off" placeholder="Примерно тогда покупал билеты в Казань">
+            <button id="recall-dates" class="link" type="button">Указать даты</button>
+          </div>
+        </div>
+        <p id="recall-status" role="status"></p>
+        <div id="recall-recovery" class="recall-buttons"></div>
+        <div id="recall-candidates" hidden></div>
+        <form id="date-form" hidden>
+          <div class="date-fields">
+            <label for="period-from">От</label><input id="period-from" type="date" required>
+            <label for="period-to">До</label><input id="period-to" type="date" required>
+          </div>
+          <button class="link" type="submit">Подтвердить даты</button>
+        </form>
+        <div id="period-editor" class="recall-buttons" hidden>
+          <label for="period-direction">Относительно письма</label>
+          <select id="period-direction">
+            <option value="around">Примерно тогда</option>
+            <option value="before">До письма</option>
+            <option value="after">После письма</option>
+          </select>
+          <button id="recall-change-anchor" class="link" type="button">Другое письмо</button>
+        </div>
+        <div id="period-preview" hidden>
+          <p id="period-summary"></p>
+          <div class="recall-buttons">
+            <button id="refine" class="primary" type="button">Уточнить поиск</button>
+            <button id="timeline-open" class="link" type="button">Посмотреть письма вокруг события</button>
+            <button id="period-edit" class="link" type="button">Изменить</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <p id="source-note"></p>
+  <p id="status" role="status"></p>
+  <main>
+    <section id="list" class="panel" aria-labelledby="heading">
+      <p id="condition" hidden></p>
+      <h2 id="heading" tabindex="-1">Письма</h2>
+      <div id="rows"></div>
+      <div id="actions" class="actions"></div>
+      <div id="recall-entry" hidden>
+        <button id="recall-toggle" class="link" type="button" aria-controls="recall-slot" aria-expanded="false">Посмотреть почту вокруг события ›</button>
+      </div>
+    </section>
+    <section id="timeline" class="panel" aria-labelledby="timeline-title" hidden>
+      <button id="timeline-back" class="link" type="button">Назад</button>
+      <h2 id="timeline-title" tabindex="-1">Почта вокруг события</h2>
+      <p id="timeline-period"></p>
+      <div id="timeline-rows"></div>
+      <p id="timeline-status" role="status"></p>
+      <div id="timeline-recovery" class="recall-buttons"></div>
+      <div id="timeline-nav" class="recall-buttons"></div>
+    </section>
+    <article id="reader" class="panel" aria-label="Открытое письмо">
+      <button id="back" class="link" type="button">К результатам</button>
+      <div id="message" aria-live="polite"><p>Выберите письмо из списка.</p></div>
+    </article>
+  </main>
+</body>
+</html>

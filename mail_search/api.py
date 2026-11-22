@@ -1,4 +1,5 @@
 from datetime import date
+import os
 from pathlib import Path
 import re
 from time import perf_counter
@@ -6,7 +7,7 @@ from typing import Annotated, Literal
 
 from fastapi import FastAPI, Query, Request, Response
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from pydantic import BaseModel
 from starlette.exceptions import HTTPException
 
@@ -62,7 +63,6 @@ def anchor_card(message):
 
 def create_app(engine: Engine, demo_fallback: bool = False) -> FastAPI:
     app = FastAPI(title="Поиск по почте")
-    page = Path(__file__).with_name("index.html").read_text(encoding="utf-8")
 
     @app.middleware("http")
     async def search_timing(request: Request, call_next):
@@ -96,9 +96,24 @@ def create_app(engine: Engine, demo_fallback: bool = False) -> FastAPI:
         value = as_of or engine.mailboxes[mailbox]
         return date.fromisoformat(value) if value else date.today()
 
-    @app.get("/", response_class=HTMLResponse)
-    async def home():
-        return page
+    if os.environ.get("MAIL_SEARCH_FRONTEND_V2") == "1":
+        frontend = Path(__file__).with_name("frontend_v2")
+
+        @app.get("/", response_class=HTMLResponse)
+        @app.get("/v2", response_class=HTMLResponse)
+        async def frontend_v2():
+            return FileResponse(frontend / "index.html", media_type="text/html")
+
+        @app.get("/v2/search.js")
+        async def frontend_v2_script():
+            return FileResponse(frontend / "search.js", media_type="text/javascript")
+
+    if os.environ.get("MAIL_SEARCH_FRONTEND_V1") == "1":
+        legacy_page = Path(__file__).with_name("index.html")
+
+        @app.get("/v1", response_class=HTMLResponse)
+        async def frontend_v1():
+            return FileResponse(legacy_page, media_type="text/html")
 
     @app.get("/healthz")
     async def health():

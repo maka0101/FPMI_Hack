@@ -39,7 +39,6 @@ def mock_ml(engine, candidates, *, ready=None):
 
 def test_public_routes_and_search_parity():
     with closing(Engine(FIXTURES, "bm25")) as engine, TestClient(create_app(engine)) as client:
-        assert client.get("/").headers["content-type"].startswith("text/html")
         assert client.get("/api/mailboxes").json() == {"box-a": "2028-10-03", "box-b": "2028-10-01"}
         assert client.get("/healthz").status_code == client.get("/readyz").status_code == 200
         response = client.get("/api/search", params=SEARCH)
@@ -154,6 +153,31 @@ def test_fallback_only_for_hybrid_demo_timeout(caplog):
 def test_rrf_agreement_and_tie_break():
     a, b, c = ({"doc_id": key} for key in "abc")
     assert fuse([b, a], [c, a], 3) == [a, b, c]
+
+
+def test_frontend_versions_are_separate_and_demo_is_opt_in(monkeypatch):
+    monkeypatch.delenv("MAIL_SEARCH_FRONTEND_V1", raising=False)
+    monkeypatch.delenv("MAIL_SEARCH_FRONTEND_V2", raising=False)
+    with closing(Engine(FIXTURES, "bm25")) as engine:
+        with TestClient(create_app(engine)) as client:
+            assert client.get("/").status_code == 404
+            assert client.get("/v1").status_code == 404
+            assert client.get("/v2").status_code == 404
+            assert client.get("/v2/search.js").status_code == 404
+        monkeypatch.setenv("MAIL_SEARCH_FRONTEND_V2", "1")
+        with TestClient(create_app(engine)) as client:
+            new_page = client.get("/v2")
+            assert client.get("/").content == new_page.content
+            assert client.get("/v1").status_code == 404
+            assert new_page.status_code == 200
+            assert 'href="/v1"' not in new_page.text
+            script_url = new_page.text.split('<script src="', 1)[1].split('"', 1)[0]
+            assert script_url.startswith("/v2/search.js?rev=")
+            assert client.get(script_url).status_code == 200
+        monkeypatch.setenv("MAIL_SEARCH_FRONTEND_V1", "1")
+        with TestClient(create_app(engine)) as client:
+            assert client.get("/v1").status_code == 200
+            assert client.get("/").content == client.get("/v2").content
 
 
 def test_harrier_fusion_prefers_lexical_order_on_conflicting_ranks():

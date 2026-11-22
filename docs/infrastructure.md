@@ -22,7 +22,7 @@ FastAPI обслуживает интерфейс, письма и BM25. Веб-
 cp .env.example .env
 # Сначала скачайте веса в .artifacts/weights/harrier270 по команде из README.
 docker compose run --build --rm --no-deps ml python -m mail_search prepare --profiles harrier270
-docker compose up --build -d --wait
+MAIL_SEARCH_FRONTEND_V2=1 docker compose up --build -d --wait
 curl -fsS http://127.0.0.1:8000/readyz
 ```
 
@@ -30,7 +30,7 @@ curl -fsS http://127.0.0.1:8000/readyz
 
 ```sh
 docker compose run --build --rm --no-deps ml python -m mail_search prepare --profiles encoder-a,encoder-b
-SEARCH_MODE=hybrid MODEL_PROFILE=encoder-a docker compose --profile semantic up -d --wait
+MAIL_SEARCH_FRONTEND_V2=1 SEARCH_MODE=hybrid MODEL_PROFILE=encoder-a docker compose --profile semantic up -d --wait
 curl -fsS http://127.0.0.1:8000/readyz
 ```
 
@@ -84,7 +84,7 @@ ssh -N -o ExitOnForwardFailure=yes -L 127.0.0.1:18001:127.0.0.1:8001 vm
 
 ```sh
 curl -fsS http://127.0.0.1:18001/readyz
-ML_URL=http://127.0.0.1:18001 SEARCH_MODE=hybrid MODEL_PROFILE=encoder-a \
+MAIL_SEARCH_FRONTEND_V2=1 ML_URL=http://127.0.0.1:18001 SEARCH_MODE=hybrid MODEL_PROFILE=encoder-a \
   uv run --locked python -m mail_search serve --port 8002
 curl -fsS http://127.0.0.1:8002/readyz
 ```
