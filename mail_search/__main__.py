@@ -43,8 +43,8 @@ def timeout_seconds(text):
 
 
 def add_engine_args(parser):
-    parser.add_argument("--mode", choices=MODES, default=os.getenv("SEARCH_MODE", "bm25"))
-    parser.add_argument("--profile", default=os.getenv("MODEL_PROFILE", "encoder-a"))
+    parser.add_argument("--mode", choices=MODES, default=os.getenv("SEARCH_MODE", "hybrid"))
+    parser.add_argument("--profile", default=os.getenv("MODEL_PROFILE", "harrier270"))
     parser.add_argument("--ml-url", default=os.getenv("ML_URL", "http://127.0.0.1:8001"))
     add_timeout(parser)
 
@@ -64,7 +64,7 @@ def parser():
     prepare = commands.add_parser("prepare", help="Подготовить версионированные индексы")
     compare = commands.add_parser("compare", help="Сравнить BM25 с encoder и hybrid")
     for command in (prepare, compare):
-        command.add_argument("--profiles", type=profile_names, default="encoder-a,encoder-b")
+        command.add_argument("--profiles", type=profile_names, default=os.getenv("MODEL_PROFILE", "harrier270"))
     add_timeout(compare)
     compare.add_argument("--out", type=Path, default=Path("runs/dev"))
     bench = commands.add_parser("benchmark", help="Оценить качество текущей конфигурации")
@@ -77,7 +77,7 @@ def parser():
         command.add_argument("--qrels", type=Path)
     load = commands.add_parser("loadtest", help="Измерить серверный p99 по HTTP")
     load.add_argument("--url", default="http://127.0.0.1:8000")
-    load.add_argument("--mode", choices=MODES, default=os.getenv("SEARCH_MODE", "bm25"))
+    load.add_argument("--mode", choices=MODES, default=os.getenv("SEARCH_MODE", "hybrid"))
     load.add_argument("--warmup", type=integer(0), default=99)
     load.add_argument("--requests", type=integer(1), default=990)
     load.add_argument("--concurrency", type=integer(1), default=4)

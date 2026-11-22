@@ -5,59 +5,473 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Поиск по почте</title>
   <style>
-    :root { font: 16px/1.5 system-ui, sans-serif; color: #18242a; background: #f0f3f2; }
-    body { max-width: 1200px; margin: auto; padding: 2rem 1.25rem; }
-    h1 { margin: 0 0 1.25rem; font-size: 2rem; letter-spacing: -.04em; }
-    form { display: grid; grid-template-columns: minmax(9rem, 1fr) 10rem minmax(10rem, 3fr) auto; align-items: end; gap: .75rem; }
-    label { display: grid; gap: .3rem; font-size: .85rem; font-weight: 600; min-width: 0; }
-    input, select, button { font: inherit; color: inherit; }
-    input, select { box-sizing: border-box; width: 100%; padding: .65rem; border: 1px solid #adbebb; border-radius: .45rem; background: #fff; }
+    :root {
+      font: 16px/1.5 system-ui, sans-serif;
+      color: #202039;
+      background: #f4f3f9;
+      --surface: #fff;
+      --muted: #595971;
+      --line: #e5e2ee;
+      --accent: #503bbb;
+      --tint: #eee9fd;
+      --sidebar: #f7f6fb;
+      --field-border: #b7b0c9;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      display: grid;
+      grid-template-columns: 15rem minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      grid-template-areas: "brand toolbar" "sidebar workspace";
+      min-height: 100svh;
+      height: 100svh;
+    }
+    h1, h2, p { margin: 0; }
+    h1 { font-size: 1.25rem; font-weight: 750; letter-spacing: -.025em; }
+    h2 { font-size: 1.25rem; letter-spacing: -.025em; }
+    button, input, select { font: inherit; color: inherit; }
     button { cursor: pointer; }
-    form button { padding: .65rem 1.15rem; border: 1px solid #1a564b; border-radius: .45rem; background: #1a564b; color: #fff; }
-    :focus-visible { outline: 3px solid #318b7b; outline-offset: 2px; }
-    main { display: grid; grid-template-columns: minmax(16rem, 2fr) minmax(0, 3fr); gap: 1rem; align-items: start; }
-    #status { min-height: 1.5rem; color: #435557; margin: .65rem 0; }
-    #results, article { border: 1px solid #d1dcd9; border-radius: .6rem; background: #fff; min-height: 7rem; overflow: hidden; }
-    article { padding: 1.2rem; }
-    article h2 { margin: 0; font-size: 1.25rem; }
-    article p { color: #435557; margin: .3rem 0 1rem; }
-    #results button { width: 100%; display: grid; gap: .15rem; text-align: left; border: 0; border-bottom: 1px solid #d1dcd9; background: #fff; padding: .75rem .85rem; }
-    #results button:last-child { border-bottom: 0; }
-    #results button:hover, #results button[aria-current="true"] { background: #e5f3ee; }
-    #results button:focus-visible { outline-offset: -3px; }
-    small { color: #435557; }
-    #results span { overflow-wrap: anywhere; }
-    pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; margin: 0; }
-    @media (max-width: 720px) {
-      form { grid-template-columns: 1fr 1fr; }
-      main { grid-template-columns: minmax(0, 1fr); }
+    button:disabled { cursor: default; opacity: .65; }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    [hidden] { display: none !important; }
+
+    .brand {
+      grid-area: brand;
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      padding: 1rem 1.15rem;
+      background: var(--sidebar);
+      border-inline-end: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .brand-mark, .reader-mark {
+      display: grid;
+      place-items: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: .7rem;
+      background: var(--accent);
+      color: white;
+    }
+    .envelope {
+      display: block;
+      position: relative;
+      width: 1rem;
+      height: .75rem;
+      border: 1.5px solid currentColor;
+      border-radius: .18rem;
+      overflow: hidden;
+    }
+    .envelope::after {
+      content: "";
+      position: absolute;
+      top: -.34rem;
+      left: .13rem;
+      width: .54rem;
+      height: .54rem;
+      border: solid currentColor;
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg);
+    }
+
+    .toolbar {
+      grid-area: toolbar;
+      padding: .9rem clamp(1rem, 2.3vw, 2rem);
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+    }
+    fieldset { padding: 0; margin: 0; border: 0; min-width: 0; }
+    #search-fields {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 1rem;
+    }
+    .date-field {
+      display: grid;
+      gap: .08rem;
+      min-width: 0;
+      padding: .25rem .65rem;
+      border: 1px solid var(--line);
+      border-radius: .65rem;
+      font-size: .6875rem;
+      font-weight: 650;
+      color: var(--muted);
+    }
+    .date-field:focus-within { border-color: var(--accent); }
+    #as-of {
+      max-width: 100%;
+      min-width: 0;
+      min-height: 1.35rem;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #202039;
+      font-size: .875rem;
+      font-weight: 600;
+    }
+    .query-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: .55rem;
+      max-width: 50rem;
+    }
+    .search-input { position: relative; }
+    .search-input::before, .search-input::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      color: var(--muted);
+    }
+    .search-input::before {
+      top: .85rem;
+      left: .9rem;
+      width: .62rem;
+      height: .62rem;
+      border: 1.5px solid currentColor;
+      border-radius: 50%;
+    }
+    .search-input::after {
+      top: 1.53rem;
+      left: 1.59rem;
+      width: .36rem;
+      border-bottom: 1.5px solid currentColor;
+      transform: rotate(45deg);
+      transform-origin: left;
+    }
+    #query {
+      width: 100%;
+      min-width: 0;
+      min-height: 2.75rem;
+      padding: .5rem .8rem .5rem 2.45rem;
+      border: 1px solid #d7d2e6;
+      border-radius: .75rem;
+      background: #f7f5fc;
+    }
+    .primary {
+      padding: .5rem 1.15rem;
+      border: 1px solid var(--accent);
+      border-radius: .75rem;
+      background: var(--accent);
+      color: white;
+      font-weight: 650;
+    }
+    .primary:not(:disabled):hover { background: #403098; }
+
+    .sidebar {
+      grid-area: sidebar;
+      min-width: 0;
+      padding: .95rem .9rem 1rem;
+      background: var(--sidebar);
+      border-inline-end: 1px solid var(--line);
+    }
+    #mailbox-fields { display: grid; gap: 1rem; }
+    .account-picker { position: relative; min-width: 0; }
+    #mailbox, .account-option {
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: .6rem;
+      min-width: 0;
+      min-height: 3.125rem;
+      padding: .45rem .65rem;
+      text-align: left;
+      border: 0;
+      border-radius: .7rem;
+      background: var(--surface);
+    }
+    #mailbox { border: 1px solid var(--line); }
+    #mailbox:not(:disabled):hover, #mailbox[aria-expanded="true"] { border-color: var(--field-border); }
+    .account-avatar {
+      display: grid;
+      place-items: center;
+      width: 1.875rem;
+      height: 1.875rem;
+      flex-shrink: 0;
+      border-radius: .55rem;
+      background: var(--tint);
+      color: #43309d;
+      font-size: .75rem;
+      font-weight: 750;
+      font-variant-numeric: tabular-nums;
+    }
+    .account-copy { display: grid; min-width: 0; line-height: 1.25; }
+    .account-copy strong { font-size: .875rem; overflow-wrap: anywhere; }
+    .account-copy small { margin-top: .15rem; color: var(--muted); font-size: .6875rem; white-space: nowrap; }
+    .account-chevron {
+      width: .45rem;
+      height: .45rem;
+      margin: 0 .15rem .2rem 0;
+      border: solid var(--muted);
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg);
+    }
+    #mailbox[aria-expanded="true"] .account-chevron { transform: rotate(225deg); margin-bottom: -.2rem; }
+    .account-menu {
+      position: absolute;
+      z-index: 5;
+      top: calc(100% + .45rem);
+      left: 0;
+      width: max(100%, 15rem);
+      padding: .35rem;
+      border: 1px solid var(--line);
+      border-radius: .85rem;
+      background: var(--surface);
+      box-shadow: 0 8px 28px #31254f26, 0 2px 6px #31254f0d;
+    }
+    .account-menu > p {
+      padding: .5rem .6rem .4rem;
+      color: var(--muted);
+      font-size: .75rem;
+      font-weight: 650;
+    }
+    #mailbox-options {
+      display: grid;
+      gap: .12rem;
+      max-height: min(19rem, 54svh);
+      overflow: auto;
+      overscroll-behavior: contain;
+      padding: .2rem;
+    }
+    .account-option:not([aria-selected="true"]):hover { background: #f8f6fc; }
+    .account-option[aria-selected="true"] { background: var(--tint); color: #43309d; }
+    .account-option:focus-visible { outline-width: 2px; outline-offset: -2px; }
+    .account-check {
+      visibility: hidden;
+      width: .4rem;
+      height: .7rem;
+      margin-right: .2rem;
+      border: solid var(--accent);
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+    .account-option[aria-selected="true"] .account-check { visibility: visible; }
+    #inbox {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      min-height: 2.75rem;
+      padding: .5rem .7rem;
+      background: transparent;
+      border: 0;
+      border-radius: .6rem;
+      text-align: left;
+      font-weight: 650;
+    }
+    #inbox:not(:disabled):hover { background: #eeebf6; }
+    #inbox[aria-current], #inbox[aria-current]:not(:disabled):hover {
+      background: var(--tint);
+      color: #43309d;
+    }
+
+    main {
+      grid-area: workspace;
+      display: grid;
+      grid-template-columns: minmax(15rem, 2fr) minmax(0, 3fr);
+      min-width: 0;
+      min-height: 0;
+      margin: 1rem clamp(1rem, 2.3vw, 2rem);
+      border: 1px solid var(--line);
+      border-radius: 1rem;
+      background: var(--surface);
+      box-shadow: 0 4px 16px #31254f0d;
+    }
+    .list-pane, .reader { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+    .list-heading { padding: 1rem 1.15rem; border-bottom: 1px solid var(--line); }
+    .list-heading h2 { margin-bottom: .35rem; }
+    .search-info { display: flex; flex-wrap: wrap; align-items: center; gap: .25rem .55rem; color: var(--muted); font-size: .8125rem; }
+    #target-day {
+      background: var(--tint);
+      color: #43309d;
+      border-radius: .4rem;
+      padding: .15rem .45rem;
+      font-weight: 650;
+    }
+    #results { overflow: auto; flex: 1; min-height: 0; border-radius: 0 0 0 1rem; }
+    #results button {
+      width: 100%;
+      display: grid;
+      gap: .3rem;
+      text-align: left;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-inline-start: 3px solid transparent;
+      background: var(--surface);
+      padding: .85rem .95rem;
+      overflow-wrap: anywhere;
+    }
+    #results button:hover { background: #f8f6fc; }
+    #results button[aria-current="true"] { background: var(--tint); border-inline-start-color: var(--accent); }
+    #results button:focus-visible { outline-offset: -4px; }
+    .row-title { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .15rem .5rem; }
+    .row-title strong { font-size: .875rem; }
+    #results small, .preview { color: var(--muted); font-size: .8125rem; }
+    .preview { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+
+    .reader {
+      border-inline-start: 1px solid var(--line);
+      background: #f9f8fc;
+      border-radius: 0 1rem 1rem 0;
+    }
+    #message { overflow: auto; flex: 1; min-height: 0; padding: clamp(1rem, 2.5vw, 2.2rem); }
+    #message:focus-visible { outline-offset: -4px; }
+    .letter {
+      padding: clamp(1rem, 2vw, 1.75rem);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: .8rem;
+    }
+    #message h2 { font-size: clamp(1.25rem, 2.2vw, 1.65rem); line-height: 1.25; overflow-wrap: anywhere; }
+    #message p { color: var(--muted); }
+    .letter-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: .25rem 1rem;
+      margin: .6rem 0 1.2rem;
+      font-size: .875rem;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+    .letter-meta time { font-variant-numeric: tabular-nums; }
+    .reader-empty { display: grid; place-content: center; justify-items: center; gap: .8rem; height: 100%; text-align: center; }
+    .reader-mark { width: 2.75rem; height: 2.75rem; background: var(--tint); color: var(--accent); }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; line-height: 1.65; max-width: 72ch; margin: 0; padding-top: 1rem; border-top: 1px solid var(--line); }
+    .secondary {
+      background: var(--surface);
+      color: #43309d;
+      border: 1px solid var(--field-border);
+      border-radius: .55rem;
+      padding: .5rem .75rem;
+      min-height: 2.75rem;
+      width: fit-content;
+    }
+    .secondary:hover { background: var(--tint); }
+    #search-retry, #message .secondary { margin-top: .65rem; }
+    #back { display: none; margin: 1rem 1rem 0; }
+
+    @media (max-width: 55rem) {
+      body {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto auto auto 1fr;
+        grid-template-areas: "brand" "toolbar" "sidebar" "workspace";
+        height: auto;
+      }
+      .brand { padding: .75rem 1rem; border-inline-end: 0; }
+      .toolbar { padding: .65rem 1rem; }
+      .sidebar { overflow: visible; padding: .7rem 1rem; border-inline-end: 0; border-bottom: 1px solid var(--line); }
+      #search-fields { grid-template-columns: minmax(0, 1fr); gap: .5rem; }
+      .date-field { display: flex; align-items: center; gap: .5rem; width: fit-content; margin-inline-start: auto; }
+      #mailbox-fields { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: center; gap: .55rem; }
+      #mailbox-options { max-height: min(16rem, 42svh); }
+      main { display: block; margin: .75rem 1rem 1rem; }
+      #results { border-radius: 0 0 1rem 1rem; }
+      .reader { display: none; border: 0; border-radius: inherit; background: var(--surface); }
+      .letter { padding: 0; border: 0; }
+      body[data-reading] { grid-template-rows: auto 0 0 1fr; }
+      body[data-reading] .toolbar, body[data-reading] .sidebar, body[data-reading] .list-pane { display: none; }
+      body[data-reading] .reader { display: flex; }
+      #back { display: block; }
     }
   </style>
 </head>
 <body>
-  <h1>Поиск по почте</h1>
-  <form id="search">
-    <label>Почтовый ящик<select id="mailbox" required></select></label>
-    <label>Дата отсчёта<input id="as-of" type="date" required></label>
-    <label>Запрос<input id="query" type="search" maxlength="1000" placeholder="Электронные чеки вчера"></label>
-    <button type="submit">Найти</button>
+  <header class="brand">
+    <span class="brand-mark" aria-hidden="true"><span class="envelope"></span></span>
+    <h1>Почта</h1>
+  </header>
+  <form id="search" class="toolbar" role="search">
+    <fieldset id="search-fields" disabled>
+      <div class="query-row">
+        <div class="search-input">
+          <input id="query" aria-label="Запрос" type="search" maxlength="1000" placeholder="Поиск по письмам">
+        </div>
+        <button class="primary" type="submit">Найти</button>
+      </div>
+      <label class="date-field">Дата отсчёта<input id="as-of" type="date" required></label>
+    </fieldset>
   </form>
-  <p id="status" role="status"></p>
+  <aside class="sidebar" aria-label="Почтовый ящик и папки">
+    <fieldset id="mailbox-fields" disabled>
+      <div class="account-picker">
+        <button id="mailbox" type="button" aria-label="Почтовый ящик" aria-haspopup="listbox"
+                aria-expanded="false" aria-controls="mailbox-options">
+          <span id="mailbox-avatar" class="account-avatar" aria-hidden="true"><span class="envelope"></span></span>
+          <span class="account-copy">
+            <strong id="mailbox-name">Ящик</strong>
+            <small id="mailbox-suffix" hidden></small>
+          </span>
+          <span class="account-chevron" aria-hidden="true"></span>
+        </button>
+        <div id="mailbox-menu" class="account-menu" hidden>
+          <p id="mailbox-menu-title">Почтовые ящики</p>
+          <div id="mailbox-options" role="listbox" aria-labelledby="mailbox-menu-title"></div>
+        </div>
+      </div>
+      <button id="inbox" type="button" aria-current="page"><span class="envelope" aria-hidden="true"></span>Входящие</button>
+    </fieldset>
+  </aside>
   <main>
-    <div id="results" aria-label="Список писем"></div>
-    <article id="message" aria-label="Открытое письмо"><p>Выберите письмо из списка.</p></article>
+    <section class="list-pane" aria-labelledby="results-heading">
+      <div class="list-heading">
+        <h2 id="results-heading">Входящие</h2>
+        <div class="search-info" role="status">
+          <span id="status"></span>
+          <span id="target-day" hidden></span>
+          <span id="search-mode" hidden>Поиск по словам</span>
+        </div>
+        <button id="search-retry" class="secondary" type="button" hidden>Повторить</button>
+      </div>
+      <div id="results"></div>
+    </section>
+    <section class="reader" aria-label="Открытое письмо">
+      <button id="back" class="secondary" type="button">К результатам</button>
+      <article id="message" tabindex="-1" aria-live="polite"></article>
+    </section>
   </main>
+  <template id="reader-placeholder">
+    <div class="reader-empty">
+      <span class="reader-mark" aria-hidden="true"><span class="envelope"></span></span>
+      <p>Выберите письмо из списка.</p>
+    </div>
+  </template>
   <script>
     const form = document.querySelector("#search");
+    const fields = document.querySelector("#search-fields");
+    const mailboxFields = document.querySelector("#mailbox-fields");
+    const inbox = document.querySelector("#inbox");
+    const heading = document.querySelector("#results-heading");
+    const readerPlaceholder = document.querySelector("#reader-placeholder");
     const mailbox = document.querySelector("#mailbox");
+    const mailboxAvatar = document.querySelector("#mailbox-avatar");
+    const mailboxName = document.querySelector("#mailbox-name");
+    const mailboxSuffix = document.querySelector("#mailbox-suffix");
+    const mailboxMenu = document.querySelector("#mailbox-menu");
+    const mailboxOptions = document.querySelector("#mailbox-options");
+    const accountPicker = mailbox.parentElement;
     const asOf = document.querySelector("#as-of");
     const query = document.querySelector("#query");
     const results = document.querySelector("#results");
     const message = document.querySelector("#message");
     const status = document.querySelector("#status");
+    const targetDay = document.querySelector("#target-day");
+    const searchMode = document.querySelector("#search-mode");
+    const searchRetry = document.querySelector("#search-retry");
+    const back = document.querySelector("#back");
+    const mobile = window.matchMedia("(max-width: 55rem)");
+    const dateFormat = new Intl.DateTimeFormat("ru-RU", {
+      day: "numeric", month: "long", year: "numeric", timeZone: "UTC"
+    });
     let mailboxes = {};
     let searchVersion = 0;
     let messageVersion = 0;
+    let scrollBeforeReading = 0;
+    let retrySearch = null;
 
     function node(tag, text) {
       const element = document.createElement(tag);
@@ -65,11 +479,89 @@
       return element;
     }
 
-    async function get(path, params = {}) {
-      const response = await fetch(path + "?" + new URLSearchParams(params));
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error);
-      return { data, headers: response.headers };
+    function formatDay(day) {
+      if (!day) return "Дата неизвестна";
+      const date = new Date(day + "T00:00:00Z");
+      return Number.isNaN(date.getTime()) ? day : dateFormat.format(date);
+    }
+
+    function mailContent(text, subject) {
+      let sender = "";
+      let body = text;
+      // The archive sometimes places labelled mail headers in the first lines.
+      while (true) {
+        const header = /^(от|от кого|отправитель|тема):[^\S\r\n]*([^\r\n]*)/i.exec(body);
+        if (!header) break;
+        if (header[1].toLowerCase() === "тема") {
+          subject ||= header[2].trim();
+        } else {
+          sender ||= header[2].trim();
+        }
+        body = body.slice(header[0].length).trimStart();
+      }
+      body = body.replace(/^текст письма:[^\S\r\n]*/i, "").trimStart();
+      return { subject: subject || "Без темы", sender, body };
+    }
+
+    function mailDate(day) {
+      if (!day) return node("span", formatDay(day));
+      const time = node("time", formatDay(day));
+      time.dateTime = day;
+      return time;
+    }
+
+    function updateMailbox(option) {
+      const previous = mailboxOptions.querySelector('[aria-selected="true"]');
+      previous?.setAttribute("aria-selected", "false");
+      option.setAttribute("aria-selected", "true");
+      mailbox.value = option.value;
+      mailbox.title = option.value;
+      const { number, suffix } = option.dataset;
+      mailboxAvatar.textContent = number;
+      mailboxName.textContent = `Ящик ${number}`;
+      mailboxSuffix.textContent = `Архив · ${suffix}`;
+      mailboxSuffix.hidden = false;
+      mailbox.setAttribute("aria-label", `Почтовый ящик: Ящик ${number} · ${suffix}`);
+    }
+
+    function openMailboxMenu() {
+      mailboxMenu.hidden = false;
+      mailbox.setAttribute("aria-expanded", "true");
+      mailboxOptions.querySelector('[aria-selected="true"]')?.focus();
+    }
+
+    function closeMailboxMenu(restoreFocus = false) {
+      if (mailboxMenu.hidden) return;
+      mailboxMenu.hidden = true;
+      mailbox.setAttribute("aria-expanded", "false");
+      if (restoreFocus) mailbox.focus();
+    }
+
+    function createMailboxOption(id, index) {
+      const number = String(index + 1).padStart(2, "0");
+      const suffix = id.slice(-4);
+      const option = node("button", "");
+      option.type = "button";
+      option.value = id;
+      option.className = "account-option";
+      option.tabIndex = -1;
+      option.dataset.number = number;
+      option.dataset.suffix = suffix;
+      option.setAttribute("role", "option");
+      option.setAttribute("aria-label", `Ящик ${number} · ${suffix}`);
+      option.setAttribute("aria-selected", "false");
+
+      const avatar = node("span", number);
+      avatar.className = "account-avatar";
+      avatar.setAttribute("aria-hidden", "true");
+      const copy = node("span", "");
+      copy.className = "account-copy";
+      copy.append(node("strong", `Ящик ${number}`), node("small", `Архив · ${suffix}`));
+      const check = node("span", "");
+      check.className = "account-check";
+      check.setAttribute("aria-hidden", "true");
+      option.append(avatar, copy, check);
+      return option;
     }
 
     function scope() {
@@ -77,54 +569,164 @@
     }
 
     function setDefaultDay() {
-      asOf.value = mailboxes[mailbox.value] || new Date().toISOString().slice(0, 10);
+      const today = new Date();
+      const localDay = [
+        today.getFullYear(),
+        String(today.getMonth() + 1).padStart(2, "0"),
+        String(today.getDate()).padStart(2, "0")
+      ].join("-");
+      asOf.value = mailboxes[mailbox.value] || localDay;
+    }
+
+    async function get(path, params = {}) {
+      const response = await fetch(path + "?" + new URLSearchParams(params));
+      if (!response.ok) {
+        const error = new Error("Ошибка запроса");
+        error.status = response.status;
+        throw error;
+      }
+      return { data: await response.json(), headers: response.headers };
+    }
+
+    function resetReader() {
+      message.replaceChildren(readerPlaceholder.content.cloneNode(true));
+    }
+
+    function focusMessage() {
+      if (mobile.matches) message.focus({ preventScroll: true });
+    }
+
+    function returnToResults() {
+      ++messageVersion;
+      document.body.removeAttribute("data-reading");
+      resetReader();
+      results.querySelector("[aria-current]")?.focus({ preventScroll: true });
+      window.scrollTo(0, scrollBeforeReading);
     }
 
     async function openMessage(docId, button, messageScope) {
       const version = ++messageVersion;
+      if (mobile.matches && !document.body.hasAttribute("data-reading")) {
+        scrollBeforeReading = window.scrollY;
+        window.scrollTo(0, 0);
+      }
+      document.body.setAttribute("data-reading", "");
       results.querySelector("[aria-current]")?.removeAttribute("aria-current");
       button.setAttribute("aria-current", "true");
       message.replaceChildren(node("p", "Открываем письмо…"));
+      message.scrollTop = 0;
+      focusMessage();
       try {
         const { data: mail } = await get("/api/message", { ...messageScope, doc_id: docId });
         if (version !== messageVersion) return;
-        message.replaceChildren(
-          node("h2", mail.subject || "Письмо"),
-          node("p", mail.day || "Дата неизвестна"),
-          node("pre", mail.body)
-        );
+        const content = mailContent(mail.body, mail.subject);
+        const letter = node("div", "");
+        letter.className = "letter";
+        const metadata = node("div", "");
+        metadata.className = "letter-meta";
+        if (content.sender) metadata.append(node("span", content.sender));
+        metadata.append(mailDate(mail.day));
+        letter.append(node("h2", content.subject), metadata, node("pre", content.body));
+        message.replaceChildren(letter);
       } catch (error) {
-        if (version === messageVersion) message.replaceChildren(node("p", error.message));
+        if (version !== messageVersion) return;
+        if (error.status === 404) {
+          message.replaceChildren(node("p", "Письмо недоступно. Выберите другое в списке."));
+          return;
+        }
+        const retry = node("button", "Открыть снова");
+        retry.type = "button";
+        retry.className = "secondary";
+        retry.addEventListener("click", () => openMessage(docId, button, messageScope));
+        message.replaceChildren(node("p", "Не удалось открыть письмо."), retry);
       }
     }
 
+    function renderResults(rows, requestScope) {
+      for (const row of rows) {
+        const button = node("button", "");
+        button.type = "button";
+        const title = node("span", "");
+        title.className = "row-title";
+        const content = mailContent(row.preview, row.subject);
+        const day = node("small", "");
+        day.append(mailDate(row.day));
+        title.append(node("strong", content.subject), day);
+        button.append(title);
+        if (content.body) {
+          const preview = node("span", content.body);
+          preview.className = "preview";
+          button.append(preview);
+        }
+        button.addEventListener("click", () => openMessage(row.doc_id, button, requestScope));
+        results.append(button);
+      }
+    }
+
+    function showSearchError(text, retry) {
+      status.textContent = text;
+      retrySearch = retry;
+      searchRetry.hidden = false;
+    }
+
     async function search() {
+      if (!form.reportValidity()) return;
       const version = ++searchVersion;
       ++messageVersion;
+      document.body.removeAttribute("data-reading");
+      targetDay.hidden = true;
+      searchMode.hidden = true;
+      searchRetry.hidden = true;
       status.textContent = "Ищем письма…";
-      message.replaceChildren(node("p", "Выберите письмо из списка."));
+      resetReader();
       results.replaceChildren();
       const requestScope = scope();
       const requestQuery = query.value.trim();
+      heading.textContent = requestQuery ? "Результаты поиска" : "Входящие";
+      if (requestQuery) inbox.removeAttribute("aria-current");
+      else inbox.setAttribute("aria-current", "page");
       try {
         const { data: rows, headers } = await get("/api/search", { ...requestScope, q: requestQuery });
         if (version !== searchVersion) return;
-        status.textContent = rows.length
-          ? (requestQuery ? `Писем в выдаче: ${rows.length}` : "Последние письма")
-          : "Письма не найдены.";
-        const targetDay = headers.get("X-Target-Day");
-        if (targetDay) status.textContent += " · За " + targetDay;
-        if (headers.get("X-Search-Mode") === "bm25-fallback")
-          status.textContent += " · Поиск по словам (таймаут модели)";
-        for (const row of rows) {
-          const button = node("button", "");
-          const preview = row.subject ? row.preview.split("\n").slice(1).join(" ").trim() : row.preview;
-          button.append(node("strong", row.subject || "Без темы"), node("small", row.day || "Дата неизвестна"), node("span", preview));
-          button.addEventListener("click", () => openMessage(row.doc_id, button, requestScope));
-          results.append(button);
+        if (requestQuery) {
+          status.textContent = rows.length ? `Писем в выдаче: ${rows.length}` : "Письма не найдены. Попробуйте другой запрос.";
+        } else {
+          status.textContent = rows.length ? `Показано: ${rows.length}` : "На эту дату в ящике нет писем.";
         }
+        const day = headers.get("X-Target-Day");
+        if (day) {
+          targetDay.textContent = "За " + formatDay(day);
+          targetDay.hidden = false;
+        }
+        searchMode.hidden = headers.get("X-Search-Mode") !== "bm25-fallback";
+        renderResults(rows, requestScope);
       } catch (error) {
-        if (version === searchVersion) status.textContent = error.message;
+        if (version !== searchVersion) return;
+        const text = error.status === 503 ? "Поиск временно недоступен." : "Не удалось загрузить письма.";
+        showSearchError(text, search);
+      }
+    }
+
+    async function loadMailboxes() {
+      searchRetry.hidden = true;
+      status.textContent = "Загружаем почтовые ящики…";
+      try {
+        const { data } = await get("/api/mailboxes");
+        mailboxes = data;
+        const ids = Object.keys(data);
+        if (!ids.length) {
+          status.textContent = "Нет доступных почтовых ящиков.";
+          return;
+        }
+        const options = ids.map(createMailboxOption);
+        mailboxOptions.replaceChildren(...options);
+        updateMailbox(options[0]);
+        setDefaultDay();
+        fields.disabled = false;
+        mailboxFields.disabled = false;
+        search();
+      } catch {
+        showSearchError("Не удалось загрузить почтовые ящики.", loadMailboxes);
       }
     }
 
@@ -132,24 +734,76 @@
       event.preventDefault();
       search();
     });
-    mailbox.addEventListener("change", () => {
+    inbox.addEventListener("click", () => {
+      query.value = "";
+      search();
+    });
+    mailbox.addEventListener("click", () => {
+      if (mailboxMenu.hidden) openMailboxMenu();
+      else closeMailboxMenu();
+    });
+    mailbox.addEventListener("keydown", event => {
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        openMailboxMenu();
+      }
+    });
+    mailboxOptions.addEventListener("click", event => {
+      const option = event.target.closest('[role="option"]');
+      if (!option) return;
+      closeMailboxMenu(true);
+      if (mailbox.value === option.value) return;
+      updateMailbox(option);
+      query.value = "";
       setDefaultDay();
       search();
+    });
+    mailboxOptions.addEventListener("keydown", event => {
+      const options = Array.from(mailboxOptions.children);
+      const index = options.indexOf(event.target);
+      let next;
+      switch (event.key) {
+        case "Escape":
+          event.preventDefault();
+          closeMailboxMenu(true);
+          return;
+        case "ArrowUp":
+          next = Math.max(0, index - 1);
+          break;
+        case "ArrowDown":
+          next = Math.min(options.length - 1, index + 1);
+          break;
+        case "Home":
+          next = 0;
+          break;
+        case "End":
+          next = options.length - 1;
+          break;
+        default:
+          return;
+      }
+      event.preventDefault();
+      options[next].focus();
+    });
+    accountPicker.addEventListener("focusout", event => {
+      const next = event.relatedTarget;
+      if (next && (next === mailbox || !accountPicker.contains(next))) closeMailboxMenu();
+    });
+    document.addEventListener("pointerdown", event => {
+      if (!accountPicker.contains(event.target)) closeMailboxMenu();
     });
     asOf.addEventListener("change", () => {
       if (asOf.value) search();
     });
+    searchRetry.addEventListener("click", () => {
+      const focusTarget = fields.disabled ? searchRetry : query;
+      focusTarget.focus();
+      retrySearch?.();
+    });
+    back.addEventListener("click", returnToResults);
 
-    get("/api/mailboxes").then(({ data }) => {
-      mailboxes = data;
-      for (const id of Object.keys(data)) {
-        const option = node("option", id);
-        option.value = id;
-        mailbox.append(option);
-      }
-      setDefaultDay();
-      search();
-    }).catch(error => { status.textContent = error.message; });
+    resetReader();
+    loadMailboxes();
   </script>
 </body>
 </html>
