@@ -1,0 +1,123 @@
+{
+  "corpus": "w3c",
+  "default": "fallback",
+  "main_commit": "0c27fa74cb93cfe00839074321eb3b7081a38a8c",
+  "ensemble_commit": "da14429dac3083480e4b41b0b301ea4c907fc83b",
+  "index": {
+    "profile_id": "harrier270",
+    "adapter": "harrier",
+    "model_id": "microsoft/harrier-oss-v1-270m",
+    "model_revision": "31de22b673913c7d658c0f03f792d77c2dcf8ebd",
+    "tokenizer_id": "microsoft/harrier-oss-v1-270m",
+    "tokenizer_revision": "31de22b673913c7d658c0f03f792d77c2dcf8ebd",
+    "parameter_count": 270000000,
+    "dimensions": 640,
+    "max_length": 512,
+    "document_template": "{doc}",
+    "query_prefix": "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery: ",
+    "normalize": true,
+    "profile_sha256": "99357d7b68048d0c61e32e878b8d218153281778eacefb54502e2ec60c42261e",
+    "index_version": "ee241240c32726e2d4ca9d44ae92378ea3c22dc759a72a24e425cd174a8b67d5",
+    "corpus_sha256": "f99cc48b85ee53ffdeb8e48da1f4ac693746e9716dee046e19178665770098b0",
+    "document_count": 8125,
+    "runtime": {
+      "numpy": "2.4.6",
+      "torch": "2.15.0",
+      "transformers": "5.23.0",
+      "tokenizers": "0.23.3",
+      "device": "mps"
+    }
+  },
+  "sets": {
+    "external": {
+      "queries": 125,
+      "scored": 125,
+      "metrics": {
+        "native": {
+          "@5": {
+            "recall": 0.856,
+            "ndcg": 0.602749,
+            "mrr": 0.517733
+          },
+          "@10": {
+            "recall": 0.936,
+            "ndcg": 0.62925,
+            "mrr": 0.529041
+          }
+        },
+        "blend": {
+          "@5": {
+            "recall": 0.856,
+            "ndcg": 0.602749,
+            "mrr": 0.517733
+          },
+          "@10": {
+            "recall": 0.936,
+            "ndcg": 0.62925,
+            "mrr": 0.529041
+          }
+        },
+        "rerank": {
+          "@5": {
+            "recall": 0.856,
+            "ndcg": 0.602749,
+            "mrr": 0.517733
+          },
+          "@10": {
+            "recall": 0.936,
+            "ndcg": 0.62925,
+            "mrr": 0.529041
+          }
+        },
+        "fallback": {
+          "@5": {
+            "recall": 0.856,
+            "ndcg": 0.602749,
+            "mrr": 0.517733
+          },
+          "@10": {
+            "recall": 0.936,
+            "ndcg": 0.62925,
+            "mrr": 0.529041
+          }
+        },
+        "fresh_only": {
+          "@5": {
+            "recall": 0.856,
+            "ndcg": 0.602749,
+            "mrr": 0.517733
+          },
+          "@10": {
+            "recall": 0.936,
+            "ndcg": 0.62925,
+            "mrr": 0.529041
+          }
+        },
+        "main": {
+          "@5": {
+            "recall": 0.904,
+            "ndcg": 0.833446,
+            "mrr": 0.8096
+          },
+          "@10": {
+            "recall": 0.944,
+            "ndcg": 0.846648,
+            "mrr": 0.81521
+          }
+        },
+        "ensemble": {
+          "@5": {
+            "recall": 0.352,
+            "ndcg": 0.274147,
+            "mrr": 0.2488
+          },
+          "@10": {
+            "recall": 0.4,
+            "ndcg": 0.289459,
+            "mrr": 0.254997
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "corpus": "sara",
+  "default": "fallback",
+  "main_commit": "0c27fa74cb93cfe00839074321eb3b7081a38a8c",
+  "ensemble_commit": "da14429dac3083480e4b41b0b301ea4c907fc83b",
+  "index": {
+    "profile_id": "harrier270",
+    "adapter": "harrier",
+    "model_id": "microsoft/harrier-oss-v1-270m",
+    "model_revision": "31de22b673913c7d658c0f03f792d77c2dcf8ebd",
+    "tokenizer_id": "microsoft/harrier-oss-v1-270m",
+    "tokenizer_revision": "31de22b673913c7d658c0f03f792d77c2dcf8ebd",
+    "parameter_count": 270000000,
+    "dimensions": 640,
+    "max_length": 512,
+    "document_template": "{doc}",
+    "query_prefix": "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery: ",
+    "normalize": true,
+    "profile_sha256": "99357d7b68048d0c61e32e878b8d218153281778eacefb54502e2ec60c42261e",
+    "index_version": "28d33bceb35cd3def345a239d7a9e4b3bd64f70e91899575a0276c387eab240b",
+    "corpus_sha256": "c9f2f337c8698317e2c982f2fd7c9b11bba68cd255fe1133b7071fb45ec6df03",
+    "document_count": 1703,
+    "runtime": {
+      "numpy": "2.4.6",
+      "torch": "2.15.0",
+      "transformers": "5.23.0",
+      "tokenizers": "0.23.3",
+      "device": "mps"
+    }
+  },
+  "sets": {
+    "external": {
+      "queries": 150,
+      "scored": 150,
+      "metrics": {
+        "native": {
+          "@5": {
+            "recall": 0.13209,
+            "ndcg": 0.19618,
+            "mrr": 0.455444
+          },
+          "@10": {
+            "recall": 0.196605,
+            "ndcg": 0.208996,
+            "mrr": 0.468532
+          }
+        },
+        "blend": {
+          "@5": {
+            "recall": 0.13209,
+            "ndcg": 0.19618,
+            "mrr": 0.455444
+          },
+          "@10": {
+            "recall": 0.196605,
+            "ndcg": 0.208996,
+            "mrr": 0.468532
+          }
+        },
+        "rerank": {
+          "@5": {
+            "recall": 0.13209,
+            "ndcg": 0.19618,
+            "mrr": 0.455444
+          },
+          "@10": {
+            "recall": 0.196605,
+            "ndcg": 0.208996,
+            "mrr": 0.468532
+          }
+        },
+        "fallback": {
+          "@5": {
+            "recall": 0.13209,
+            "ndcg": 0.19618,
+            "mrr": 0.455444
+          },
+          "@10": {
+            "recall": 0.196605,
+            "ndcg": 0.208996,
+            "mrr": 0.468532
+          }
+        },
+        "fresh_only": {
+          "@5": {
+            "recall": 0.13209,
+            "ndcg": 0.19618,
+            "mrr": 0.455444
+          },
+          "@10": {
+            "recall": 0.196605,
+            "ndcg": 0.208996,
+            "mrr": 0.468532
+          }
+        },
+        "main": {
+          "@5": {
+            "recall": 0.131888,
+            "ndcg": 0.195378,
+            "mrr": 0.444556
+          },
+          "@10": {
+            "recall": 0.193572,
+            "ndcg": 0.204067,
+            "mrr": 0.459005
+          }
+        },
+        "ensemble": {
+          "@5": {
+            "recall": 0.040306,
+            "ndcg": 0.06706,
+            "mrr": 0.180556
+          },
+          "@10": {
+            "recall": 0.049693,
+            "ndcg": 0.061972,
+            "mrr": 0.189534
+          }
+        }
+      }
+    }
+  }
+}
