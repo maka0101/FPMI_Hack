@@ -154,5 +154,6 @@ def test_frontend_versions_are_separate_and_demo_is_opt_in(monkeypatch):
             assert client.get("/").content == old_page.content
             assert new_page.status_code == 200
             assert new_page.content != old_page.content
-            assert 'src="/v2/search.js"' in new_page.text
-            assert client.get("/v2/search.js").status_code == 200
+            script_url = new_page.text.split('<script src="', 1)[1].split('"', 1)[0]
+            assert script_url.startswith("/v2/search.js?rev=")
+            assert client.get(script_url).status_code == 200
