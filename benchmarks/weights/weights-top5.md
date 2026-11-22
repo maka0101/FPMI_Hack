@@ -83,7 +83,7 @@ Recall@5 и nDCG@5 усреднены по 99 запросам. MRR@5 счита
 ## Воспроизведение
 
 ```sh
-.cache/ml-venv/bin/python -m benchmarks.weight_grid --fine --cutoff 5 --embedder harrier270 --output benchmarks/weights-top5-harrier270.json
-.venv/bin/python -m benchmarks.weight_grid --fine --cutoff 5 --embedder e5 --output benchmarks/weights-top5-e5.json
-.cache/ml-venv/bin/python -m benchmarks.weight_grid --fine --cutoff 5 --embedder granite97 --output benchmarks/weights-top5-granite97.json
+.cache/ml-venv/bin/python -m benchmarks.weight_grid --fine --cutoff 5 --embedder harrier270 --output benchmarks/weights/weights-top5-harrier270.json
+.venv/bin/python -m benchmarks.weight_grid --fine --cutoff 5 --embedder e5 --output benchmarks/weights/weights-top5-e5.json
+.cache/ml-venv/bin/python -m benchmarks.weight_grid --fine --cutoff 5 --embedder granite97 --output benchmarks/weights/weights-top5-granite97.json
 ```

@@ -14,7 +14,7 @@
 
 Шаг веса BM25 — 0,01. Для Harrier проверили веса от 0,65 до 0,85, для E5 и Granite — от 0,85 до 0,99, включая границы. Режим `hybrid` объединяет через RRF списки BM25 и исходного запроса к эмбеддеру после фильтрации по ящику и дате. Глубина каждого списка — 50, константа RRF — 60. Модели запускались последовательно на Apple M4 Pro. E5 использовал ONNX INT8 на CPU, Granite и Harrier — PyTorch BF16 на MPS.
 
-Один клиент после прогрева делал три прохода через `/api/search` в перемешанном порядке. Всего 15 147 измеренных HTTP-вызовов. Для каждого веса серверный p99 рассчитан по 297 вызовам, от начала разбора HTTP-запроса до сериализации ответа в JSON. В точках, общих с [предыдущей сеткой](weights.md), все три метрики качества совпадают.
+Один клиент после прогрева делал три прохода через `/api/search` в перемешанном порядке. Всего 15 147 измеренных HTTP-вызовов. Для каждого веса серверный p99 рассчитан по 297 вызовам, от начала разбора HTTP-запроса до сериализации ответа в JSON. В точках, общих с [предыдущей сеткой](README.md), все три метрики качества совпадают.
 
 ## Harrier 270M
 
@@ -91,7 +91,7 @@
 ## Воспроизведение
 
 ```sh
-.venv/bin/python -m benchmarks.weight_grid --fine --embedder e5 --output benchmarks/weights-fine-e5.json
-.cache/ml-venv/bin/python -m benchmarks.weight_grid --fine --embedder granite97 --output benchmarks/weights-fine-granite97.json
-.cache/ml-venv/bin/python -m benchmarks.weight_grid --fine --embedder harrier270 --output benchmarks/weights-fine-harrier270.json
+.venv/bin/python -m benchmarks.weight_grid --fine --embedder e5 --output benchmarks/weights/weights-fine-e5.json
+.cache/ml-venv/bin/python -m benchmarks.weight_grid --fine --embedder granite97 --output benchmarks/weights/weights-fine-granite97.json
+.cache/ml-venv/bin/python -m benchmarks.weight_grid --fine --embedder harrier270 --output benchmarks/weights/weights-fine-harrier270.json
 ```

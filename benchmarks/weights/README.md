@@ -81,7 +81,7 @@ PyTorch BF16 на MPS. [Результаты JSON](weights-harrier270.json)
 Запустите по одной модели в её окружении с локальными весами и индексом.
 
 ```sh
-.venv/bin/python -m benchmarks.weight_grid --embedder e5 --output benchmarks/weights-e5.json
-.cache/ml-venv/bin/python -m benchmarks.weight_grid --embedder granite97 --output benchmarks/weights-granite97.json
-.cache/ml-venv/bin/python -m benchmarks.weight_grid --embedder harrier270 --output benchmarks/weights-harrier270.json
+.venv/bin/python -m benchmarks.weight_grid --embedder e5 --output benchmarks/weights/weights-e5.json
+.cache/ml-venv/bin/python -m benchmarks.weight_grid --embedder granite97 --output benchmarks/weights/weights-granite97.json
+.cache/ml-venv/bin/python -m benchmarks.weight_grid --embedder harrier270 --output benchmarks/weights/weights-harrier270.json
 ```
