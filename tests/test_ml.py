@@ -113,3 +113,17 @@ def test_pinned_local_model_stops_before_inference_without_weights(workspace):
     path.write_text(yaml.safe_dump(config))
     with pytest.raises(ValueError, match="pinned"):
         read_profile("e5-small")
+
+
+def test_vector_range_is_applied_before_limit(workspace):
+    data, _, _ = workspace
+    meta = prepare(data, "encoder-a")
+    client = TestClient(create_app(data, "encoder-a"))
+    period = {"start": "2028-09-30", "end": "2028-10-03"}
+    params = request(meta, query="", target_day=None, target_range=period, limit=10)
+    hits = client.post("/v1/candidates", json=params).json()["candidates"]
+    assert [hit["doc_id"] for hit in hits] == ["receipt-a", "receipt-b", "travel"]
+    assert client.post("/v1/candidates", json={**params, "target_day": "2028-10-01"}).status_code == 422
+    assert client.post("/v1/candidates", json={
+        **params, "target_range": {"start": period["end"], "end": period["start"]},
+    }).status_code == 422

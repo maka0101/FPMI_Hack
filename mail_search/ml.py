@@ -14,12 +14,12 @@ from threading import Lock
 
 from fastapi import FastAPI, HTTPException
 import numpy as np
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 import uvicorn
 import yaml
 
 from .ml_profiles import Digest, Encoder, Profile, file_hash, read_profile, stable_hash
-from .search import DATE_IN_QUERY
+from .search import DATE_IN_QUERY, DateRange
 
 
 INDEX_FORMAT = 1
@@ -31,8 +31,15 @@ class CandidateRequest(BaseModel):
     query: str
     query_date: date
     target_day: date | None = None
+    target_range: DateRange | None = None
     limit: int = Field(ge=1, le=1000)
     corpus_sha256: Digest
+
+    @model_validator(mode="after")
+    def check_date_filter(self):
+        if self.target_day and self.target_range:
+            raise ValueError("Передайте один календарный фильтр")
+        return self
 
 
 class Candidate(BaseModel):
@@ -181,9 +188,13 @@ class VectorIndex:
 
     def search(self, request: CandidateRequest) -> list[Candidate]:
         as_of = request.query_date.isoformat()
-        target = request.target_day.isoformat() if request.target_day else None
+        period = request.target_range
+        if request.target_day:
+            period = DateRange(request.target_day, request.target_day)
+        if period:
+            start, end = period.start.isoformat(), period.end.isoformat()
         eligible = [(idx, doc_id) for idx, doc_id, day in self.mailboxes.get(request.synthetic_user, ())
-                    if (day is None or day <= as_of) and (target is None or day == target)]
+                    if (day is None or day <= as_of) and (period is None or (day is not None and start <= day <= end))]
         if not eligible:
             return []
         text = request.query

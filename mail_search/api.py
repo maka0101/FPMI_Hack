@@ -1,7 +1,8 @@
 from datetime import date
 from pathlib import Path
+import re
 from time import perf_counter
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import FastAPI, Query, Request, Response
 from fastapi.exceptions import RequestValidationError
@@ -10,6 +11,10 @@ from pydantic import BaseModel
 from starlette.exceptions import HTTPException
 
 from .engine import Engine, MLUnavailable
+from .search import DateRange
+
+
+MAIL_HEADER = re.compile(r"^(от|от кого|отправитель|тема):[^\S\r\n]*([^\r\n]*)", re.IGNORECASE)
 
 
 class Summary(BaseModel):
@@ -26,6 +31,35 @@ class Message(BaseModel):
     body: str
 
 
+class Anchor(BaseModel):
+    doc_id: str
+    subject: str
+    day: date
+    sender: str | None
+
+
+class NearbySummary(Summary):
+    offset_days: int
+
+
+class NearbyResults(BaseModel):
+    anchor: Anchor
+    window: DateRange | None
+    results: list[NearbySummary]
+
+
+def anchor_card(message):
+    subject, sender, body = message["subject"], None, message["body"]
+    while header := MAIL_HEADER.match(body):
+        name, value = header[1].lower(), header[2].strip()
+        if name == "тема":
+            subject = subject or value
+        else:
+            sender = sender or value or None
+        body = body[header.end():].lstrip()
+    return Anchor(doc_id=message["doc_id"], subject=subject, day=message["day"], sender=sender)
+
+
 def create_app(engine: Engine, demo_fallback: bool = False) -> FastAPI:
     app = FastAPI(title="Поиск по почте")
     page = Path(__file__).with_name("index.html").read_text(encoding="utf-8")
@@ -34,7 +68,7 @@ def create_app(engine: Engine, demo_fallback: bool = False) -> FastAPI:
     async def search_timing(request: Request, call_next):
         started = perf_counter()
         response = await call_next(request)
-        if request.url.path == "/api/search":
+        if request.url.path in ("/api/search", "/api/search/anchors", "/api/search/around"):
             elapsed = (perf_counter() - started) * 1000
             response.headers["Server-Timing"] = f"search;dur={elapsed:.3f}"
         return response
@@ -87,8 +121,39 @@ def create_app(engine: Engine, demo_fallback: bool = False) -> FastAPI:
         rows, mode, target = engine.search_with_info(mailbox, q, day, limit, demo_fallback=demo_fallback)
         response.headers["X-Search-Mode"] = mode
         if target:
-            response.headers["X-Target-Day"] = target.isoformat()
+            if target.start == target.end:
+                response.headers["X-Target-Day"] = target.start.isoformat()
+            else:
+                response.headers["X-Target-From"] = target.start.isoformat()
+                response.headers["X-Target-To"] = target.end.isoformat()
         return rows
+
+    @app.get("/api/search/anchors", response_model=list[Anchor])
+    def anchors(response: Response, mailbox: str, q: str, as_of: str | None = None):
+        if not q.strip():
+            raise ValueError("Опишите письмо-ориентир")
+        day = reference_date(mailbox, as_of)
+        rows, mode, _ = engine.search_with_info(
+            mailbox, q, day, 3, demo_fallback=demo_fallback, dated_only=True,
+        )
+        response.headers["X-Search-Mode"] = mode
+        return [anchor_card(engine.index.message(mailbox, row["doc_id"], day)) for row in rows]
+
+    @app.get("/api/search/around", response_model=NearbyResults)
+    def around(response: Response, mailbox: str, anchor_doc_id: str,
+               direction: Literal["before", "after", "around"], q: str = "",
+               as_of: str | None = None, days: int = 3):
+        if days not in (3, 7):
+            raise ValueError("Размер окна должен быть 3 или 7 дней")
+        day = reference_date(mailbox, as_of)
+        anchor = engine.index.message(mailbox, anchor_doc_id, day)
+        if anchor is None or anchor["day"] is None:
+            return JSONResponse({"error": "Письмо-ориентир недоступно"}, status_code=404)
+        rows, mode, window = engine.search_around(
+            mailbox, q, day, anchor, direction, days, demo_fallback=demo_fallback,
+        )
+        response.headers["X-Search-Mode"] = mode
+        return {"anchor": anchor_card(anchor), "window": window, "results": rows}
 
     @app.get("/api/message", response_model=Message)
     def message(mailbox: str = "", doc_id: str = "", as_of: str | None = None):
