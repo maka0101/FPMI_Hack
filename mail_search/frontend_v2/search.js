@@ -328,6 +328,7 @@ const timelineNav = get("timeline-nav");
 
 let recallContext;
 let recallVersion = 0;
+let hintTimer;
 let period;
 let suggestion;
 let timelineOrigin;
@@ -351,6 +352,7 @@ function openRecall(focus = true) {
 }
 
 function clearRecallFields() {
+  clearTimeout(hintTimer);
   ++recallVersion;
   period = suggestion = null;
   fromField.value = toField.value = "";
@@ -380,6 +382,7 @@ function runSearch(keepHint = false) {
   const context = mailContext(submitted);
   if (!context) return start("Выберите дату отсчёта");
   ordinary(context, submitted);
+  if (keepHint && submitted) scheduleHint();
 }
 
 function eventRequest(operation, payload, context = recallContext) {
@@ -454,17 +457,23 @@ function demoSuggest(text, asOfDate) {
     return { kind: "clarify", message: direction === "after" ? "После какой даты?" :
       direction === "before" ? "До какой даты?" : "Какой период вы помните?" };
   }
-  const matches = term.length < 3 ? [] : demoMatches(term, demoMail.filter(item => item.day <= asOfDate))
+  const matches = !/[\p{L}\p{N}]{4}/u.test(term) || /^(?:до|после)$/iu.test(term) ? [] :
+    demoMatches(term, demoMail.filter(item => item.day <= asOfDate))
     .sort((a, b) => b.score - a.score).slice(0, 3).map(row => row.item);
   return { kind: "anchors", direction, candidates: matches };
 }
 
-function showDates() {
+function showDates(focus = true) {
   dateForm.hidden = false;
   fromField.value = period?.from || fromField.value;
   toField.value = period?.to || toField.value;
   fromField.max = toField.max = recallContext.scope.as_of;
-  fromField.focus();
+  if (focus) fromField.focus();
+}
+
+function scheduleHint() {
+  clearRecallFields();
+  if (recallInput.value.trim().length >= 4) hintTimer = setTimeout(resolveHint, 300);
 }
 
 function resolveHint() {
@@ -476,10 +485,10 @@ function resolveHint() {
   period = suggestion = null;
   candidates.hidden = dateForm.hidden = preview.hidden = periodEditor.hidden = true;
   recallOperation("Подбираем период…", () => demo ? demoSuggest(text, scope.as_of) : eventRequest("suggest", { text }), data => {
-    if (data.kind === "period") confirmPeriod({ from: data.from, to: data.to });
+    if (data.kind === "period") confirmPeriod({ from: data.from, to: data.to }, undefined, false);
     else if (data.kind === "clarify") {
       notice.textContent = data.message;
-      showDates();
+      showDates(false);
     } else {
       suggestion = data;
       showCandidates();
@@ -495,7 +504,10 @@ function showCandidates() {
     after: "После какого письма искать?",
     around: "Какое письмо поможет вспомнить дату?"
   }[suggestion.direction];
-  renderRows(suggestion.candidates, anchor => confirmPeriod({ anchor, direction: suggestion.direction, size: 3 }), candidates);
+  renderRows(suggestion.candidates, anchor => {
+    const selection = { anchor, direction: suggestion.direction, size: 3 };
+    confirmPeriod(selection, recallContext.text ? refine : undefined);
+  }, candidates);
 }
 
 function localPeriod(selection, asOfDate) {
@@ -524,22 +536,22 @@ function periodLabel(selection) {
   return dates + " · " + phrase[selection.direction] + " «" + (selection.anchor.subject || "Без темы") + "»";
 }
 
-function confirmPeriod(selection, after) {
+function confirmPeriod(selection, after, focus = true) {
   const context = recallContext;
   preview.hidden = true;
   recallOperation("Проверяем даты…", () => context.demo ? localPeriod(selection, context.scope.as_of) :
     eventRequest("period", periodPayload(selection), context), window => {
     period = { ...selection, ...window };
     candidates.hidden = dateForm.hidden = periodEditor.hidden = true;
-    preview.hidden = false;
+    preview.hidden = Boolean(after);
     get("period-summary").textContent = periodLabel(period);
     get("period-direction").value = period.direction || "around";
     get("refine").hidden = !context.text;
     get("timeline-open").textContent = context.text ? "Посмотреть письма вокруг события" : "Показать письма за этот период";
     get("timeline-open").className = context.text ? "link" : "primary";
     if (after) after(period);
-    else (context.text ? get("refine") : get("timeline-open")).focus({ preventScroll: true });
-  }, () => confirmPeriod(selection, after));
+    else if (focus) (context.text ? get("refine") : get("timeline-open")).focus({ preventScroll: true });
+  }, () => confirmPeriod(selection, after, focus));
 }
 
 function matchingPeriod(context, selected) {
@@ -687,14 +699,16 @@ recallToggle.addEventListener("click", () => {
     openRecall();
   }
 });
-get("recall-form").addEventListener("submit", event => {
-  event.preventDefault();
-  resolveHint();
+recallInput.addEventListener("input", event => {
+  if (event.isComposing) clearRecallFields();
+  else scheduleHint();
 });
+recallInput.addEventListener("compositionend", scheduleHint);
 get("recall-dates").addEventListener("click", () => {
   const context = mailContext(query.value.trim());
   if (!context) return;
   recallContext = context;
+  clearTimeout(hintTimer);
   ++recallVersion;
   notice.textContent = "";
   recovery.replaceChildren();

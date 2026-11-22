@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Поиск по почте · v2</title>
-  <script src="/v2/search.js?rev=signing-fixtures" defer></script>
+  <script src="/v2/search.js?rev=live-recall" defer></script>
   <style>
     :root { font: 16px/1.5 system-ui, sans-serif; color: #18242a; background: #f0f3f2; }
     * { box-sizing: border-box; }
@@ -52,7 +52,7 @@
     @media (prefers-reduced-motion: reduce) {
       #recall-slot, #recall-slot[data-visible] { transition: none; }
     }
-    #recall-controls form { display: grid; gap: .45rem; }
+    #recall-controls form, #recall-form { display: grid; gap: .45rem; }
     #recall-controls input { max-width: 100%; }
     #recall-controls p { margin: 0; }
     #recall-candidates { border: 1px solid #d1dcd9; border-radius: .55rem; overflow: hidden; }
@@ -102,14 +102,13 @@
   <div id="recall-slot" inert>
     <div class="recall-clip">
       <section id="recall-controls" aria-label="Вспомнить по событию">
-        <form id="recall-form">
+        <div id="recall-form">
           <label for="recall-input">Помните, что было примерно в это время?</label>
           <div class="recall-buttons">
-            <input id="recall-input" required maxlength="1000" placeholder="Примерно тогда покупал билеты в Казань">
-            <button class="primary" type="submit">Подобрать период</button>
+            <input id="recall-input" maxlength="1000" autocomplete="off" placeholder="Примерно тогда покупал билеты в Казань">
             <button id="recall-dates" class="link" type="button">Указать даты</button>
           </div>
-        </form>
+        </div>
         <p id="recall-status" role="status"></p>
         <div id="recall-recovery" class="recall-buttons"></div>
         <div id="recall-candidates" hidden></div>
