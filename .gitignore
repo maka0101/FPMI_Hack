@@ -5,3 +5,4 @@ rankings.jsonl
 .env
 .artifacts/
 runs/
+.cache/

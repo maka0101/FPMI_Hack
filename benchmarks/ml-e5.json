@@ -1,0 +1,65 @@
+{
+  "limit": 10,
+  "repeats": 3,
+  "embedder": {
+    "name": "multilingual-e5-small",
+    "device": "cpu",
+    "precision": "int8"
+  },
+  "reranker": null,
+  "results": {
+    "original": {
+      "bm25": {
+        "queries": 99,
+        "server_p99_ms": 6.724666,
+        "latency_samples": 297,
+        "recall_at_10": 0.9248814168600265,
+        "ndcg_at_10": 0.9784775007591382
+      },
+      "hybrid": {
+        "queries": 99,
+        "server_p99_ms": 10.200375,
+        "latency_samples": 297,
+        "recall_at_10": 0.9187220599430939,
+        "ndcg_at_10": 0.9696157892859164
+      }
+    },
+    "paraphrase": {
+      "bm25": {
+        "queries": 99,
+        "server_p99_ms": 7.201125,
+        "latency_samples": 297,
+        "recall_at_10": 0.6236268287070426,
+        "ndcg_at_10": 0.6351261247931285
+      },
+      "hybrid": {
+        "queries": 99,
+        "server_p99_ms": 11.521959,
+        "latency_samples": 297,
+        "recall_at_10": 0.8245544908646513,
+        "ndcg_at_10": 0.8248574259302143
+      }
+    },
+    "paraphrase_no_day": {
+      "bm25": {
+        "queries": 99,
+        "server_p99_ms": 8.170875,
+        "latency_samples": 297,
+        "known_target_recall_at_10": 0.14823187309818325
+      },
+      "hybrid": {
+        "queries": 99,
+        "server_p99_ms": 13.434417,
+        "latency_samples": 297,
+        "known_target_recall_at_10": 0.21093250431485724
+      }
+    }
+  },
+  "receipts_missed_by_bm25": {
+    "bm25_candidate_limit": 50,
+    "query_document_pairs": 18,
+    "recovered_at_10": {
+      "hybrid": 10
+    }
+  }
+}

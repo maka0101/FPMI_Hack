@@ -1,0 +1,38 @@
+{
+  "limit": 10,
+  "repeats": 5,
+  "results": {
+    "original": {
+      "bm25": {
+        "queries": 99,
+        "recall_at_10": 0.9248814168600265,
+        "ndcg_at_10": 0.9784775007591382,
+        "server_p99_ms": 5.0865,
+        "latency_samples": 495
+      },
+      "hybrid": {
+        "queries": 99,
+        "recall_at_10": 0.9187220599430939,
+        "ndcg_at_10": 0.9696157892859164,
+        "server_p99_ms": 8.207708,
+        "latency_samples": 495
+      }
+    },
+    "paraphrase": {
+      "bm25": {
+        "queries": 99,
+        "recall_at_10": 0.6236268287070426,
+        "ndcg_at_10": 0.6351261247931285,
+        "server_p99_ms": 5.090333,
+        "latency_samples": 495
+      },
+      "hybrid": {
+        "queries": 99,
+        "recall_at_10": 0.8245544908646513,
+        "ndcg_at_10": 0.8248574259302143,
+        "server_p99_ms": 9.206167,
+        "latency_samples": 495
+      }
+    }
+  }
+}

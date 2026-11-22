@@ -42,6 +42,8 @@ V2 доступен на `/` и `/v2` при `MAIL_SEARCH_FRONTEND_V2=1`. Для
 
 [Дизайн панели и хронологии](docs/event-recall-frontend.md)
 
+[Автономный ранжировщик Harrier, метрики и команды запуска](benchmarks/harrier_transfer/README.md)
+
 ## Публичный бенчмарк
 
 ```sh
