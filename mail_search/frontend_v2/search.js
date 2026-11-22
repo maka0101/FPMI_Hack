@@ -238,7 +238,7 @@ async function ordinary(context, text) {
     const fallback = headers?.get("X-Search-Mode") === "bm25-fallback";
     status.textContent = "Писем: " + data.length + (day ? " · За " + displayDate(day) : "") +
       (fallback ? " · Поиск по словам" : "");
-    configureRecall(context, Boolean(text && !data.length));
+    syncRecallVisibility();
   } catch (error) {
     if (version !== searchVersion) return;
     heading.textContent = "Поиск недоступен";
@@ -267,6 +267,7 @@ async function loadSource() {
   mailbox.replaceChildren();
   asOf.value = "";
   get("submit").disabled = true;
+  syncRecallVisibility();
   get("source-note").textContent = demo ? "Демоданные. Поиск и чтение выполняются на вымышленных письмах." : "";
   try {
     const loadedBoxes = demo ? { [demoMailbox]: demoDate } : (await request("/api/mailboxes")).data;
@@ -293,10 +294,10 @@ async function loadSource() {
 get("search").addEventListener("submit", event => {
   event.preventDefault();
   submitted = query.value.trim();
-  runSearch();
+  runSearch(true);
 });
 mailbox.addEventListener("change", () => { resetDate(); runSearch(); });
-asOf.addEventListener("change", runSearch);
+asOf.addEventListener("change", () => runSearch());
 source.addEventListener("change", loadSource);
 get("back").addEventListener("click", () => closeMessage(true));
 rows.addEventListener("keydown", event => {
@@ -308,8 +309,7 @@ rows.addEventListener("keydown", event => {
   choices[(choices.indexOf(event.target) + step + choices.length) % choices.length].focus();
 });
 
-const controls = get("recall-controls");
-const recallDialog = get("recall-dialog");
+const recallSlot = get("recall-slot");
 const recallInput = get("recall-input");
 const recallToggle = get("recall-toggle");
 const notice = get("recall-status");
@@ -331,50 +331,53 @@ let suggestion;
 let timelineOrigin;
 let timelinePosition;
 
-function toggleRecall(open, focus = true) {
-  if (!open) {
-    controls.hidden = true;
-    if (recallDialog.open) recallDialog.close();
-    get("recall-slot").append(controls);
-    if (focus) recallToggle.focus({ preventScroll: true });
-  } else {
-    controls.hidden = false;
-    if (focus && matchMedia("(max-width: 700px)").matches && !recallDialog.open) {
-      recallDialog.append(controls);
-      recallDialog.showModal();
-    }
-    if (focus) recallInput.focus();
-  }
-  recallToggle.setAttribute("aria-expanded", String(open));
+let standaloneRecall = false;
+
+function syncRecallVisibility() {
+  const hasQuery = Boolean(query.value.trim());
+  const visible = timeline.hidden && (hasQuery || standaloneRecall);
+  recallSlot.inert = !visible;
+  recallSlot.toggleAttribute("data-visible", visible);
+  get("recall-entry").hidden = hasQuery || get("submit").disabled || !asOf.value;
+  recallToggle.setAttribute("aria-expanded", String(visible && !hasQuery));
 }
 
-function resetRecall() {
+function openRecall(focus = true) {
+  standaloneRecall = !query.value.trim();
+  syncRecallVisibility();
+  if (focus) recallInput.focus();
+}
+
+function clearRecallFields() {
   ++recallVersion;
-  recallContext = period = suggestion = timelineOrigin = null;
-  timeline.hidden = true;
-  get("list").hidden = false;
-  get("recall-entry").hidden = true;
-  toggleRecall(false, false);
-  recallInput.value = fromField.value = toField.value = "";
+  period = suggestion = null;
+  fromField.value = toField.value = "";
   notice.textContent = "";
   recovery.replaceChildren();
   candidates.replaceChildren();
   candidates.hidden = dateForm.hidden = periodEditor.hidden = preview.hidden = true;
 }
 
-function configureRecall(context, empty) {
-  recallContext = context;
-  recallToggle.textContent = context.text ? "Помните, что было примерно в то же время? ›" :
-    "Посмотреть почту вокруг события ›";
-  get("recall-entry").hidden = false;
-  if (empty) toggleRecall(true, false);
+function resetRecall(keepHint = false) {
+  clearRecallFields();
+  recallContext = timelineOrigin = null;
+  standaloneRecall = false;
+  timeline.hidden = true;
+  get("list").hidden = false;
+  if (!keepHint) recallInput.value = "";
+  syncRecallVisibility();
 }
 
-function runSearch() {
-  resetRecall();
-  if (!mailbox.value || !asOf.value) return start("Выберите дату отсчёта");
-  const scope = { mailbox: mailbox.value, as_of: asOf.value };
-  ordinary({ scope, text: submitted, demo: source.value === "demo" }, submitted);
+function mailContext(text) {
+  if (!mailbox.value || !asOf.value || get("submit").disabled) return null;
+  return { scope: { mailbox: mailbox.value, as_of: asOf.value }, text, demo: source.value === "demo" };
+}
+
+function runSearch(keepHint = false) {
+  resetRecall(keepHint);
+  const context = mailContext(submitted);
+  if (!context) return start("Выберите дату отсчёта");
+  ordinary(context, submitted);
 }
 
 function eventRequest(operation, payload, context = recallContext) {
@@ -403,9 +406,9 @@ async function recallOperation(operation, work, render, retry, output = notice, 
         const hint = recallInput.value;
         source.value = "demo";
         loadSource().then(() => {
-          if (!recallContext?.demo) return;
+          if (source.value !== "demo" || !mailContext(query.value.trim())) return;
           recallInput.value = hint;
-          toggleRecall(true);
+          openRecall();
         });
       }, buttons);
     }
@@ -464,8 +467,10 @@ function showDates() {
 
 function resolveHint() {
   const text = recallInput.value.trim();
-  if (!text) return;
-  const { scope, demo } = recallContext;
+  const context = mailContext(query.value.trim());
+  if (!text || !context) return;
+  recallContext = context;
+  const { scope, demo } = context;
   period = suggestion = null;
   candidates.hidden = dateForm.hidden = preview.hidden = periodEditor.hidden = true;
   recallOperation("Подбираем период…", () => demo ? demoSuggest(text, scope.as_of) : eventRequest("suggest", { text }), data => {
@@ -552,7 +557,8 @@ function refine(selected = period) {
   recallOperation("Ищем письма в выбранном периоде…", () => context.demo ?
     { results: matchingPeriod(context, selected) } :
     eventRequest("search", { ...periodPayload(selected), q: context.text, limit: 10 }, context), data => {
-    toggleRecall(false, false);
+    submitted = context.text;
+    preview.hidden = true;
     start(data.results.length ? "Результаты за выбранный период" : "За этот период писем не найдено");
     condition.textContent = context.text + " · " + periodLabel({ ...selected, ...data.window });
     condition.hidden = false;
@@ -564,10 +570,10 @@ function refine(selected = period) {
     });
     if (!data.results.length) {
       if (selected.size === 3) action("Расширить до 7 дней", () => {
-        toggleRecall(true);
+        openRecall();
         confirmPeriod({ ...selected, size: 7 }, refine);
       });
-      action("Изменить период", () => { toggleRecall(true); showDates(); });
+      action("Изменить период", () => { openRecall(false); showDates(); });
     }
     action("Посмотреть письма вокруг события", () => openTimeline(selected));
     heading.focus();
@@ -585,9 +591,9 @@ function openTimeline(selected) {
     message: [...message.childNodes], reading: reader.classList.contains("reading"),
     trigger: document.activeElement
   };
-  toggleRecall(false, false);
   get("list").hidden = true;
   timeline.hidden = false;
+  syncRecallVisibility();
   loadTimeline({ from: selected.from, to: selected.to, anchor: selected.anchor });
 }
 
@@ -655,6 +661,7 @@ function closeTimeline() {
   timelineOrigin = null;
   timeline.hidden = true;
   get("list").hidden = false;
+  syncRecallVisibility();
   status.textContent = previous.status;
   activeRow = previous.activeRow;
   message.replaceChildren(...previous.message);
@@ -662,19 +669,20 @@ function closeTimeline() {
   rows.scrollTop = previous.scroll;
   const trigger = previous.trigger;
   (previous.reading ? message.querySelector("h2") :
-    trigger && !controls.contains(trigger) ? trigger : recallToggle)?.focus({ preventScroll: true });
+    trigger && document.contains(trigger) ? trigger : query)?.focus({ preventScroll: true });
 }
 
-recallToggle.addEventListener("click", () => toggleRecall(controls.hidden));
-get("recall-close").addEventListener("click", () => toggleRecall(false));
-recallDialog.addEventListener("cancel", event => {
-  event.preventDefault();
-  toggleRecall(false);
+query.addEventListener("input", () => {
+  if (timeline.hidden) clearRecallFields();
+  standaloneRecall = false;
+  syncRecallVisibility();
 });
-controls.addEventListener("keydown", event => {
-  if (event.key === "Escape") {
-    event.preventDefault();
-    toggleRecall(false);
+recallToggle.addEventListener("click", () => {
+  if (standaloneRecall) {
+    standaloneRecall = false;
+    syncRecallVisibility();
+  } else {
+    openRecall();
   }
 });
 get("recall-form").addEventListener("submit", event => {
@@ -682,6 +690,9 @@ get("recall-form").addEventListener("submit", event => {
   resolveHint();
 });
 get("recall-dates").addEventListener("click", () => {
+  const context = mailContext(query.value.trim());
+  if (!context) return;
+  recallContext = context;
   ++recallVersion;
   notice.textContent = "";
   recovery.replaceChildren();
